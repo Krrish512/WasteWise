@@ -45,4 +45,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * A user has many SearchHistories.
+     */
+    public function searchHistories()
+    {
+        return $this->hasMany(SearchHistory::class, 'user_id');
+    }
 }
