@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\SearchHistory;
 use App\Models\WasteItem;
 use Illuminate\Http\Request;
 
@@ -40,6 +41,15 @@ class WasteSearchController extends Controller
                 'message' => 'Sorry, we couldn\'t find this waste item. '
                     . 'Try another name such as Old Laptop, Old Mobile, Plastic Bottle, or Newspaper.',
             ], 404);
+        }
+
+        // ── 3.1 Save search history for authenticated users ───────────────
+        if (auth()->check()) {
+            SearchHistory::create([
+                'user_id'       => auth()->id(),
+                'waste_item_id' => $item->id,
+                'searched_at'   => now(),
+            ]);
         }
 
         // ── 4. Find collection centres that handle this waste category ────────

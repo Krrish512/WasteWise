@@ -6,11 +6,12 @@
 |--------------------------------------------------------------------------
 |
 | This config controls which cross-origin requests Laravel will allow.
-| We need this open so the Lovable frontend (hosted on a different domain)
-| can call the WasteWise API without CORS errors.
+| supports_credentials must be true so the browser sends the Laravel
+| session cookie with fetch() calls from the same site.
 |
-| For production, replace '*' in allowed_origins with the exact Lovable
-| frontend URL, e.g. 'https://your-app.lovable.app'
+| IMPORTANT: 'allowed_origins' must NOT use '*' (wildcard) when
+| supports_credentials is true — browsers reject that combination.
+| List the exact origins the app is served from instead.
 |
 */
 
@@ -34,11 +35,15 @@ return [
     |--------------------------------------------------------------------------
     | Allowed origins
     |--------------------------------------------------------------------------
-    | During development, '*' allows all origins.
-    | In production, replace with your exact Lovable frontend URL.
-    | Example: 'https://your-wastewise-app.lovable.app'
+    | Must be explicit (no wildcard) when supports_credentials is true.
+    | List every origin the frontend may be served from during development.
     */
-    'allowed_origins' => ['*'],
+    'allowed_origins' => [
+        'http://localhost',
+        'http://localhost:8000',
+        'http://127.0.0.1',
+        'http://127.0.0.1:8000',
+    ],
 
     'allowed_origins_patterns' => [],
 
@@ -62,8 +67,10 @@ return [
     |--------------------------------------------------------------------------
     | Supports credentials (cookies, Authorization headers)
     |--------------------------------------------------------------------------
-    | Keep false while authentication is not yet implemented.
+    | Must be true so the browser includes the Laravel session cookie in
+    | fetch() calls to /api/waste/search, allowing auth()->check() to work.
     */
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
 ];
+

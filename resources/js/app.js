@@ -3,7 +3,7 @@
  * Connects to Laravel API at http://localhost:8000/api/waste/search
  */
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = window.location.origin ? `${window.location.origin}/api` : '/api';
 
 /* ── Page Router ──────────────────────────────────────────────────────────── */
 const pages = {
@@ -192,6 +192,7 @@ async function doSearch(query) {
         const resp = await fetch(url, {
             method: 'GET',
             headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
         });
 
         if (resp.status === 404) {

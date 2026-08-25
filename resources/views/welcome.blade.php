@@ -37,6 +37,20 @@
                 <a class="nav-link"         data-page="how"     href="#" id="nav-how">⚙️ How It Works</a>
                 <a class="nav-link"         data-page="centres" href="#" id="nav-centres">📍 Collection Centres</a>
                 <a class="nav-link"         data-page="about"   href="#" id="nav-about">ℹ️ About</a>
+
+                @guest
+                    <a class="nav-link" href="{{ route('login') }}">🔑 Login</a>
+                    <a class="nav-link" href="{{ route('register') }}" style="background:var(--primary);color:#fff;padding:.4rem .9rem;border-radius:var(--radius-full);font-weight:600;">✨ Register</a>
+                @endguest
+
+                @auth
+                    <a class="nav-link" href="{{ route('dashboard') }}">👤 Dashboard</a>
+                    <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                        @csrf
+                        <button type="submit" class="nav-link" style="background:none;border:none;cursor:pointer;color:#dc2626;font-weight:600;">🚪 Logout</button>
+                    </form>
+                @endauth
+
                 <button class="nav-admin-btn" data-page="adminLogin">🔒 Admin</button>
             </div>
 
@@ -63,10 +77,42 @@
             <a class="mobile-nav-link" data-page="how"        href="#">⚙️ How It Works</a>
             <a class="mobile-nav-link" data-page="centres"    href="#">📍 Collection Centres</a>
             <a class="mobile-nav-link" data-page="about"      href="#">ℹ️ About</a>
+
+            @guest
+                <a class="mobile-nav-link" href="{{ route('login') }}">🔑 Login</a>
+                <a class="mobile-nav-link" href="{{ route('register') }}">✨ Register</a>
+            @endguest
+
+            @auth
+                <a class="mobile-nav-link" href="{{ route('dashboard') }}">👤 Dashboard</a>
+                <form action="{{ route('logout') }}" method="POST" style="margin-top:.5rem;">
+                    @csrf
+                    <button type="submit" class="mobile-nav-link" style="width:100%;text-align:left;background:none;border:none;color:#dc2626;font-weight:600;">🚪 Logout</button>
+                </form>
+            @endauth
+
             <a class="mobile-nav-link" data-page="adminLogin" href="#">🔒 Admin Login</a>
         </div>
     </div>
 </div>
+
+<!-- Flash Alerts Container -->
+@if(session('success') || session('error'))
+<div class="container" style="margin-top:1.5rem;margin-bottom:0;">
+    @if(session('success'))
+        <div style="background:#dcfce7;border:1px solid #86efac;color:#166534;padding:.9rem 1.25rem;border-radius:var(--radius-md);display:flex;align-items:center;gap:.75rem;font-weight:500;box-shadow:var(--shadow-sm);">
+            <span style="font-size:1.2rem">✅</span>
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
+    @if(session('error'))
+        <div style="background:#fef2f2;border:1px solid #fca5a5;color:#991b1b;padding:.9rem 1.25rem;border-radius:var(--radius-md);display:flex;align-items:center;gap:.75rem;font-weight:500;box-shadow:var(--shadow-sm);">
+            <span style="font-size:1.2rem">⚠️</span>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+</div>
+@endif
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
      PAGE 1 – HOME

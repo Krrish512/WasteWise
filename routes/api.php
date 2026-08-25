@@ -8,11 +8,11 @@ use App\Http\Controllers\Api\WasteSearchController;
 | API Routes — WasteWise
 |--------------------------------------------------------------------------
 |
-| All routes here are automatically prefixed with /api
-| and assigned the "api" middleware group.
+| All routes here are automatically prefixed with /api.
+| Assigned "web" middleware group to enable session-based user authentication.
 |
 */
 
 // ── Waste Search & Recommendation ──────────────────────────────────────────
 // GET /api/waste/search?q=Old+Laptop
-Route::get('/waste/search', [WasteSearchController::class, 'search']);
+Route::middleware('web')->get('/waste/search', [WasteSearchController::class, 'search']);
