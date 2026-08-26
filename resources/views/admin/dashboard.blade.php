@@ -17,7 +17,7 @@
                         WasteWise Management Console
                     </h1>
                     <p style="color:#dcfce7;font-size:1.05rem;max-width:550px;">
-                        Logged in as <strong style="color:#fff;">{{ auth()->user()->email }}</strong>. Overview of waste disposal items, collection centres, and user activity.
+                        Logged in as <strong style="color:#fff;">{{ auth()->user()->email }}</strong>. Full real-time oversight of waste items, categories, centres, users, and feedback.
                     </p>
                 </div>
 
@@ -32,89 +32,133 @@
             </div>
         </div>
 
-        <!-- Database Metrics Grid -->
-        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:1.25rem;margin-bottom:2.5rem;">
+        <!-- Database Metrics Grid (Real Statistics) -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));gap:1.25rem;margin-bottom:2.5rem;">
             
-            <div style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;">
+            <a href="{{ route('admin.waste-items.index') }}" style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
                 <div style="width:48px;height:48px;background:var(--primary-pale);color:var(--primary-dark);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">💻</div>
                 <div>
                     <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text-dark);line-height:1;">{{ $stats['waste_items'] }}</div>
                     <div style="color:var(--text-muted);font-size:.85rem;font-weight:600;margin-top:.2rem;">Waste Items</div>
                 </div>
-            </div>
+            </a>
 
-            <div style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;">
+            <a href="{{ route('admin.categories.index') }}" style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
                 <div style="width:48px;height:48px;background:#eff6ff;color:#1d4ed8;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🏷️</div>
                 <div>
                     <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text-dark);line-height:1;">{{ $stats['categories'] }}</div>
                     <div style="color:var(--text-muted);font-size:.85rem;font-weight:600;margin-top:.2rem;">Categories</div>
                 </div>
-            </div>
+            </a>
 
-            <div style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;">
-                <div style="width:48px;height:48px;background:#faf5ff;color:#7e22ce;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">♻️</div>
-                <div>
-                    <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text-dark);line-height:1;">{{ $stats['collection_centres'] }}</div>
-                    <div style="color:var(--text-muted);font-size:.85rem;font-weight:600;margin-top:.2rem;">Collection Centres</div>
-                </div>
-            </div>
-
-            <div style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;">
+            <a href="{{ route('admin.disposal-methods.index') }}" style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
                 <div style="width:48px;height:48px;background:#f0fdf4;color:#15803d;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🔧</div>
                 <div>
                     <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text-dark);line-height:1;">{{ $stats['disposal_methods'] }}</div>
                     <div style="color:var(--text-muted);font-size:.85rem;font-weight:600;margin-top:.2rem;">Disposal Methods</div>
                 </div>
-            </div>
+            </a>
 
-            <div style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;">
+            <a href="{{ route('admin.cities.index') }}" style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
                 <div style="width:48px;height:48px;background:#fef2f2;color:#b91c1c;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🌆</div>
                 <div>
                     <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text-dark);line-height:1;">{{ $stats['cities'] }}</div>
                     <div style="color:var(--text-muted);font-size:.85rem;font-weight:600;margin-top:.2rem;">Cities</div>
                 </div>
-            </div>
+            </a>
 
-            <div style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;">
-                <div style="width:48px;height:48px;background:#fff7ed;color:#c2410c;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">📋</div>
+            <a href="{{ route('admin.collection-centres.index') }}" style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                <div style="width:48px;height:48px;background:#faf5ff;color:#7e22ce;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">📍</div>
+                <div>
+                    <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text-dark);line-height:1;">{{ $stats['collection_centres'] }}</div>
+                    <div style="color:var(--text-muted);font-size:.85rem;font-weight:600;margin-top:.2rem;">Collection Centres</div>
+                </div>
+            </a>
+
+            <a href="{{ route('admin.users.index') }}" style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                <div style="width:48px;height:48px;background:#fdf2f8;color:#be185d;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">👥</div>
+                <div>
+                    <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text-dark);line-height:1;">{{ $stats['users'] }}</div>
+                    <div style="color:var(--text-muted);font-size:.85rem;font-weight:600;margin-top:.2rem;">Registered Users</div>
+                </div>
+            </a>
+
+            <a href="{{ route('admin.search-history.index') }}" style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                <div style="width:48px;height:48px;background:#fff7ed;color:#c2410c;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">📊</div>
                 <div>
                     <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text-dark);line-height:1;">{{ $stats['searches_today'] }}</div>
                     <div style="color:var(--text-muted);font-size:.85rem;font-weight:600;margin-top:.2rem;">Searches Today</div>
+                </div>
+            </a>
+
+            <a href="{{ route('admin.feedback.index') }}" style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                <div style="width:48px;height:48px;background:#fefce8;color:#a16207;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">💬</div>
+                <div>
+                    <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text-dark);line-height:1;">{{ $stats['pending_feedback'] }}</div>
+                    <div style="color:var(--text-muted);font-size:.85rem;font-weight:600;margin-top:.2rem;">Pending Feedback</div>
+                </div>
+            </a>
+
+            <div style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;">
+                <div style="width:48px;height:48px;background:#fef3c7;color:#b45309;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">⭐</div>
+                <div>
+                    <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text-dark);line-height:1;">{{ $stats['avg_rating'] }} / 5</div>
+                    <div style="color:var(--text-muted);font-size:.85rem;font-weight:600;margin-top:.2rem;">Average Rating</div>
                 </div>
             </div>
 
         </div>
 
-        <!-- Placeholder Navigation Cards for Future Admin Capabilities -->
+        <!-- Active Admin Management Navigation Modules -->
         <div style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:2rem;box-shadow:var(--shadow-md);">
             <h2 style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:800;color:var(--text-dark);margin-bottom:.5rem;display:flex;align-items:center;gap:.6rem;">
                 ⚙️ Admin Management Modules
             </h2>
             <p style="color:var(--text-muted);font-size:.95rem;margin-bottom:1.5rem;">
-                Module access placeholders for WasteWise data management.
+                Select a module to manage WasteWise database records.
             </p>
 
-            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:1rem;">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:1.25rem;">
                 
-                <div style="border:1px dashed var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-base);opacity:.85;">
-                    <div style="font-weight:700;color:var(--text-dark);font-size:1rem;margin-bottom:.3rem;">📦 Waste Items</div>
-                    <div style="font-size:.85rem;color:var(--text-muted);">View, add, update & delete waste items</div>
-                </div>
+                <a href="{{ route('admin.waste-items.index') }}" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-card);transition:var(--transition);display:block;" onmouseover="this.style.borderColor='var(--primary)';" onmouseout="this.style.borderColor='var(--border)';">
+                    <div style="font-weight:700;color:var(--text-dark);font-size:1.05rem;margin-bottom:.3rem;">📦 Waste Items</div>
+                    <div style="font-size:.85rem;color:var(--text-muted);">View, add, edit, and delete waste items catalog</div>
+                </a>
 
-                <div style="border:1px dashed var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-base);opacity:.85;">
-                    <div style="font-weight:700;color:var(--text-dark);font-size:1rem;margin-bottom:.3rem;">🏷️ Categories</div>
-                    <div style="font-size:.85rem;color:var(--text-muted);">Manage waste categories & descriptions</div>
-                </div>
+                <a href="{{ route('admin.categories.index') }}" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-card);transition:var(--transition);display:block;" onmouseover="this.style.borderColor='var(--primary)';" onmouseout="this.style.borderColor='var(--border)';">
+                    <div style="font-weight:700;color:var(--text-dark);font-size:1.05rem;margin-bottom:.3rem;">🏷️ Categories</div>
+                    <div style="font-size:.85rem;color:var(--text-muted);">Manage waste categories and descriptions</div>
+                </a>
 
-                <div style="border:1px dashed var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-base);opacity:.85;">
-                    <div style="font-weight:700;color:var(--text-dark);font-size:1rem;margin-bottom:.3rem;">📍 Collection Centres</div>
-                    <div style="font-size:.85rem;color:var(--text-muted);">Manage recycling centres & locations</div>
-                </div>
+                <a href="{{ route('admin.disposal-methods.index') }}" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-card);transition:var(--transition);display:block;" onmouseover="this.style.borderColor='var(--primary)';" onmouseout="this.style.borderColor='var(--border)';">
+                    <div style="font-weight:700;color:var(--text-dark);font-size:1.05rem;margin-bottom:.3rem;">♻️ Disposal Methods</div>
+                    <div style="font-size:.85rem;color:var(--text-muted);">Manage disposal instructions and safety guidance</div>
+                </a>
 
-                <div style="border:1px dashed var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-base);opacity:.85;">
-                    <div style="font-weight:700;color:var(--text-dark);font-size:1rem;margin-bottom:.3rem;">🔧 Disposal Methods</div>
-                    <div style="font-size:.85rem;color:var(--text-muted);">Manage disposal instructions & guidance</div>
-                </div>
+                <a href="{{ route('admin.cities.index') }}" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-card);transition:var(--transition);display:block;" onmouseover="this.style.borderColor='var(--primary)';" onmouseout="this.style.borderColor='var(--border)';">
+                    <div style="font-weight:700;color:var(--text-dark);font-size:1.05rem;margin-bottom:.3rem;">🏙️ Cities</div>
+                    <div style="font-size:.85rem;color:var(--text-muted);">Manage coverage cities for centres</div>
+                </a>
+
+                <a href="{{ route('admin.collection-centres.index') }}" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-card);transition:var(--transition);display:block;" onmouseover="this.style.borderColor='var(--primary)';" onmouseout="this.style.borderColor='var(--border)';">
+                    <div style="font-weight:700;color:var(--text-dark);font-size:1.05rem;margin-bottom:.3rem;">📍 Collection Centres</div>
+                    <div style="font-size:.85rem;color:var(--text-muted);">Manage recycling centres and contact info</div>
+                </a>
+
+                <a href="{{ route('admin.users.index') }}" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-card);transition:var(--transition);display:block;" onmouseover="this.style.borderColor='var(--primary)';" onmouseout="this.style.borderColor='var(--border)';">
+                    <div style="font-weight:700;color:var(--text-dark);font-size:1.05rem;margin-bottom:.3rem;">👥 Users</div>
+                    <div style="font-size:.85rem;color:var(--text-muted);">Manage registered users and admin privileges</div>
+                </a>
+
+                <a href="{{ route('admin.search-history.index') }}" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-card);transition:var(--transition);display:block;" onmouseover="this.style.borderColor='var(--primary)';" onmouseout="this.style.borderColor='var(--border)';">
+                    <div style="font-weight:700;color:var(--text-dark);font-size:1.05rem;margin-bottom:.3rem;">📊 Search History</div>
+                    <div style="font-size:.85rem;color:var(--text-muted);">Monitor user waste search activity logs</div>
+                </a>
+
+                <a href="{{ route('admin.feedback.index') }}" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-card);transition:var(--transition);display:block;" onmouseover="this.style.borderColor='var(--primary)';" onmouseout="this.style.borderColor='var(--border)';">
+                    <div style="font-weight:700;color:var(--text-dark);font-size:1.05rem;margin-bottom:.3rem;">💬 User Feedback</div>
+                    <div style="font-size:.85rem;color:var(--text-muted);">Review user ratings, reviews, and suggestions</div>
+                </a>
 
             </div>
         </div>

@@ -14,6 +14,7 @@
                 <a class="nav-link" href="{{ url('/#how') }}" id="nav-how">⚙️ How It Works</a>
                 <a class="nav-link" href="{{ url('/#centres') }}" id="nav-centres">📍 Collection Centres</a>
                 <a class="nav-link" href="{{ url('/#about') }}" id="nav-about">ℹ️ About</a>
+                <a class="nav-link {{ request()->routeIs('feedback.*') ? 'active' : '' }}" href="{{ route('feedback.create') }}">💬 Feedback</a>
 
                 @guest
                     <a class="nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">🔑 Login</a>
@@ -62,6 +63,7 @@
             <a class="mobile-nav-link" href="{{ url('/#how') }}">⚙️ How It Works</a>
             <a class="mobile-nav-link" href="{{ url('/#centres') }}">📍 Collection Centres</a>
             <a class="mobile-nav-link" href="{{ url('/#about') }}">ℹ️ About</a>
+            <a class="mobile-nav-link" href="{{ route('feedback.create') }}">💬 Feedback</a>
 
             @guest
                 <a class="mobile-nav-link" href="{{ route('login') }}">🔑 Login</a>

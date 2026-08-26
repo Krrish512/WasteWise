@@ -63,4 +63,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(SearchHistory::class, 'user_id');
     }
+
+    /**
+     * A user has many Feedbacks.
+     */
+    public function feedbacks()
+    {
+        return $this->hasMany(Feedback::class, 'user_id');
+    }
 }

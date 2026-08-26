@@ -8,8 +8,8 @@ class DisposalMethod extends Model
 {
     protected $fillable = [
         'name',
-        'description',
         'instructions',
+        'avoid',
     ];
 
     /**

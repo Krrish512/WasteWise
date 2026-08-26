@@ -11,7 +11,9 @@ class CollectionCentre extends Model
         'address',
         'city_id',
         'category_id',
-        'contact',
+        'phone',
+        'latitude',
+        'longitude',
     ];
 
     /**
