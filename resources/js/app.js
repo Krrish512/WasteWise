@@ -433,7 +433,7 @@ function showToast(msg, duration = 3000) {
 /* ── Navigation event delegation ─────────────────────────────────────────── */
 document.addEventListener('click', e => {
     const link = e.target.closest('[data-page]');
-    if (link) {
+    if (link && pages[link.dataset.page]) {
         e.preventDefault();
         navigateTo(link.dataset.page);
     }

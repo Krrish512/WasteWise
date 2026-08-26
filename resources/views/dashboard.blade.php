@@ -25,13 +25,6 @@
                     <a href="{{ route('home') }}" style="background:#fff;color:#065f46;padding:.8rem 1.5rem;border-radius:var(--radius-full);font-weight:700;font-size:.95rem;display:inline-flex;align-items:center;gap:.5rem;box-shadow:var(--shadow-md);transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
                         🔍 Search Waste Items
                     </a>
-
-                    <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-                        @csrf
-                        <button type="submit" style="background:rgba(239,68,68,.2);border:1px solid rgba(239,68,68,.4);color:#fff;padding:.8rem 1.4rem;border-radius:var(--radius-full);font-weight:600;font-size:.95rem;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;transition:var(--transition);" onmouseover="this.style.background='rgba(239,68,68,.4)';" onmouseout="this.style.background='rgba(239,68,68,.2)';">
-                            🚪 Logout
-                        </button>
-                    </form>
                 </div>
             </div>
         </div>
