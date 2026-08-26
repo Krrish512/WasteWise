@@ -25,33 +25,23 @@
             <form action="{{ route('feedback.store') }}" method="POST">
                 @csrf
 
-                <!-- Contact Info (Prefilled if logged in, optional for guests) -->
-                @guest
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;">
-                        <div>
-                            <label style="display:block;font-weight:600;margin-bottom:.4rem;color:var(--text-dark);">Your Name (Optional)</label>
-                            <input type="text" name="name" value="{{ old('name') }}" maxlength="255" style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.95rem;" placeholder="e.g. Soumya Sharma">
-                            @error('name')
-                                <span style="color:#dc2626;font-size:.85rem;margin-top:.25rem;display:block;">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div>
-                            <label style="display:block;font-weight:600;margin-bottom:.4rem;color:var(--text-dark);">Email Address (Optional)</label>
-                            <input type="email" name="email" value="{{ old('email') }}" maxlength="255" style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.95rem;" placeholder="e.g. soumya@example.com">
-                            @error('email')
-                                <span style="color:#dc2626;font-size:.85rem;margin-top:.25rem;display:block;">{{ $message }}</span>
-                            @enderror
-                        </div>
+                <!-- Contact Info -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+                    <div>
+                        <label style="display:block;font-weight:600;margin-bottom:.4rem;color:var(--text-dark);">Your Name <span style="color:#dc2626;">*</span></label>
+                        <input type="text" name="name" value="{{ old('name', auth()->check() ? auth()->user()->name : '') }}" required maxlength="255" style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.95rem;" placeholder="e.g. Soumya Sharma">
+                        @error('name')
+                            <span style="color:#dc2626;font-size:.85rem;margin-top:.25rem;display:block;">{{ $message }}</span>
+                        @enderror
                     </div>
-                @else
-                    <div style="background:var(--bg-base);border:1px solid var(--border-light);padding:1rem 1.25rem;border-radius:var(--radius-md);margin-bottom:1.5rem;display:flex;align-items:center;gap:.75rem;">
-                        <span style="font-size:1.3rem;">👤</span>
-                        <div>
-                            <div style="font-weight:700;color:var(--text-dark);font-size:.95rem;">Submitting as {{ auth()->user()->name }}</div>
-                            <div style="font-size:.85rem;color:var(--text-muted);">{{ auth()->user()->email }}</div>
-                        </div>
+                    <div>
+                        <label style="display:block;font-weight:600;margin-bottom:.4rem;color:var(--text-dark);">Email Address <span style="color:#dc2626;">*</span></label>
+                        <input type="email" name="email" value="{{ old('email', auth()->check() ? auth()->user()->email : '') }}" required maxlength="255" style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.95rem;" placeholder="e.g. soumya@example.com">
+                        @error('email')
+                            <span style="color:#dc2626;font-size:.85rem;margin-top:.25rem;display:block;">{{ $message }}</span>
+                        @enderror
                     </div>
-                @endguest
+                </div>
 
                 <!-- Overall Experience Rating -->
                 <div style="margin-bottom:1.5rem;">
@@ -103,19 +93,21 @@
                     @enderror
                 </div>
 
-                <!-- Experience / Review Textarea -->
+                <!-- How was your experience with WasteWise? -->
                 <div style="margin-bottom:1.5rem;">
-                    <label style="display:block;font-weight:600;margin-bottom:.4rem;color:var(--text-dark);">4. Experience / Review <span style="color:#dc2626;">*</span></label>
-                    <textarea name="experience" rows="4" required maxlength="2000" style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.95rem;" placeholder="Tell us about your experience searching or finding disposal guidance on WasteWise...">{{ old('experience') }}</textarea>
+                    <label style="display:block;font-weight:600;margin-bottom:.2rem;color:var(--text-dark);">4. How was your experience with WasteWise? <span style="color:#dc2626;">*</span></label>
+                    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:.5rem;">Tell us about your experience, what you liked, or what could be improved.</p>
+                    <textarea name="experience" rows="4" required minlength="5" maxlength="2000" style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.95rem;" placeholder="Example: WasteWise was easy to use and helped me quickly find the correct way to dispose of my old laptop.">{{ old('experience') }}</textarea>
                     @error('experience')
                         <span style="color:#dc2626;font-size:.85rem;margin-top:.25rem;display:block;">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <!-- Suggestion for Improvement -->
+                <!-- Any suggestions for us? -->
                 <div style="margin-bottom:1.5rem;">
-                    <label style="display:block;font-weight:600;margin-bottom:.4rem;color:var(--text-dark);">5. Suggestion for Improvement (Optional)</label>
-                    <textarea name="suggestion" rows="3" maxlength="2000" style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.95rem;" placeholder="Any features, new waste categories, or collection centres you would like to see?">{{ old('suggestion') }}</textarea>
+                    <label style="display:block;font-weight:600;margin-bottom:.2rem;color:var(--text-dark);">5. Any suggestions for us?</label>
+                    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:.5rem;">Tell us how we can make WasteWise better.</p>
+                    <textarea name="suggestion" rows="3" maxlength="2000" style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.95rem;" placeholder="Any new features, additional waste categories, or collection centres you would like to see?">{{ old('suggestion') }}</textarea>
                     @error('suggestion')
                         <span style="color:#dc2626;font-size:.85rem;margin-top:.25rem;display:block;">{{ $message }}</span>
                     @enderror

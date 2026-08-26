@@ -20,21 +20,28 @@ class FeedbackController extends Controller
      */
     public function store(Request $request)
     {
+        if (auth()->check()) {
+            $request->merge([
+                'name'  => $request->input('name') ?: auth()->user()->name,
+                'email' => $request->input('email') ?: auth()->user()->email,
+            ]);
+        }
+
         $validated = $request->validate([
-            'name'        => 'nullable|string|max:255',
-            'email'       => 'nullable|email|max:255',
+            'name'        => 'required|string|max:255',
+            'email'       => 'required|email|max:255',
             'rating'      => 'required|integer|between:1,5',
             'ease_of_use'  => 'required|integer|between:1,5',
             'helpful'     => 'required|boolean',
-            'experience'  => 'required|string|max:2000',
+            'experience'  => 'required|string|min:5|max:2000',
             'suggestion'  => 'nullable|string|max:2000',
             'recommend'   => 'required|boolean',
         ]);
 
         $feedbackData = [
             'user_id'     => auth()->check() ? auth()->id() : null,
-            'name'        => auth()->check() ? (auth()->user()->name ?: $validated['name']) : $validated['name'],
-            'email'       => auth()->check() ? (auth()->user()->email ?: $validated['email']) : $validated['email'],
+            'name'        => $validated['name'],
+            'email'       => $validated['email'],
             'rating'      => $validated['rating'],
             'ease_of_use'  => $validated['ease_of_use'],
             'helpful'     => $validated['helpful'],

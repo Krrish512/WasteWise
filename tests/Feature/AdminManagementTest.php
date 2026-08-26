@@ -306,6 +306,8 @@ class AdminManagementTest extends TestCase
         // 2. Authenticated user feedback submission
         $user = $this->createNormalUser();
         $userResponse = $this->actingAs($user)->post('/feedback', [
+            'name'        => $user->name,
+            'email'       => $user->email,
             'rating'      => 4,
             'ease_of_use' => 5,
             'helpful'     => 1,
@@ -318,6 +320,19 @@ class AdminManagementTest extends TestCase
             'user_id' => $user->id,
             'rating'  => 4,
         ]);
+    }
+
+    #[Test]
+    public function feedback_submission_fails_with_missing_mandatory_fields()
+    {
+        $response = $this->post('/feedback', [
+            'name'       => '',
+            'email'      => 'not-an-email',
+            'rating'     => 5,
+            'experience' => '',
+        ]);
+
+        $response->assertSessionHasErrors(['name', 'email', 'experience']);
     }
 
     #[Test]
