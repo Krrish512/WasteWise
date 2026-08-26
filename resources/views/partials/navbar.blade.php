@@ -19,13 +19,12 @@
                 @guest
                     <a class="nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">🔑 Login</a>
                     <a class="nav-link {{ request()->routeIs('register') ? 'active' : '' }}" href="{{ route('register') }}" style="background:var(--primary);color:#fff;padding:.4rem .9rem;border-radius:var(--radius-full);font-weight:600;">✨ Register</a>
-                    <a href="{{ route('admin.login') }}" class="nav-admin-btn">🔒 Admin</a>
                 @endguest
 
                 @auth
                     @if(auth()->user()->isAdmin())
                         <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">🔒 Admin Dashboard</a>
-                        <form action="{{ route('admin.logout') }}" method="POST" style="display:inline;">
+                        <form action="{{ route('logout') }}" method="POST" style="display:inline;">
                             @csrf
                             <button type="submit" class="nav-link" style="background:none;border:none;cursor:pointer;color:#dc2626;font-weight:600;">🚪 Logout</button>
                         </form>
@@ -35,7 +34,6 @@
                             @csrf
                             <button type="submit" class="nav-link" style="background:none;border:none;cursor:pointer;color:#dc2626;font-weight:600;">🚪 Logout</button>
                         </form>
-                        <a href="{{ route('admin.login') }}" class="nav-admin-btn">🔒 Admin</a>
                     @endif
                 @endauth
             </div>
@@ -68,13 +66,12 @@
             @guest
                 <a class="mobile-nav-link" href="{{ route('login') }}">🔑 Login</a>
                 <a class="mobile-nav-link" href="{{ route('register') }}">✨ Register</a>
-                <a class="mobile-nav-link" href="{{ route('admin.login') }}">🔒 Admin Login</a>
             @endguest
 
             @auth
                 @if(auth()->user()->isAdmin())
                     <a class="mobile-nav-link" href="{{ route('admin.dashboard') }}">🔒 Admin Dashboard</a>
-                    <form action="{{ route('admin.logout') }}" method="POST" style="margin-top:.5rem;">
+                    <form action="{{ route('logout') }}" method="POST" style="margin-top:.5rem;">
                         @csrf
                         <button type="submit" class="mobile-nav-link" style="width:100%;text-align:left;background:none;border:none;color:#dc2626;font-weight:600;">🚪 Logout</button>
                     </form>
@@ -84,7 +81,6 @@
                         @csrf
                         <button type="submit" class="mobile-nav-link" style="width:100%;text-align:left;background:none;border:none;color:#dc2626;font-weight:600;">🚪 Logout</button>
                     </form>
-                    <a class="mobile-nav-link" href="{{ route('admin.login') }}">🔒 Admin Login</a>
                 @endif
             @endauth
         </div>

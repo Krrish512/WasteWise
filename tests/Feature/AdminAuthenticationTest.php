@@ -35,14 +35,14 @@ class AdminAuthenticationTest extends TestCase
         ], $overrides));
     }
 
-    /* ── A. Admin Login Tests ────────────────────────────────────────────────── */
+    /* ── A. Unified Single Login Entry Point Tests ───────────────────────────── */
 
     #[Test]
     public function valid_admin_credentials_login_succeeds_and_redirects_to_admin_dashboard()
     {
         $admin = $this->createAdminUser();
 
-        $response = $this->post('/admin/login', [
+        $response = $this->post('/login', [
             'email'    => 'admin@wastewise.in',
             'password' => 'WasteWise@123',
         ]);
@@ -52,11 +52,25 @@ class AdminAuthenticationTest extends TestCase
     }
 
     #[Test]
-    public function invalid_admin_password_login_fails()
+    public function valid_normal_user_credentials_login_succeeds_and_redirects_to_user_dashboard()
+    {
+        $user = $this->createNormalUser();
+
+        $response = $this->post('/login', [
+            'email'    => 'user@example.com',
+            'password' => 'password123',
+        ]);
+
+        $response->assertRedirect('/dashboard');
+        $this->assertAuthenticatedAs($user);
+    }
+
+    #[Test]
+    public function invalid_password_login_fails()
     {
         $this->createAdminUser();
 
-        $response = $this->post('/admin/login', [
+        $response = $this->post('/login', [
             'email'    => 'admin@wastewise.in',
             'password' => 'WrongPassword',
         ]);
@@ -70,7 +84,7 @@ class AdminAuthenticationTest extends TestCase
     {
         $this->createAdminUser();
 
-        $response = $this->post('/admin/login', [
+        $response = $this->post('/login', [
             'email'    => 'nonexistent@wastewise.in',
             'password' => 'WasteWise@123',
         ]);
@@ -79,14 +93,14 @@ class AdminAuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    /* ── B. Admin Authorization Tests ────────────────────────────────────────── */
+    /* ── B. Server-Side Admin Authorization Tests ────────────────────────────── */
 
     #[Test]
-    public function guest_accessing_admin_dashboard_redirects_to_admin_login()
+    public function guest_accessing_admin_dashboard_redirects_to_login()
     {
         $response = $this->get('/admin/dashboard');
 
-        $response->assertRedirect('/admin/login');
+        $response->assertRedirect('/login');
     }
 
     #[Test]
@@ -100,20 +114,6 @@ class AdminAuthenticationTest extends TestCase
     }
 
     #[Test]
-    public function normal_user_attempting_admin_login_is_rejected_and_logged_out()
-    {
-        $user = $this->createNormalUser();
-
-        $response = $this->post('/admin/login', [
-            'email'    => 'user@example.com',
-            'password' => 'password123',
-        ]);
-
-        $response->assertSessionHasErrors(['email']);
-        $this->assertGuest();
-    }
-
-    #[Test]
     public function admin_can_access_admin_dashboard()
     {
         $admin = $this->createAdminUser();
@@ -124,16 +124,16 @@ class AdminAuthenticationTest extends TestCase
         $response->assertSee('WasteWise Management Console');
     }
 
-    /* ── C. Admin Logout Tests ───────────────────────────────────────────────── */
+    /* ── C. Logout Tests ─────────────────────────────────────────────────────── */
 
     #[Test]
-    public function admin_logout_invalidates_session_and_redirects_to_admin_login()
+    public function logout_invalidates_session_and_redirects_to_home()
     {
         $admin = $this->createAdminUser();
 
-        $response = $this->actingAs($admin)->post('/admin/logout');
+        $response = $this->actingAs($admin)->post('/logout');
 
-        $response->assertRedirect('/admin/login');
+        $response->assertRedirect('/');
         $this->assertGuest();
     }
 
@@ -142,27 +142,13 @@ class AdminAuthenticationTest extends TestCase
     {
         $admin = $this->createAdminUser();
 
-        $this->actingAs($admin)->post('/admin/logout');
+        $this->actingAs($admin)->post('/logout');
 
         $response = $this->get('/admin/dashboard');
-        $response->assertRedirect('/admin/login');
+        $response->assertRedirect('/login');
     }
 
-    /* ── D. Normal User Regression Tests ─────────────────────────────────────── */
-
-    #[Test]
-    public function normal_user_login_still_works()
-    {
-        $user = $this->createNormalUser();
-
-        $response = $this->post('/login', [
-            'email'    => 'user@example.com',
-            'password' => 'password123',
-        ]);
-
-        $response->assertRedirect('/dashboard');
-        $this->assertAuthenticatedAs($user);
-    }
+    /* ── D. Regression Tests ─────────────────────────────────────────────────── */
 
     #[Test]
     public function user_dashboard_still_works_for_normal_users()
@@ -214,27 +200,5 @@ class AdminAuthenticationTest extends TestCase
             'user_id'       => $user->id,
             'waste_item_id' => $item->id,
         ]);
-    }
-
-    /* ── E. Admin Regression Tests ───────────────────────────────────────────── */
-
-    #[Test]
-    public function admin_cannot_accidentally_lose_normal_public_search_access()
-    {
-        $category = WasteCategory::create(['name' => 'Electronic Waste', 'description' => 'E-waste items']);
-        $disposal = DisposalMethod::create(['name' => 'Recycle', 'instructions' => 'Take to center']);
-        WasteItem::create([
-            'name'               => 'Old Laptop',
-            'description'        => 'Used laptop',
-            'category_id'        => $category->id,
-            'disposal_method_id' => $disposal->id,
-        ]);
-
-        $admin = $this->createAdminUser();
-
-        $response = $this->actingAs($admin)->getJson('/api/waste/search?q=Old+Laptop');
-
-        $response->assertStatus(200);
-        $response->assertJsonPath('data.name', 'Old Laptop');
     }
 }

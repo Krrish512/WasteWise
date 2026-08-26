@@ -45,6 +45,12 @@ class AuthController extends Controller
      */
     public function showLogin()
     {
+        if (Auth::check()) {
+            return Auth::user()->isAdmin()
+                ? redirect()->route('admin.dashboard')
+                : redirect()->route('dashboard');
+        }
+
         return view('auth.login');
     }
 
@@ -60,6 +66,11 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+            $user = Auth::user();
+
+            if ($user->isAdmin()) {
+                return redirect()->intended(route('admin.dashboard'))->with('success', 'Welcome back to WasteWise Admin!');
+            }
 
             return redirect()->intended(route('dashboard'))->with('success', 'Welcome back to WasteWise!');
         }
