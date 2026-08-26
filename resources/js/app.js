@@ -511,3 +511,35 @@ setTimeout(initReveal, 200);
 // ── Global Exports (for Blade onclick handlers) ────────────────────────────
 window.triggerSearch = triggerSearch;
 window.searchCategory = (q) => triggerSearch(q);
+
+/* ── Password Visibility Toggle ───────────────────────────────────────────── */
+function togglePasswordVisibility(button, inputId) {
+    if (!button) return;
+    const input = inputId ? document.getElementById(inputId) : button.parentElement.querySelector('input');
+    if (!input) return;
+
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    button.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+    button.classList.toggle('is-visible', isPassword);
+
+    const eyeShow = button.querySelector('.eye-icon-show');
+    const eyeHide = button.querySelector('.eye-icon-hide');
+
+    if (eyeShow && eyeHide) {
+        eyeShow.style.display = isPassword ? 'none' : 'block';
+        eyeHide.style.display = isPassword ? 'block' : 'none';
+    }
+}
+
+window.togglePasswordVisibility = togglePasswordVisibility;
+
+document.addEventListener('click', e => {
+    const toggleBtn = e.target.closest('.password-toggle-btn');
+    if (toggleBtn) {
+        e.preventDefault();
+        const targetId = toggleBtn.dataset.target;
+        togglePasswordVisibility(toggleBtn, targetId);
+    }
+});
+

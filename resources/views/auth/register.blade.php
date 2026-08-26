@@ -16,7 +16,7 @@
                     Create Your Account
                 </h1>
                 <p style="color:var(--text-muted);font-size:.95rem;">
-                    Join WasteWise to track your waste searches & eco-contributions
+                    Join WasteWise to track your waste searches &amp; eco-contributions
                 </p>
             </div>
 
@@ -74,36 +74,74 @@
 
                 <!-- Password -->
                 <div style="margin-bottom:1.25rem;">
-                    <label for="password" style="display:block;font-weight:600;font-size:.9rem;color:var(--text-dark);margin-bottom:.4rem;">
+                    <label for="reg-password" style="display:block;font-weight:600;font-size:.9rem;color:var(--text-dark);margin-bottom:.4rem;">
                         Password <span style="color:#dc2626;">*</span>
                     </label>
-                    <input 
-                        type="password" 
-                        name="password" 
-                        id="password" 
-                        required 
-                        placeholder="At least 8 characters"
-                        style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:1rem;outline:none;transition:var(--transition);"
-                        onfocus="this.style.borderColor='var(--primary)';"
-                        onblur="this.style.borderColor='var(--border)';"
-                    >
+                    <div style="position:relative;">
+                        <input 
+                            type="password" 
+                            name="password" 
+                            id="reg-password" 
+                            required 
+                            placeholder="At least 8 characters"
+                            style="width:100%;padding:.75rem 2.85rem .75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:1rem;outline:none;transition:var(--transition);"
+                            onfocus="this.style.borderColor='var(--primary)';"
+                            onblur="this.style.borderColor='var(--border)';"
+                        >
+                        <button 
+                            type="button" 
+                            id="toggle-reg-password"
+                            aria-label="Show password"
+                            style="position:absolute;right:.65rem;top:50%;transform:translateY(-50%);background:transparent;border:none;padding:.35rem;color:#64748b;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;z-index:10;"
+                        >
+                            <svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg class="eye-closed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="display:none;">
+                                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                                <path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                                <line x1="2" x2="22" y1="2" y2="22"></line>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Confirm Password -->
                 <div style="margin-bottom:1.75rem;">
-                    <label for="password_confirmation" style="display:block;font-weight:600;font-size:.9rem;color:var(--text-dark);margin-bottom:.4rem;">
+                    <label for="reg-password-confirm" style="display:block;font-weight:600;font-size:.9rem;color:var(--text-dark);margin-bottom:.4rem;">
                         Confirm Password <span style="color:#dc2626;">*</span>
                     </label>
-                    <input 
-                        type="password" 
-                        name="password_confirmation" 
-                        id="password_confirmation" 
-                        required 
-                        placeholder="Re-enter password"
-                        style="width:100%;padding:.75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:1rem;outline:none;transition:var(--transition);"
-                        onfocus="this.style.borderColor='var(--primary)';"
-                        onblur="this.style.borderColor='var(--border)';"
-                    >
+                    <div style="position:relative;">
+                        <input 
+                            type="password" 
+                            name="password_confirmation" 
+                            id="reg-password-confirm" 
+                            required 
+                            placeholder="Re-enter password"
+                            style="width:100%;padding:.75rem 2.85rem .75rem 1rem;border:1.5px solid var(--border);border-radius:var(--radius-md);font-size:1rem;outline:none;transition:var(--transition);"
+                            onfocus="this.style.borderColor='var(--primary)';"
+                            onblur="this.style.borderColor='var(--border)';"
+                        >
+                        <button 
+                            type="button" 
+                            id="toggle-reg-password-confirm"
+                            aria-label="Show password"
+                            style="position:absolute;right:.65rem;top:50%;transform:translateY(-50%);background:transparent;border:none;padding:.35rem;color:#64748b;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;z-index:10;"
+                        >
+                            <svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg class="eye-closed" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" style="display:none;">
+                                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                                <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                                <path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                                <line x1="2" x2="22" y1="2" y2="22"></line>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Submit Button -->
@@ -128,4 +166,34 @@
         </div>
     </div>
 </section>
+
+{{-- Self-contained password toggle – no dependency on app.js --}}
+<script>
+(function() {
+    function setupToggle(buttonId, inputId) {
+        var btn = document.getElementById(buttonId);
+        var input = document.getElementById(inputId);
+        if (!btn || !input) return;
+
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.setAttribute('aria-label', 'Hide password');
+                btn.querySelector('.eye-open').style.display = 'none';
+                btn.querySelector('.eye-closed').style.display = 'block';
+            } else {
+                input.type = 'password';
+                btn.setAttribute('aria-label', 'Show password');
+                btn.querySelector('.eye-open').style.display = 'block';
+                btn.querySelector('.eye-closed').style.display = 'none';
+            }
+        });
+    }
+
+    setupToggle('toggle-reg-password', 'reg-password');
+    setupToggle('toggle-reg-password-confirm', 'reg-password-confirm');
+})();
+</script>
 @endsection

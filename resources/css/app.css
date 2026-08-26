@@ -1337,6 +1337,50 @@ ul { list-style: none; }
     background: white;
 }
 
+/* ── Password Input & Toggle Button ─────────────────────────────────────── */
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.password-input-wrapper input {
+    width: 100%;
+    padding-right: 2.85rem !important;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 0.65rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    padding: 0.35rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition), background-color var(--transition);
+    z-index: 2;
+}
+
+.password-toggle-btn:hover,
+.password-toggle-btn:focus-visible {
+    color: var(--primary);
+    background-color: var(--primary-pale);
+    outline: none;
+}
+
+.password-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+}
+
 .form-submit {
     width: 100%;
     padding: .9rem;
