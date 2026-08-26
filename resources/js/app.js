@@ -66,7 +66,11 @@ function closeMobileNav() {
 
 hamburger?.addEventListener('click', openMobileNav);
 mobileNavClose?.addEventListener('click', closeMobileNav);
-mobileNav?.addEventListener('click', e => { if (e.target === mobileNav) closeMobileNav(); });
+mobileNav?.addEventListener('click', e => {
+    if (e.target === mobileNav || e.target.closest('.mobile-nav-link') || e.target.closest('button')) {
+        closeMobileNav();
+    }
+});
 
 /* ── Navbar scroll effect ─────────────────────────────────────────────────── */
 const navbar = document.getElementById('navbar');
@@ -433,35 +437,22 @@ function showToast(msg, duration = 3000) {
 /* ── Navigation event delegation ─────────────────────────────────────────── */
 document.addEventListener('click', e => {
     const link = e.target.closest('[data-page]');
-    if (link && pages[link.dataset.page]) {
+    if (link && pages.home && pages[link.dataset.page]) {
         e.preventDefault();
         navigateTo(link.dataset.page);
     }
-
-    // Admin dashboard nav from admin login
-    const adminLoginBtn = e.target.closest('#admin-login-form');
-    if (adminLoginBtn) {
-        // Already handled via form submit
-    }
-});
-
-/* ── Admin Login Form ─────────────────────────────────────────────────────── */
-document.getElementById('admin-login-form')?.addEventListener('submit', e => {
-    e.preventDefault();
-    const email = document.getElementById('admin-email')?.value;
-    const pass  = document.getElementById('admin-password')?.value;
-
-    if (!email || !pass) {
-        showToast('Please enter your credentials.');
-        return;
-    }
-
-    // UI only – show dashboard
-    navigateTo('adminDash');
 });
 
 /* ── Init ─────────────────────────────────────────────────────────────────── */
-navigateTo('home');
+if (pages.home) {
+    const hash = window.location.hash.replace('#', '');
+    const validPages = ['how', 'centres', 'about', 'adminLogin'];
+    if (hash && validPages.includes(hash) && pages[hash]) {
+        navigateTo(hash);
+    } else {
+        navigateTo('home');
+    }
+}
 setTimeout(initReveal, 200);
 
 // ── Global Exports (for Blade onclick handlers) ────────────────────────────

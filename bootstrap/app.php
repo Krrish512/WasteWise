@@ -14,6 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         // Allow cross-origin requests from the Lovable frontend
         $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
+
+        // Register custom middleware aliases
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\EnsureIsAdmin::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
