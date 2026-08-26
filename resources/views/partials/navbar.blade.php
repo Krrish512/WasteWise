@@ -3,17 +3,17 @@
     <div class="container">
         <div class="navbar-inner">
             <!-- Logo -->
-            <a href="{{ route('home') }}" class="logo" data-page="home" aria-label="WasteWise Home">
+            <a href="{{ route('home') }}" class="logo" aria-label="WasteWise Home">
                 <div class="logo-icon">🌿</div>
                 <span class="logo-text">WasteWise</span>
             </a>
 
             <!-- Desktop Nav Links -->
             <div class="nav-links">
-                <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" data-page="home" href="{{ route('home') }}" id="nav-home">🏠 Home</a>
-                <a class="nav-link" data-page="how" href="{{ url('/#how') }}" id="nav-how">⚙️ How It Works</a>
-                <a class="nav-link" data-page="centres" href="{{ url('/#centres') }}" id="nav-centres">📍 Collection Centres</a>
-                <a class="nav-link" data-page="about" href="{{ url('/#about') }}" id="nav-about">ℹ️ About</a>
+                <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}" id="nav-home">🏠 Home</a>
+                <a class="nav-link" href="{{ url('/#how') }}" id="nav-how">⚙️ How It Works</a>
+                <a class="nav-link" href="{{ url('/#centres') }}" id="nav-centres">📍 Collection Centres</a>
+                <a class="nav-link" href="{{ url('/#about') }}" id="nav-about">ℹ️ About</a>
 
                 @guest
                     <a class="nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">🔑 Login</a>
@@ -58,10 +58,10 @@
             <span class="logo-text" style="font-size:1.1rem">WasteWise</span>
         </div>
         <div class="mobile-nav-links">
-            <a class="mobile-nav-link" data-page="home" href="{{ route('home') }}">🏠 Home</a>
-            <a class="mobile-nav-link" data-page="how" href="{{ url('/#how') }}">⚙️ How It Works</a>
-            <a class="mobile-nav-link" data-page="centres" href="{{ url('/#centres') }}">📍 Collection Centres</a>
-            <a class="mobile-nav-link" data-page="about" href="{{ url('/#about') }}">ℹ️ About</a>
+            <a class="mobile-nav-link" href="{{ route('home') }}">🏠 Home</a>
+            <a class="mobile-nav-link" href="{{ url('/#how') }}">⚙️ How It Works</a>
+            <a class="mobile-nav-link" href="{{ url('/#centres') }}">📍 Collection Centres</a>
+            <a class="mobile-nav-link" href="{{ url('/#about') }}">ℹ️ About</a>
 
             @guest
                 <a class="mobile-nav-link" href="{{ route('login') }}">🔑 Login</a>

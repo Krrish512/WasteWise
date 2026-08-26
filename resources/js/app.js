@@ -31,6 +31,16 @@ function navigateTo(pageId, options = {}) {
         currentPage = pageId;
 
         // Update active nav links
+        const navLinks = {
+            home: document.getElementById('nav-home'),
+            how: document.getElementById('nav-how'),
+            centres: document.getElementById('nav-centres'),
+            about: document.getElementById('nav-about'),
+        };
+        Object.entries(navLinks).forEach(([id, el]) => {
+            if (el) el.classList.toggle('active', id === pageId);
+        });
+
         document.querySelectorAll('[data-page]').forEach(el => {
             el.classList.toggle('active', el.dataset.page === pageId);
         });
@@ -434,24 +444,67 @@ function showToast(msg, duration = 3000) {
     setTimeout(() => toast.classList.remove('show'), duration);
 }
 
-/* ── Navigation event delegation ─────────────────────────────────────────── */
-document.addEventListener('click', e => {
-    const link = e.target.closest('[data-page]');
-    if (link && pages.home && pages[link.dataset.page]) {
-        e.preventDefault();
-        navigateTo(link.dataset.page);
+/* ── Navigation event delegation & SPA Init ────────────────────────────────── */
+if (document.getElementById('page-home')) {
+    function getPageFromHash() {
+        const rawHash = window.location.hash.replace(/^#\/?/, '');
+        const validPages = ['home', 'how', 'centres', 'about', 'results'];
+        return validPages.includes(rawHash) ? rawHash : null;
     }
-});
 
-/* ── Init ─────────────────────────────────────────────────────────────────── */
-if (pages.home) {
-    const hash = window.location.hash.replace('#', '');
-    const validPages = ['how', 'centres', 'about', 'adminLogin'];
-    if (hash && validPages.includes(hash) && pages[hash]) {
-        navigateTo(hash);
-    } else {
-        navigateTo('home');
-    }
+    document.addEventListener('click', e => {
+        // 1. Elements with data-page attribute (e.g. CTA buttons, footer links on welcome.blade.php)
+        const dataPageEl = e.target.closest('[data-page]');
+        if (dataPageEl) {
+            const pageId = dataPageEl.dataset.page;
+            if (pages[pageId]) {
+                e.preventDefault();
+                if (pageId === 'home') {
+                    if (window.location.hash) {
+                        history.pushState(null, '', window.location.pathname);
+                    }
+                } else {
+                    window.location.hash = pageId;
+                }
+                navigateTo(pageId);
+                return;
+            }
+        }
+
+        // 2. Anchor links pointing to SPA sections on welcome.blade.php
+        const anchor = e.target.closest('a');
+        if (anchor && anchor.href) {
+            try {
+                const url = new URL(anchor.href, window.location.origin);
+                // Only intercept if target URL path is home ('/' or current welcome page)
+                if (url.pathname === '/' || url.pathname === window.location.pathname) {
+                    const hashPage = url.hash.replace(/^#\/?/, '');
+                    if (hashPage && pages[hashPage]) {
+                        e.preventDefault();
+                        window.location.hash = hashPage;
+                        navigateTo(hashPage);
+                    } else if (!url.hash && (anchor.id === 'nav-home' || anchor.classList.contains('logo'))) {
+                        e.preventDefault();
+                        if (window.location.hash) {
+                            history.pushState(null, '', window.location.pathname);
+                        }
+                        navigateTo('home');
+                    }
+                }
+            } catch (err) {
+                // Ignore non-standard links
+            }
+        }
+    });
+
+    window.addEventListener('hashchange', () => {
+        const targetPage = getPageFromHash() || 'home';
+        navigateTo(targetPage);
+    });
+
+    // Initial page load SPA routing
+    const initialPage = getPageFromHash() || 'home';
+    navigateTo(initialPage);
 }
 setTimeout(initReveal, 200);
 
