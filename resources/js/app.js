@@ -344,51 +344,204 @@ function escHtml(str) {
 }
 
 /* ── Collection Centres Page ──────────────────────────────────────────────── */
-const centresData = [
-    { name: 'GreenEarth Recycling Hub', city: 'Mumbai', address: '45 Marol Industrial Area, Andheri East', phone: '+91 22 2835 4567', category: 'Electronic Waste', lat: 19.1136, lng: 72.8697 },
-    { name: 'EcoMart Collection Point', city: 'Pune', address: '12 Hadapsar Industrial Estate', phone: '+91 20 2683 1234', category: 'Plastic Waste', lat: 18.5103, lng: 73.9302 },
-    { name: 'CleanCycle Centre', city: 'Bangalore', address: '78 Electronic City Phase 1', phone: '+91 80 2852 3456', category: 'Electronic Waste', lat: 12.8399, lng: 77.6770 },
-    { name: 'PaperPath Recyclers', city: 'Delhi', address: '34 Okhla Industrial Area Phase 2', phone: '+91 11 2692 7890', category: 'Paper Waste', lat: 28.5384, lng: 77.2700 },
-    { name: 'GlassWorks Collection', city: 'Hyderabad', address: '56 Patancheru Industrial Area', phone: '+91 40 2304 5678', category: 'Glass Waste', lat: 17.5288, lng: 78.2666 },
-    { name: 'BioGreen Organics', city: 'Chennai', address: '23 Ambattur Industrial Estate', phone: '+91 44 2625 9012', category: 'Organic Waste', lat: 13.0975, lng: 80.1540 },
-    { name: 'MetalMax Scrap Hub', city: 'Kolkata', address: '9 Tangra Industrial Growth Centre', phone: '+91 33 2334 5678', category: 'Metal Waste', lat: 22.5387, lng: 88.3871 },
-    { name: 'SafeDrop Hazmat Centre', city: 'Ahmedabad', address: '67 GIDC Vatva Industrial Estate', phone: '+91 79 2583 4567', category: 'Hazardous Waste', lat: 22.9734, lng: 72.6389 },
-    { name: 'FibreLoop Textiles', city: 'Surat', address: '14 Sachin GIDC', phone: '+91 261 239 7890', category: 'Textile Waste', lat: 21.1046, lng: 72.8714 },
-    { name: 'CityGreen E-Waste', city: 'Mumbai', address: '7 Kalina Business Park, BKC', phone: '+91 22 6744 1234', category: 'Electronic Waste', lat: 19.0670, lng: 72.8647 },
-    { name: 'RecyclePoint Nagpur', city: 'Nagpur', address: '22 Hingna MIDC', phone: '+91 712 265 3456', category: 'Plastic Waste', lat: 21.1272, lng: 79.1095 },
-    { name: 'EarthCycle Jaipur', city: 'Jaipur', address: '5 Sitapura Industrial Area', phone: '+91 141 271 7890', category: 'Organic Waste', lat: 26.7748, lng: 75.8648 },
-];
+let centresData = (window.collectionCentresData && window.collectionCentresData.length > 0)
+    ? window.collectionCentresData
+    : [
+        { name: 'GreenEarth Recycling Hub', city: 'Mumbai', address: '45 Marol Industrial Area, Andheri East', phone: '+91 22 2835 4567', category: 'Electronic Waste', lat: 19.1136, lng: 72.8697 },
+        { name: 'EcoMart Collection Point', city: 'Pune', address: '12 Hadapsar Industrial Estate', phone: '+91 20 2683 1234', category: 'Plastic Waste', lat: 18.5103, lng: 73.9302 },
+        { name: 'CleanCycle Centre', city: 'Bangalore', address: '78 Electronic City Phase 1', phone: '+91 80 2852 3456', category: 'Electronic Waste', lat: 12.8399, lng: 77.6770 },
+        { name: 'PaperPath Recyclers', city: 'Delhi', address: '34 Okhla Industrial Area Phase 2', phone: '+91 11 2692 7890', category: 'Paper Waste', lat: 28.5384, lng: 77.2700 },
+        { name: 'GlassWorks Collection', city: 'Hyderabad', address: '56 Patancheru Industrial Area', phone: '+91 40 2304 5678', category: 'Glass Waste', lat: 17.5288, lng: 78.2666 },
+        { name: 'BioGreen Organics', city: 'Chennai', address: '23 Ambattur Industrial Estate', phone: '+91 44 2625 9012', category: 'Organic Waste', lat: 13.0975, lng: 80.1540 },
+        { name: 'MetalMax Scrap Hub', city: 'Kolkata', address: '9 Tangra Industrial Growth Centre', phone: '+91 33 2334 5678', category: 'Metal Waste', lat: 22.5387, lng: 88.3871 },
+        { name: 'SafeDrop Hazmat Centre', city: 'Ahmedabad', address: '67 GIDC Vatva Industrial Estate', phone: '+91 79 2583 4567', category: 'Hazardous Waste', lat: 22.9734, lng: 72.6389 },
+        { name: 'FibreLoop Textiles', city: 'Surat', address: '14 Sachin GIDC', phone: '+91 261 239 7890', category: 'Textile Waste', lat: 21.1046, lng: 72.8714 },
+        { name: 'CityGreen E-Waste', city: 'Mumbai', address: '7 Kalina Business Park, BKC', phone: '+91 22 6744 1234', category: 'Electronic Waste', lat: 19.0670, lng: 72.8647 },
+        { name: 'RecyclePoint Nagpur', city: 'Nagpur', address: '22 Hingna MIDC', phone: '+91 712 265 3456', category: 'Plastic Waste', lat: 21.1272, lng: 79.1095 },
+        { name: 'EarthCycle Jaipur', city: 'Jaipur', address: '5 Sitapura Industrial Area', phone: '+91 141 271 7890', category: 'Organic Waste', lat: 26.7748, lng: 75.8648 },
+    ];
 
-let centresFiltered = [...centresData];
+let userLocation = null; // { lat, lng }
+let isNearestActive = false;
+
+function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
+    if (lat1 === null || lon1 === null || lat2 === null || lon2 === null) return null;
+    if (lat1 === undefined || lon1 === undefined || lat2 === undefined || lon2 === undefined) return null;
+
+    const numLat1 = parseFloat(lat1);
+    const numLon1 = parseFloat(lon1);
+    const numLat2 = parseFloat(lat2);
+    const numLon2 = parseFloat(lon2);
+
+    if (isNaN(numLat1) || isNaN(numLon1) || isNaN(numLat2) || isNaN(numLon2)) return null;
+
+    const R = 6371; // Earth radius in km
+    const dLat = (numLat2 - numLat1) * (Math.PI / 180);
+    const dLon = (numLon2 - numLon1) * (Math.PI / 180);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(numLat1 * (Math.PI / 180)) * Math.cos(numLat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
 
 function initCentresPage() {
+    if (window.collectionCentresData && Array.isArray(window.collectionCentresData) && window.collectionCentresData.length > 0) {
+        centresData = window.collectionCentresData;
+    }
+
     const filterInput = document.getElementById('centres-filter');
     const catFilter   = document.getElementById('centres-cat-filter');
-    renderCentresList(centresData);
+    const btnNearest  = document.getElementById('btn-find-nearest');
+    const btnShowAll  = document.getElementById('btn-show-all');
 
+    filterCentres();
+
+    filterInput?.removeEventListener('input', filterCentres);
     filterInput?.addEventListener('input', filterCentres);
+
+    catFilter?.removeEventListener('change', filterCentres);
     catFilter?.addEventListener('change', filterCentres);
+
+    if (btnNearest) {
+        btnNearest.removeEventListener('click', handleFindNearest);
+        btnNearest.addEventListener('click', handleFindNearest);
+    }
+
+    if (btnShowAll) {
+        btnShowAll.removeEventListener('click', handleShowAll);
+        btnShowAll.addEventListener('click', handleShowAll);
+    }
+}
+
+function handleFindNearest() {
+    const btnNearest = document.getElementById('btn-find-nearest');
+    const btnShowAll = document.getElementById('btn-show-all');
+
+    if (!navigator.geolocation) {
+        showNearestStatus("Your browser does not support location services.", "error");
+        return;
+    }
+
+    if (btnNearest) {
+        btnNearest.disabled = true;
+        btnNearest.innerHTML = '📍 Locating...';
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            if (btnNearest) {
+                btnNearest.disabled = false;
+                btnNearest.innerHTML = '📍 Find Nearest Centre';
+            }
+
+            userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            isNearestActive = true;
+
+            showNearestStatus("📍 Showing centres nearest to you", "success");
+            if (btnShowAll) btnShowAll.style.display = 'inline-flex';
+
+            filterCentres();
+        },
+        error => {
+            if (btnNearest) {
+                btnNearest.disabled = false;
+                btnNearest.innerHTML = '📍 Find Nearest Centre';
+            }
+
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    showNearestStatus("📍 Location access was denied. Please allow location access to find the nearest centre.", "error");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    showNearestStatus("Unable to determine your location. Please try again.", "error");
+                    break;
+                case error.TIMEOUT:
+                    showNearestStatus("Location request timed out. Please try again.", "error");
+                    break;
+                default:
+                    showNearestStatus("Unable to determine your location. Please try again.", "error");
+                    break;
+            }
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+}
+
+function handleShowAll() {
+    userLocation = null;
+    isNearestActive = false;
+
+    const btnShowAll = document.getElementById('btn-show-all');
+    if (btnShowAll) btnShowAll.style.display = 'none';
+
+    hideNearestStatus();
+    filterCentres();
+}
+
+function showNearestStatus(msg, type = 'info') {
+    const statusEl = document.getElementById('nearest-status');
+    if (!statusEl) return;
+    statusEl.textContent = msg;
+    statusEl.className = `nearest-status ${type}`;
+    statusEl.style.display = 'flex';
+}
+
+function hideNearestStatus() {
+    const statusEl = document.getElementById('nearest-status');
+    if (statusEl) {
+        statusEl.style.display = 'none';
+        statusEl.textContent = '';
+    }
 }
 
 function filterCentres() {
     const term = document.getElementById('centres-filter')?.value.toLowerCase() ?? '';
     const cat  = document.getElementById('centres-cat-filter')?.value ?? '';
 
-    centresFiltered = centresData.filter(c => {
-        const matchTerm = !term || c.name.toLowerCase().includes(term) ||
-            c.city.toLowerCase().includes(term) || c.address.toLowerCase().includes(term);
+    let filtered = centresData.filter(c => {
+        const matchTerm = !term ||
+            (c.name && c.name.toLowerCase().includes(term)) ||
+            (c.city && c.city.toLowerCase().includes(term)) ||
+            (c.address && c.address.toLowerCase().includes(term));
         const matchCat  = !cat || c.category === cat;
         return matchTerm && matchCat;
     });
 
-    renderCentresList(centresFiltered);
+    filtered = filtered.map(c => {
+        const dist = (isNearestActive && userLocation)
+            ? calculateHaversineDistance(userLocation.lat, userLocation.lng, c.lat, c.lng)
+            : null;
+        return { ...c, distance: dist };
+    });
+
+    if (isNearestActive && userLocation) {
+        filtered.sort((a, b) => {
+            if (a.distance !== null && b.distance !== null) {
+                return a.distance - b.distance;
+            }
+            if (a.distance !== null) return -1;
+            if (b.distance !== null) return 1;
+            return (a.name || '').localeCompare(b.name || '');
+        });
+    }
+
+    renderCentresList(filtered);
 }
 
 function renderCentresList(data) {
     const container = document.getElementById('centres-list-grid');
     if (!container) return;
 
-    if (data.length === 0) {
+    if (!data || data.length === 0) {
         container.innerHTML = `<div class="no-centres" style="grid-column:1/-1">
             <p>🔍 No collection centres match your filter.</p>
         </div>`;
@@ -396,21 +549,37 @@ function renderCentresList(data) {
     }
 
     container.innerHTML = data.map(c => {
-        const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`;
+        const hasCoords = c.lat !== null && c.lat !== undefined && c.lng !== null && c.lng !== undefined;
+        let mapsUrl = '';
+        if (hasCoords) {
+            if (userLocation && userLocation.lat && userLocation.lng) {
+                mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLocation.lat},${userLocation.lng}&destination=${c.lat},${c.lng}`;
+            } else {
+                mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`;
+            }
+        } else {
+            mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((c.name || '') + ' ' + (c.city || ''))}`;
+        }
+
+        const distBadge = (c.distance !== null && c.distance !== undefined)
+            ? `<div class="centre-distance-badge">📏 ${c.distance < 1 ? (c.distance * 1000).toFixed(0) + ' m away' : c.distance.toFixed(1) + ' km away'}</div>`
+            : '';
+
         return `
         <div class="centre-list-card reveal">
             <div class="centre-list-header">
                 <div>
-                    <div class="centre-name" style="font-size:1rem;margin-bottom:.3rem">${escHtml(c.name)}</div>
-                    <div class="centre-city">📍 ${escHtml(c.city)}</div>
+                    <div class="centre-name" style="font-size:1.05rem;margin-bottom:.3rem">${escHtml(c.name)}</div>
+                    ${c.city ? `<div class="centre-city">📍 ${escHtml(c.city)}</div>` : ''}
+                    ${distBadge}
                 </div>
                 <div class="centre-list-icon">♻️</div>
             </div>
-            <div class="centre-detail"><span class="centre-detail-icon">🏢</span><span>${escHtml(c.address)}</span></div>
-            <div class="centre-detail"><span class="centre-detail-icon">📞</span><span>${escHtml(c.phone)}</span></div>
-            <div class="centre-detail"><span class="centre-detail-icon">🏷️</span><span>${escHtml(c.category)}</span></div>
+            ${c.address ? `<div class="centre-detail"><span class="centre-detail-icon">🏢</span><span>${escHtml(c.address)}</span></div>` : ''}
+            ${c.phone ? `<div class="centre-detail"><span class="centre-detail-icon">📞</span><span>${escHtml(c.phone)}</span></div>` : ''}
+            ${c.category ? `<div class="centre-detail"><span class="centre-detail-icon">🏷️</span><span>${escHtml(c.category)}</span></div>` : ''}
             <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" class="directions-btn">
-                🧭 Get Directions
+                🗺️ Get Directions
             </a>
         </div>`;
     }).join('');

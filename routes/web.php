@@ -14,9 +14,37 @@ use App\Http\Controllers\Admin\WasteItemController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SearchHistoryController;
 use App\Http\Controllers\Admin\AdminFeedbackController;
+use App\Models\CollectionCentre;
+use App\Models\WasteCategory;
+use Illuminate\Support\Facades\Schema;
 
 Route::get('/', function () {
-    return view('welcome');
+    $collectionCentres = [];
+    $categories = [];
+
+    if (Schema::hasTable('collection_centres')) {
+        $collectionCentres = CollectionCentre::with(['city', 'category'])
+            ->orderBy('name')
+            ->get()
+            ->map(function ($centre) {
+                return [
+                    'id'       => $centre->id,
+                    'name'     => $centre->name,
+                    'city'     => $centre->city ? $centre->city->name : '',
+                    'address'  => $centre->address,
+                    'phone'    => $centre->phone,
+                    'category' => $centre->category ? $centre->category->name : '',
+                    'lat'      => $centre->latitude !== null ? (float) $centre->latitude : null,
+                    'lng'      => $centre->longitude !== null ? (float) $centre->longitude : null,
+                ];
+            });
+    }
+
+    if (Schema::hasTable('waste_categories')) {
+        $categories = WasteCategory::orderBy('name')->get();
+    }
+
+    return view('welcome', compact('collectionCentres', 'categories'));
 })->name('home');
 
 // ── Public User Feedback Routes ─────────────────────────────────────────────

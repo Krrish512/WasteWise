@@ -17,6 +17,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
+    <script>
+        window.collectionCentresData = @json($collectionCentres ?? []);
+        window.wasteCategoriesData = @json($categories ?? []);
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
@@ -540,16 +544,31 @@
                 >
                 <select id="centres-cat-filter" class="filter-input" style="max-width:220px" aria-label="Filter by category">
                     <option value="">All Categories</option>
-                    <option value="Electronic Waste">💻 Electronic Waste</option>
-                    <option value="Plastic Waste">♻️ Plastic Waste</option>
-                    <option value="Paper Waste">📰 Paper Waste</option>
-                    <option value="Glass Waste">🫙 Glass Waste</option>
-                    <option value="Organic Waste">🌱 Organic Waste</option>
-                    <option value="Metal Waste">⚙️ Metal Waste</option>
-                    <option value="Hazardous Waste">⚠️ Hazardous Waste</option>
-                    <option value="Textile Waste">👕 Textile Waste</option>
+                    @if(isset($categories) && count($categories) > 0)
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->name }}">{{ $cat->name }}</option>
+                        @endforeach
+                    @else
+                        <option value="Electronic Waste">💻 Electronic Waste</option>
+                        <option value="Plastic Waste">♻️ Plastic Waste</option>
+                        <option value="Paper Waste">📰 Paper Waste</option>
+                        <option value="Glass Waste">🫙 Glass Waste</option>
+                        <option value="Organic Waste">🌱 Organic Waste</option>
+                        <option value="Metal Waste">⚙️ Metal Waste</option>
+                        <option value="Hazardous Waste">⚠️ Hazardous Waste</option>
+                        <option value="Textile Waste">👕 Textile Waste</option>
+                    @endif
                 </select>
+                <button id="btn-find-nearest" class="btn btn-primary btn-nearest" type="button" aria-label="Find Nearest Centre">
+                    📍 Find Nearest Centre
+                </button>
+                <button id="btn-show-all" class="btn btn-outline btn-show-all" type="button" aria-label="Show All Centres">
+                    Show All Centres
+                </button>
             </div>
+
+            <!-- Status message container -->
+            <div id="nearest-status" class="nearest-status" style="display: none;" role="status"></div>
 
             <!-- Grid -->
             <div class="centres-list" id="centres-list-grid">
