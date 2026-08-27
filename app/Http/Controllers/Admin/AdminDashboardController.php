@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Announcement;
 use App\Models\City;
 use App\Models\CollectionCentre;
 use App\Models\DisposalMethod;
@@ -21,15 +22,18 @@ class AdminDashboardController extends Controller
     public function index()
     {
         $stats = [
-            'waste_items'        => WasteItem::count(),
-            'categories'         => WasteCategory::count(),
-            'collection_centres' => CollectionCentre::count(),
-            'disposal_methods'   => DisposalMethod::count(),
-            'cities'             => City::count(),
-            'users'              => User::count(),
-            'searches_today'     => SearchHistory::whereDate('created_at', Carbon::today())->count(),
-            'pending_feedback'   => Feedback::where('is_reviewed', false)->count(),
-            'avg_rating'         => round((float) (Feedback::avg('rating') ?? 0), 1),
+            'waste_items'             => WasteItem::count(),
+            'categories'              => WasteCategory::count(),
+            'collection_centres'      => CollectionCentre::count(),
+            'disposal_methods'        => DisposalMethod::count(),
+            'cities'                  => City::count(),
+            'users'                   => User::count(),
+            'searches_today'          => SearchHistory::whereDate('created_at', Carbon::today())->count(),
+            'pending_feedback'        => Feedback::where('is_reviewed', false)->count(),
+            'avg_rating'              => round((float) (Feedback::avg('rating') ?? 0), 1),
+            'announcements_total'     => Announcement::count(),
+            'announcements_published' => Announcement::where('is_published', true)->count(),
+            'announcements_draft'     => Announcement::where('is_published', false)->count(),
         ];
 
         return view('admin.dashboard', compact('stats'));

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Admin\WasteItemController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SearchHistoryController;
 use App\Http\Controllers\Admin\AdminFeedbackController;
+use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Models\CollectionCentre;
 use App\Models\WasteCategory;
 use Illuminate\Support\Facades\Schema;
@@ -50,6 +52,10 @@ Route::get('/', function () {
 // ── Public User Feedback Routes ─────────────────────────────────────────────
 Route::get('/feedback', [FeedbackController::class, 'create'])->name('feedback.create');
 Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+
+// ── Public Announcements / Updates Routes ─────────────────────────────────
+Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+Route::get('/announcements/{announcement:slug}', [AnnouncementController::class, 'show'])->name('announcements.show');
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
@@ -101,5 +107,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/feedback/{feedback}', [AdminFeedbackController::class, 'show'])->name('feedback.show');
         Route::patch('/feedback/{feedback}/toggle-reviewed', [AdminFeedbackController::class, 'toggleReviewed'])->name('feedback.toggle-reviewed');
         Route::delete('/feedback/{feedback}', [AdminFeedbackController::class, 'destroy'])->name('feedback.destroy');
+
+        // Phase 9: Announcements / Updates CRUD
+        Route::resource('announcements', AdminAnnouncementController::class);
+        Route::patch('/announcements/{announcement}/toggle-published', [AdminAnnouncementController::class, 'togglePublished'])->name('announcements.toggle-published');
     });
 });

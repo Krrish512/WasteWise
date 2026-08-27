@@ -11,6 +11,7 @@
             <!-- Desktop Nav Links -->
             <div class="nav-links">
                 <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}" id="nav-home">🏠 Home</a>
+                <a class="nav-link {{ request()->routeIs('announcements.*') ? 'active' : '' }}" href="{{ route('announcements.index') }}">📢 Updates</a>
                 <a class="nav-link" href="{{ url('/#how') }}" id="nav-how">⚙️ How It Works</a>
                 <a class="nav-link" href="{{ url('/#centres') }}" id="nav-centres">📍 Collection Centres</a>
                 <a class="nav-link" href="{{ url('/#about') }}" id="nav-about">ℹ️ About</a>
@@ -58,6 +59,7 @@
         </div>
         <div class="mobile-nav-links">
             <a class="mobile-nav-link" href="{{ route('home') }}">🏠 Home</a>
+            <a class="mobile-nav-link {{ request()->routeIs('announcements.*') ? 'active' : '' }}" href="{{ route('announcements.index') }}">📢 Updates</a>
             <a class="mobile-nav-link" href="{{ url('/#how') }}">⚙️ How It Works</a>
             <a class="mobile-nav-link" href="{{ url('/#centres') }}">📍 Collection Centres</a>
             <a class="mobile-nav-link" href="{{ url('/#about') }}">ℹ️ About</a>
