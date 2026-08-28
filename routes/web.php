@@ -16,6 +16,8 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SearchHistoryController;
 use App\Http\Controllers\Admin\AdminFeedbackController;
 use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
+use App\Http\Controllers\Admin\SustainabilityTipController as AdminSustainabilityTipController;
+use App\Http\Controllers\SustainabilityTipController;
 use App\Models\CollectionCentre;
 use App\Models\WasteCategory;
 use Illuminate\Support\Facades\Schema;
@@ -56,6 +58,10 @@ Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.s
 // ── Public Announcements / Updates Routes ─────────────────────────────────
 Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
 Route::get('/announcements/{announcement:slug}', [AnnouncementController::class, 'show'])->name('announcements.show');
+
+// ── Public Sustainability Tips Routes ─────────────────────────────────────
+Route::get('/sustainability-tips', [SustainabilityTipController::class, 'index'])->name('sustainability-tips.index');
+Route::get('/sustainability-tips/{sustainabilityTip:slug}', [SustainabilityTipController::class, 'show'])->name('sustainability-tips.show');
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
@@ -111,5 +117,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Phase 9: Announcements / Updates CRUD
         Route::resource('announcements', AdminAnnouncementController::class);
         Route::patch('/announcements/{announcement}/toggle-published', [AdminAnnouncementController::class, 'togglePublished'])->name('announcements.toggle-published');
+
+        // Phase 10: Sustainability Tips CRUD
+        Route::resource('sustainability-tips', AdminSustainabilityTipController::class);
+        Route::patch('/sustainability-tips/{sustainabilityTip}/toggle-published', [AdminSustainabilityTipController::class, 'togglePublished'])->name('sustainability-tips.toggle-published');
     });
 });
