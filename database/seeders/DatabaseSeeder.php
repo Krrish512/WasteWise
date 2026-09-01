@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             WasteItemSeeder::class,
             CitySeeder::class,
             CollectionCentreSeeder::class,
+            KnowledgeArticleSeeder::class,
         ]);
     }
 }
