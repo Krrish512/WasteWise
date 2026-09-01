@@ -26,4 +26,12 @@ class WasteCategory extends Model
     {
         return $this->hasMany(CollectionCentre::class, 'category_id');
     }
+
+    /**
+     * A category has many KnowledgeArticles (FK: waste_category_id).
+     */
+    public function knowledgeArticles()
+    {
+        return $this->hasMany(KnowledgeArticle::class, 'waste_category_id');
+    }
 }

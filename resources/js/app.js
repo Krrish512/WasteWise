@@ -672,8 +672,14 @@ if (document.getElementById('page-home')) {
     });
 
     // Initial page load SPA routing
-    const initialPage = getPageFromHash() || 'home';
-    navigateTo(initialPage);
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialQuery = urlParams.get('q') || urlParams.get('search');
+    if (initialQuery) {
+        triggerSearch(initialQuery);
+    } else {
+        const initialPage = getPageFromHash() || 'home';
+        navigateTo(initialPage);
+    }
 }
 setTimeout(initReveal, 200);
 

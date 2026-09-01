@@ -17,7 +17,9 @@ use App\Http\Controllers\Admin\SearchHistoryController;
 use App\Http\Controllers\Admin\AdminFeedbackController;
 use App\Http\Controllers\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Http\Controllers\Admin\SustainabilityTipController as AdminSustainabilityTipController;
+use App\Http\Controllers\Admin\KnowledgeArticleController as AdminKnowledgeArticleController;
 use App\Http\Controllers\SustainabilityTipController;
+use App\Http\Controllers\KnowledgeArticleController;
 use App\Models\CollectionCentre;
 use App\Models\WasteCategory;
 use Illuminate\Support\Facades\Schema;
@@ -62,6 +64,10 @@ Route::get('/announcements/{announcement:slug}', [AnnouncementController::class,
 // ── Public Sustainability Tips Routes ─────────────────────────────────────
 Route::get('/sustainability-tips', [SustainabilityTipController::class, 'index'])->name('sustainability-tips.index');
 Route::get('/sustainability-tips/{sustainabilityTip:slug}', [SustainabilityTipController::class, 'show'])->name('sustainability-tips.show');
+
+// ── Public Knowledge Hub Routes ───────────────────────────────────────────
+Route::get('/knowledge', [KnowledgeArticleController::class, 'index'])->name('knowledge.index');
+Route::get('/knowledge/{knowledgeArticle:slug}', [KnowledgeArticleController::class, 'show'])->name('knowledge.show');
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
@@ -121,5 +127,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Phase 10: Sustainability Tips CRUD
         Route::resource('sustainability-tips', AdminSustainabilityTipController::class);
         Route::patch('/sustainability-tips/{sustainabilityTip}/toggle-published', [AdminSustainabilityTipController::class, 'togglePublished'])->name('sustainability-tips.toggle-published');
+
+        // Phase 11: Waste Knowledge Hub CRUD
+        Route::resource('knowledge-articles', AdminKnowledgeArticleController::class);
+        Route::patch('/knowledge-articles/{knowledgeArticle}/toggle-published', [AdminKnowledgeArticleController::class, 'togglePublished'])->name('knowledge-articles.toggle-published');
     });
 });

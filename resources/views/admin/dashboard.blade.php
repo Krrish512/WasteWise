@@ -107,6 +107,14 @@
                 </div>
             </a>
 
+            <a href="{{ route('admin.knowledge-articles.index') }}" style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                <div style="width:48px;height:48px;background:#eff6ff;color:#1e40af;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">📚</div>
+                <div>
+                    <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text-dark);line-height:1;">{{ $stats['knowledge_articles_total'] }}</div>
+                    <div style="color:var(--text-muted);font-size:.85rem;font-weight:600;margin-top:.2rem;">Knowledge Articles ({{ $stats['knowledge_articles_published'] }} Published / {{ $stats['knowledge_articles_draft'] }} Draft)</div>
+                </div>
+            </a>
+
             <a href="{{ route('admin.feedback.index') }}" style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
                 <div style="width:48px;height:48px;background:#fefce8;color:#a16207;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">💬</div>
                 <div>
@@ -136,6 +144,11 @@
 
             <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:1.25rem;">
                 
+                <a href="{{ route('admin.knowledge-articles.index') }}" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-card);transition:var(--transition);display:block;" onmouseover="this.style.borderColor='var(--primary)';" onmouseout="this.style.borderColor='var(--border)';">
+                    <div style="font-weight:700;color:var(--text-dark);font-size:1.05rem;margin-bottom:.3rem;">📚 Knowledge Hub</div>
+                    <div style="font-size:.85rem;color:var(--text-muted);">Create, publish, edit, and delete waste category knowledge articles</div>
+                </a>
+
                 <a href="{{ route('admin.sustainability-tips.index') }}" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-card);transition:var(--transition);display:block;" onmouseover="this.style.borderColor='var(--primary)';" onmouseout="this.style.borderColor='var(--border)';">
                     <div style="font-weight:700;color:var(--text-dark);font-size:1.05rem;margin-bottom:.3rem;">🌱 Sustainability Tips</div>
                     <div style="font-size:.85rem;color:var(--text-muted);">Create, publish, edit, and delete eco sustainability tips</div>

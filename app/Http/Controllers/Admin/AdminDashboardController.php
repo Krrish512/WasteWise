@@ -8,6 +8,7 @@ use App\Models\City;
 use App\Models\CollectionCentre;
 use App\Models\DisposalMethod;
 use App\Models\Feedback;
+use App\Models\KnowledgeArticle;
 use App\Models\SearchHistory;
 use App\Models\SustainabilityTip;
 use App\Models\User;
@@ -38,6 +39,9 @@ class AdminDashboardController extends Controller
             'sustainability_tips_total'     => SustainabilityTip::count(),
             'sustainability_tips_published' => SustainabilityTip::where('is_published', true)->count(),
             'sustainability_tips_draft'     => SustainabilityTip::where('is_published', false)->count(),
+            'knowledge_articles_total'     => KnowledgeArticle::count(),
+            'knowledge_articles_published' => KnowledgeArticle::where('is_published', true)->count(),
+            'knowledge_articles_draft'     => KnowledgeArticle::where('is_published', false)->count(),
         ];
 
         return view('admin.dashboard', compact('stats'));

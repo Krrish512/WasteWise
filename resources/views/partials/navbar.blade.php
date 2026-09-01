@@ -11,6 +11,7 @@
             <!-- Desktop Nav Links -->
             <div class="nav-links">
                 <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}" id="nav-home">🏠 Home</a>
+                <a class="nav-link {{ request()->routeIs('knowledge.*') ? 'active' : '' }}" href="{{ route('knowledge.index') }}">📚 Knowledge Hub</a>
                 <a class="nav-link {{ request()->routeIs('sustainability-tips.*') ? 'active' : '' }}" href="{{ route('sustainability-tips.index') }}">🌱 Tips</a>
                 <a class="nav-link {{ request()->routeIs('announcements.*') ? 'active' : '' }}" href="{{ route('announcements.index') }}">📢 Updates</a>
                 <a class="nav-link" href="{{ url('/#how') }}" id="nav-how">⚙️ How It Works</a>
@@ -60,6 +61,7 @@
         </div>
         <div class="mobile-nav-links">
             <a class="mobile-nav-link" href="{{ route('home') }}">🏠 Home</a>
+            <a class="mobile-nav-link {{ request()->routeIs('knowledge.*') ? 'active' : '' }}" href="{{ route('knowledge.index') }}">📚 Knowledge Hub</a>
             <a class="mobile-nav-link {{ request()->routeIs('sustainability-tips.*') ? 'active' : '' }}" href="{{ route('sustainability-tips.index') }}">🌱 Sustainability Tips</a>
             <a class="mobile-nav-link {{ request()->routeIs('announcements.*') ? 'active' : '' }}" href="{{ route('announcements.index') }}">📢 Updates</a>
             <a class="mobile-nav-link" href="{{ url('/#how') }}">⚙️ How It Works</a>
