@@ -22,6 +22,9 @@
                 </div>
 
                 <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+                    <a href="{{ route('admin.analytics.index') }}" style="background:#fff;color:var(--primary-dark);padding:.75rem 1.4rem;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;box-shadow:var(--shadow-sm);">
+                        📊 Smart Waste Insights (Python)
+                    </a>
                     <form action="{{ route('admin.logout') }}" method="POST" style="margin:0;">
                         @csrf
                         <button type="submit" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:.75rem 1.4rem;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;transition:var(--transition);" onmouseover="this.style.background='rgba(255,255,255,.25)';" onmouseout="this.style.background='rgba(255,255,255,.15)';">
@@ -143,6 +146,11 @@
             </p>
 
             <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:1.25rem;">
+                
+                <a href="{{ route('admin.analytics.index') }}" style="border:1.5px solid var(--primary);border-radius:var(--radius-lg);padding:1.25rem;background:#ecfdf5;transition:var(--transition);display:block;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                    <div style="font-weight:800;color:var(--primary-dark);font-size:1.05rem;margin-bottom:.3rem;">📊 Smart Waste Insights</div>
+                    <div style="font-size:.85rem;color:var(--text-muted);">Python analytics integration, search trends, &amp; subprocess report generation</div>
+                </a>
                 
                 <a href="{{ route('admin.knowledge-articles.index') }}" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;background:var(--bg-card);transition:var(--transition);display:block;" onmouseover="this.style.borderColor='var(--primary)';" onmouseout="this.style.borderColor='var(--border)';">
                     <div style="font-weight:700;color:var(--text-dark);font-size:1.05rem;margin-bottom:.3rem;">📚 Knowledge Hub</div>
