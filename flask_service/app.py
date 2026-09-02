@@ -1,5 +1,8 @@
 import os
 import csv
+import json
+import urllib.request
+import urllib.error
 from datetime import datetime
 from flask import (
     Flask,
@@ -28,8 +31,99 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 ALLOWED_EXTENSIONS = {'csv'}
 
+# Laravel API base URL (configurable via environment variable)
+LARAVEL_API_BASE = os.environ.get('LARAVEL_API_BASE', 'http://127.0.0.1:8000')
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def fetch_laravel_search_trends(focus='all'):
+    """
+    Fetch real WasteWise search history data from the Laravel JSON API.
+    Uses urllib.request (Python standard library) — no extra dependencies.
+    Returns parsed JSON dict on success, or None on failure.
+    """
+    url = f"{LARAVEL_API_BASE}/api/search-trends?focus={focus}"
+    try:
+        req = urllib.request.Request(url, headers={
+            'Accept': 'application/json',
+            'User-Agent': 'WasteWise-Flask-Insights/1.0',
+        })
+        with urllib.request.urlopen(req, timeout=10) as response:
+            raw = response.read().decode('utf-8')
+            data = json.loads(raw)
+            if isinstance(data, dict) and data.get('success'):
+                return data
+    except urllib.error.URLError:
+        pass
+    except urllib.error.HTTPError:
+        pass
+    except (json.JSONDecodeError, ValueError, OSError):
+        pass
+    return None
+
+
+def analyze_search_records(records):
+    """
+    Perform Python-side analysis on search history records fetched from Laravel.
+    Returns a dict with: top_category, top_item, total_searches,
+    category_breakdown, and a human-readable insight string.
+    """
+    total = len(records)
+    if total == 0:
+        return {
+            'total_searches': 0,
+            'top_category': 'N/A',
+            'top_item': 'N/A',
+            'category_breakdown': [],
+            'insight': 'No search history data available yet. Use the main WasteWise app to search for waste items.',
+        }
+
+    # Count categories
+    cat_counts = {}
+    item_counts = {}
+    for r in records:
+        cat = r.get('category', 'Uncategorized')
+        item = r.get('waste_item', 'Unknown Item')
+        cat_counts[cat] = cat_counts.get(cat, 0) + 1
+        item_counts[item] = item_counts.get(item, 0) + 1
+
+    # Sort by count descending
+    sorted_cats = sorted(cat_counts.items(), key=lambda x: x[1], reverse=True)
+    sorted_items = sorted(item_counts.items(), key=lambda x: x[1], reverse=True)
+
+    top_category = sorted_cats[0][0]
+    top_category_count = sorted_cats[0][1]
+    top_item = sorted_items[0][0]
+
+    # Category breakdown with percentages
+    breakdown = []
+    for cat_name, count in sorted_cats:
+        pct = round((count / total) * 100, 1)
+        breakdown.append({
+            'category': cat_name,
+            'searches': count,
+            'percentage': pct,
+        })
+
+    # Human-readable insight
+    top_pct = round((top_category_count / total) * 100, 1)
+    if total >= 20:
+        insight = f"{top_category} dominates search trends with {top_category_count} searches ({top_pct}% of all {total} searches). Most searched item: {top_item}."
+    elif total >= 5:
+        insight = f"{top_category} leads search activity with {top_category_count} out of {total} total searches ({top_pct}%). Top item: {top_item}."
+    else:
+        insight = f"Early search data shows {top_category} as the leading category ({top_category_count} of {total} searches). Most searched: {top_item}."
+
+    return {
+        'total_searches': total,
+        'top_category': top_category,
+        'top_item': top_item,
+        'category_breakdown': breakdown,
+        'insight': insight,
+    }
+
 
 # -----------------------------------------------------------------------------
 # 5.1.3.1 Route Declarations & Views
@@ -43,57 +137,42 @@ def home():
 @app.route('/insights', methods=['GET', 'POST'])
 def insights():
     """
-    5.3 HTTP Methods: GET displays landing page, POST processes analytics focus.
-    5.4 Request Object: request.form (POST) & request.args (GET filter parameters).
+    GET displays landing page, POST fetches real WasteWise data from
+    Laravel API and performs Python analysis.
+    Demonstrates: request.form (POST), request.args (GET), session,
+    redirect, url_for, Jinja2 rendering.
     """
     if request.method == 'POST':
+        # 5.4.1 request.form — read selected focus from POST form
         focus = request.form.get('focus', 'all').strip()
-        custom_category = request.form.get('category', '').strip()
-        custom_city = request.form.get('city', '').strip()
-        custom_searches = request.form.get('searches', '').strip()
 
-        # Determine category, city, search count based on focus or custom values
-        if custom_category and custom_city:
-            category = custom_category
-            city = custom_city
-            try:
-                searches = max(1, int(custom_searches)) if custom_searches else 20
-            except ValueError:
-                searches = 20
-        elif focus == 'electronic':
-            category = 'Electronic Waste'
-            city = 'Surat'
-            searches = 45
-        elif focus == 'plastic':
-            category = 'Plastic Waste'
-            city = 'Surat'
-            searches = 30
-        elif focus == 'organic':
-            category = 'Organic Waste'
-            city = 'Ahmedabad'
-            searches = 25
-        else:
-            category = 'Plastic Waste'
-            city = 'Surat'
-            searches = 20
+        # Fetch real data from Laravel API via urllib.request
+        api_data = fetch_laravel_search_trends(focus)
 
-        # Calculate insight string
-        if searches >= 50:
-            insight_msg = f"{category} has extremely high search volume in {city} ({searches} searches)."
-        elif searches >= 15:
-            insight_msg = f"{category} is currently highly searched in {city} ({searches} searches)."
-        else:
-            insight_msg = f"{category} shows steady search activity in {city} ({searches} searches)."
+        if api_data is None:
+            flash(
+                "Could not connect to the main WasteWise application. "
+                "Please ensure Laravel is running on port 8000 and try again.",
+                "error"
+            )
+            return redirect(url_for('insights'))
+
+        records = api_data.get('records', [])
+
+        # Python-side analysis of real search history data
+        analysis = analyze_search_records(records)
 
         # 5.4.2 Flask Session Storage
-        session['last_category'] = category
-        session['last_city'] = city
-        session['last_searches'] = searches
-        session['last_insight'] = insight_msg
+        session['last_category'] = analysis['top_category']
+        session['last_item'] = analysis['top_item']
+        session['last_searches'] = analysis['total_searches']
+        session['last_insight'] = analysis['insight']
+        session['category_breakdown'] = analysis['category_breakdown']
         session['analyzed_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        session['analysis_source'] = 'WasteWise Dataset'
+        session['analysis_source'] = 'WasteWise Live Data'
+        session['analysis_focus'] = focus
 
-        # Clear CSV metadata when running quick analysis
+        # Clear CSV metadata when running live analysis
         session.pop('csv_filename', None)
         session.pop('csv_rows', None)
         session.pop('csv_top_category', None)
@@ -103,16 +182,10 @@ def insights():
 
     # GET handling with optional request.args parameters (5.4.1 request.args)
     selected_focus = request.args.get('focus', 'all')
-    prefill_category = request.args.get('category', 'Plastic Waste')
-    prefill_city = request.args.get('city', 'Surat')
-    prefill_searches = request.args.get('searches', '20')
 
     return render_template(
         'index.html',
         selected_focus=selected_focus,
-        prefill_category=prefill_category,
-        prefill_city=prefill_city,
-        prefill_searches=prefill_searches
     )
 
 @app.route('/insights/result', methods=['GET'])
@@ -126,14 +199,16 @@ def insights_result():
 
     result_data = {
         'category': session.get('last_category'),
-        'city': session.get('last_city'),
+        'item': session.get('last_item', 'N/A'),
         'searches': session.get('last_searches'),
         'insight': session.get('last_insight'),
+        'category_breakdown': session.get('category_breakdown', []),
         'analyzed_at': session.get('analyzed_at'),
         'analysis_source': session.get('analysis_source', 'System'),
+        'analysis_focus': session.get('analysis_focus', 'all'),
         'csv_filename': session.get('csv_filename'),
         'csv_rows': session.get('csv_rows'),
-        'csv_top_category': session.get('csv_top_category')
+        'csv_top_category': session.get('csv_top_category'),
     }
 
     return render_template('result.html', result=result_data)
@@ -230,11 +305,13 @@ def upload_csv():
 
         # Store calculated CSV results in Flask session
         session['last_category'] = top_category
-        session['last_city'] = top_city
+        session['last_item'] = top_category  # CSV uses category as primary label
         session['last_searches'] = top_searches
         session['last_insight'] = insight_msg
+        session['category_breakdown'] = []
         session['analyzed_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         session['analysis_source'] = 'CSV Upload'
+        session['analysis_focus'] = 'csv'
         session['csv_filename'] = safe_name
         session['csv_rows'] = row_count
         session['csv_top_category'] = top_category

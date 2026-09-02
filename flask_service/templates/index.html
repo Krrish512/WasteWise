@@ -41,16 +41,16 @@
             <div class="card" style="margin-bottom: 0;">
                 <h2 class="card-title">📊 1. Analyze WasteWise Data</h2>
                 <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
-                    Run Python calculations on WasteWise search category distributions and regional trends.
+                    Fetch real search history from WasteWise and run Python calculations on category distributions and item trends.
                 </p>
                 <form action="{{ url_for('insights') }}" method="POST">
                     <div class="form-group">
                         <label for="focus">Select Category Focus</label>
                         <select id="focus" name="focus">
-                            <option value="all" {% if selected_focus == 'all' %}selected{% endif %}>Overall Waste Search Trends (Surat)</option>
-                            <option value="electronic" {% if selected_focus == 'electronic' %}selected{% endif %}>Electronic Waste Focus (Surat)</option>
-                            <option value="plastic" {% if selected_focus == 'plastic' %}selected{% endif %}>Plastic Waste Focus (Surat)</option>
-                            <option value="organic" {% if selected_focus == 'organic' %}selected{% endif %}>Organic Waste Focus (Ahmedabad)</option>
+                            <option value="all" {% if selected_focus == 'all' %}selected{% endif %}>Overall Waste Search Trends</option>
+                            <option value="electronic" {% if selected_focus == 'electronic' %}selected{% endif %}>Electronic Waste Focus</option>
+                            <option value="plastic" {% if selected_focus == 'plastic' %}selected{% endif %}>Plastic Waste Focus</option>
+                            <option value="organic" {% if selected_focus == 'organic' %}selected{% endif %}>Organic Waste Focus</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Run WasteWise Analysis</button>

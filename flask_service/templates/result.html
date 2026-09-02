@@ -12,7 +12,7 @@
             <div>
                 <div class="logo-badge">📊 Analysis Result</div>
                 <h1>Waste Insight Result</h1>
-                <p class="subtitle">Calculated Python analytics report</p>
+                <p class="subtitle">Python-calculated analytics from real WasteWise data</p>
             </div>
             <div>
                 <a href="{{ url_for('insights') }}" class="btn btn-outline">← Analyze Again</a>
@@ -44,31 +44,59 @@
         <!-- Metric Grid -->
         <div class="result-metric-grid">
             <div class="metric-box">
-                <div class="metric-label">Category</div>
+                <div class="metric-label">Top Category</div>
                 <div class="metric-value">{{ result.category }}</div>
             </div>
             <div class="metric-box">
-                <div class="metric-label">City</div>
-                <div class="metric-value">{{ result.city }}</div>
+                <div class="metric-label">Top Item</div>
+                <div class="metric-value">{{ result.item }}</div>
             </div>
             <div class="metric-box">
-                <div class="metric-label">Searches Recorded</div>
+                <div class="metric-label">Total Searches</div>
                 <div class="metric-value">{{ result.searches }}</div>
             </div>
         </div>
 
-        <!-- Card 1: Session Information -->
+        <!-- Category Breakdown Table -->
+        {% if result.category_breakdown %}
+        <div class="card">
+            <h2 class="card-title">📋 Category Breakdown</h2>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 0.75rem;">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--border-color);">
+                        <th style="text-align: left; padding: 0.5rem 0.75rem; font-size: 0.85rem; color: var(--text-muted);">Category</th>
+                        <th style="text-align: right; padding: 0.5rem 0.75rem; font-size: 0.85rem; color: var(--text-muted);">Searches</th>
+                        <th style="text-align: right; padding: 0.5rem 0.75rem; font-size: 0.85rem; color: var(--text-muted);">Share</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in result.category_breakdown %}
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 0.5rem 0.75rem;">{{ row.category }}</td>
+                        <td style="text-align: right; padding: 0.5rem 0.75rem;">{{ row.searches }}</td>
+                        <td style="text-align: right; padding: 0.5rem 0.75rem;">{{ row.percentage }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- Session Information Card -->
         <div class="card">
             <h2 class="card-title">📌 Session Storage Summary</h2>
             <p style="margin-bottom: 0.5rem;">
-                <strong>Last Analyzed:</strong> {{ result.category }} — {{ result.city }}
+                <strong>Data Source:</strong> {{ result.analysis_source }}
+            </p>
+            <p style="margin-bottom: 0.5rem;">
+                <strong>Focus:</strong> {{ result.analysis_focus | capitalize }}
             </p>
             <p style="color: var(--text-muted); font-size: 0.85rem;">
                 Timestamp: {{ result.analyzed_at }}
             </p>
         </div>
 
-        <!-- Card 2: CSV Upload Details if available -->
+        <!-- CSV Upload Details if available -->
         {% if result.csv_filename %}
         <div class="card">
             <h2 class="card-title">📊 Uploaded CSV Summary</h2>
