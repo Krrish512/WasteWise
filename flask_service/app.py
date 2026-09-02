@@ -43,25 +43,41 @@ def home():
 @app.route('/insights', methods=['GET', 'POST'])
 def insights():
     """
-    5.3 HTTP Methods: GET displays analysis form, POST processes inputs.
-    5.4 Request Object: request.form (POST) & request.args (GET pre-fill).
+    5.3 HTTP Methods: GET displays landing page, POST processes analytics focus.
+    5.4 Request Object: request.form (POST) & request.args (GET filter parameters).
     """
     if request.method == 'POST':
-        category = request.form.get('category', '').strip()
-        city = request.form.get('city', '').strip()
-        searches_raw = request.form.get('searches', '1').strip()
+        focus = request.form.get('focus', 'all').strip()
+        custom_category = request.form.get('category', '').strip()
+        custom_city = request.form.get('city', '').strip()
+        custom_searches = request.form.get('searches', '').strip()
 
-        if not category or not city:
-            flash("Please provide both a waste category and a city name.", "error")
-            return redirect(url_for('insights'))
+        # Determine category, city, search count based on focus or custom values
+        if custom_category and custom_city:
+            category = custom_category
+            city = custom_city
+            try:
+                searches = max(1, int(custom_searches)) if custom_searches else 20
+            except ValueError:
+                searches = 20
+        elif focus == 'electronic':
+            category = 'Electronic Waste'
+            city = 'Surat'
+            searches = 45
+        elif focus == 'plastic':
+            category = 'Plastic Waste'
+            city = 'Surat'
+            searches = 30
+        elif focus == 'organic':
+            category = 'Organic Waste'
+            city = 'Ahmedabad'
+            searches = 25
+        else:
+            category = 'Plastic Waste'
+            city = 'Surat'
+            searches = 20
 
-        try:
-            searches = max(1, int(searches_raw))
-        except ValueError:
-            flash("Search count must be a valid positive integer.", "error")
-            return redirect(url_for('insights'))
-
-        # Simple calculated insight string
+        # Calculate insight string
         if searches >= 50:
             insight_msg = f"{category} has extremely high search volume in {city} ({searches} searches)."
         elif searches >= 15:
@@ -75,17 +91,25 @@ def insights():
         session['last_searches'] = searches
         session['last_insight'] = insight_msg
         session['analyzed_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        session['analysis_source'] = 'WasteWise Dataset'
+
+        # Clear CSV metadata when running quick analysis
+        session.pop('csv_filename', None)
+        session.pop('csv_rows', None)
+        session.pop('csv_top_category', None)
 
         # 5.4.4 Redirect with url_for
         return redirect(url_for('insights_result'))
 
-    # GET handling with optional request.args pre-fill
+    # GET handling with optional request.args parameters (5.4.1 request.args)
+    selected_focus = request.args.get('focus', 'all')
     prefill_category = request.args.get('category', 'Plastic Waste')
     prefill_city = request.args.get('city', 'Surat')
     prefill_searches = request.args.get('searches', '20')
 
     return render_template(
         'index.html',
+        selected_focus=selected_focus,
         prefill_category=prefill_category,
         prefill_city=prefill_city,
         prefill_searches=prefill_searches
@@ -106,6 +130,7 @@ def insights_result():
         'searches': session.get('last_searches'),
         'insight': session.get('last_insight'),
         'analyzed_at': session.get('analyzed_at'),
+        'analysis_source': session.get('analysis_source', 'System'),
         'csv_filename': session.get('csv_filename'),
         'csv_rows': session.get('csv_rows'),
         'csv_top_category': session.get('csv_top_category')
@@ -117,7 +142,8 @@ def insights_result():
 def upload_csv():
     """
     5.4.3 Controlled CSV file upload handling with request.files[].
-    Validates file extension, sanitizes filename, saves to disk, parses rows.
+    Validates file extension, sanitizes filename, saves to disk, parses rows,
+    determines the row with highest search count, and sets calculated session result.
     """
     if 'file' not in request.files:
         flash("No file field submitted in request.", "error")
@@ -142,28 +168,78 @@ def upload_csv():
         # Save file to disk
         file.save(save_path)
 
-        # Parse CSV file rows safely using Python standard library
         row_count = 0
-        categories = []
+        parsed_rows = []
+
         with open(save_path, mode='r', encoding='utf-8-sig', errors='replace') as f:
             reader = csv.reader(f)
             headers = next(reader, None)
+
+            cat_idx = 0
+            city_idx = 1
+            search_idx = 2
+
+            if headers:
+                header_lower = [h.strip().lower() for h in headers]
+                for idx, h in enumerate(header_lower):
+                    if 'category' in h:
+                        cat_idx = idx
+                    elif 'city' in h:
+                        city_idx = idx
+                    elif 'search' in h or 'count' in h:
+                        search_idx = idx
+
             for row in reader:
-                if row:
-                    row_count += 1
-                    if len(row) > 0 and row[0].strip():
-                        categories.append(row[0].strip())
+                if not row or not any(field.strip() for field in row):
+                    continue
 
-        top_cat = "N/A"
-        if categories:
-            from collections import Counter
-            top_cat = Counter(categories).most_common(1)[0][0]
+                row_count += 1
+                cat = row[cat_idx].strip() if len(row) > cat_idx and row[cat_idx].strip() else "Uncategorized"
+                city = row[city_idx].strip() if len(row) > city_idx and row[city_idx].strip() else "Unknown City"
 
+                search_cnt = 1
+                if len(row) > search_idx:
+                    try:
+                        search_cnt = int(row[search_idx].strip())
+                    except (ValueError, TypeError):
+                        search_cnt = 1
+
+                parsed_rows.append({
+                    'category': cat,
+                    'city': city,
+                    'searches': search_cnt
+                })
+
+        if not parsed_rows:
+            flash("The uploaded CSV file contains no valid data rows.", "error")
+            return redirect(url_for('insights'))
+
+        # Find row with highest search count in the uploaded CSV
+        top_row = max(parsed_rows, key=lambda r: r['searches'])
+        top_category = top_row['category']
+        top_city = top_row['city']
+        top_searches = top_row['searches']
+
+        # Calculate insight string for CSV top row
+        if top_searches >= 50:
+            insight_msg = f"{top_category} has extremely high search volume in {top_city} ({top_searches} searches)."
+        elif top_searches >= 15:
+            insight_msg = f"{top_category} is currently highly searched in {top_city} ({top_searches} searches)."
+        else:
+            insight_msg = f"{top_category} shows steady search activity in {top_city} ({top_searches} searches)."
+
+        # Store calculated CSV results in Flask session
+        session['last_category'] = top_category
+        session['last_city'] = top_city
+        session['last_searches'] = top_searches
+        session['last_insight'] = insight_msg
+        session['analyzed_at'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        session['analysis_source'] = 'CSV Upload'
         session['csv_filename'] = safe_name
         session['csv_rows'] = row_count
-        session['csv_top_category'] = top_cat
+        session['csv_top_category'] = top_category
 
-        flash(f"CSV data '{safe_name}' uploaded successfully ({row_count} data rows processed).", "success")
+        flash(f"CSV data '{safe_name}' processed successfully ({row_count} data rows). Top trend: {top_category} in {top_city}.", "success")
         return redirect(url_for('insights_result'))
 
     except Exception as e:

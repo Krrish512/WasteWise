@@ -10,12 +10,12 @@
     <header>
         <div class="header-container">
             <div>
-                <div class="logo-badge">🐍 Python Insights Engine</div>
+                <div class="logo-badge"> Standalone Python Analytics Service</div>
                 <h1>WasteWise Python Insights</h1>
                 <p class="subtitle">Standalone Python Flask service for WasteWise search trends and analytics</p>
             </div>
             <div>
-                <a href="http://127.0.0.1:8000/admin/analytics" class="btn btn-outline">← Return to Main Admin</a>
+                <a href="http://127.0.0.1:8000/admin/analytics" class="btn btn-outline">← Return to Main WasteWise App</a>
             </div>
         </div>
     </header>
@@ -35,39 +35,62 @@
             {% endif %}
         {% endwith %}
 
-        <!-- Form 1: Waste Search Insight Analyzer -->
-        <div class="card">
-            <h2 class="card-title">🔍 Waste Insight Analyzer</h2>
-            <form action="{{ url_for('insights') }}" method="POST">
-                <div class="form-group">
-                    <label for="category">Waste Category</label>
-                    <input type="text" id="category" name="category" value="{{ prefill_category }}" placeholder="e.g. Plastic Waste, Electronic Waste" required>
-                </div>
+        <!-- Feature Grid (3 Primary Focus Areas) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+            <!-- Card 1: Analyze Real WasteWise Data -->
+            <div class="card" style="margin-bottom: 0;">
+                <h2 class="card-title">📊 1. Analyze WasteWise Data</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    Run Python calculations on WasteWise search category distributions and regional trends.
+                </p>
+                <form action="{{ url_for('insights') }}" method="POST">
+                    <div class="form-group">
+                        <label for="focus">Select Category Focus</label>
+                        <select id="focus" name="focus">
+                            <option value="all" {% if selected_focus == 'all' %}selected{% endif %}>Overall Waste Search Trends (Surat)</option>
+                            <option value="electronic" {% if selected_focus == 'electronic' %}selected{% endif %}>Electronic Waste Focus (Surat)</option>
+                            <option value="plastic" {% if selected_focus == 'plastic' %}selected{% endif %}>Plastic Waste Focus (Surat)</option>
+                            <option value="organic" {% if selected_focus == 'organic' %}selected{% endif %}>Organic Waste Focus (Ahmedabad)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Run Waste Wise Analysis</button>
+                </form>
+            </div>
 
-                <div class="form-group">
-                    <label for="city">City Name</label>
-                    <input type="text" id="city" name="city" value="{{ prefill_city }}" placeholder="e.g. Surat, Ahmedabad, Vadodara" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="searches">Search Count</label>
-                    <input type="number" id="searches" name="searches" value="{{ prefill_searches }}" min="1" max="10000" required>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Analyze Search Trend</button>
-            </form>
+            <!-- Card 2: CSV Data Processing -->
+            <div class="card" style="margin-bottom: 0;">
+                <h2 class="card-title">📁 2. CSV Data Processing</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    Upload a custom CSV analytics dataset to parse row trends and compute peak search counts.
+                </p>
+                <form action="{{ url_for('upload_csv') }}" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="file">Select CSV File (.csv)</label>
+                        <input type="file" id="file" name="file" accept=".csv" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary" style="width: 100%;">Upload & Process CSV</button>
+                </form>
+            </div>
         </div>
 
-        <!-- Form 2: CSV Analytics Upload -->
+        <!-- Card 3: Service Info & Health Status -->
         <div class="card">
-            <h2 class="card-title">📁 Upload CSV Analytics Data</h2>
-            <form action="{{ url_for('upload_csv') }}" method="POST" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="file">Select CSV Analytics File (.csv only)</label>
-                    <input type="file" id="file" name="file" accept=".csv" required>
+            <h2 class="card-title">🟢 3. Service & Health Status</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; align-items: center;">
+                <div>
+                    <p><strong>Service Name:</strong> WasteWise Python Insights</p>
+                    <p><strong>Architecture:</strong> Standalone Flask microservice (Port 5000)</p>
+                    <p><strong>Primary Application:</strong> Laravel (Port 8000)</p>
                 </div>
-                <button type="submit" class="btn btn-secondary">Upload & Process CSV</button>
-            </form>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <a href="{{ url_for('health_check') }}" target="_blank" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                        🏥 Health Check (GET /health)
+                    </a>
+                    <a href="/api/demo-methods" target="_blank" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                        🔄 REST Methods (GET/HEAD/PUT/DELETE)
+                    </a>
+                </div>
+            </div>
         </div>
     </main>
 

@@ -13,6 +13,10 @@ class PythonAnalyticsService
     protected function getPythonBinary(): string
     {
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $userAppData = 'C:\\Users\\Krish Patel\\AppData\\Local\\Programs\\Python\\Python314\\python.exe';
+            if (file_exists($userAppData)) {
+                return '"' . $userAppData . '"';
+            }
             if (file_exists('C:\\Python314\\python.exe')) {
                 return 'C:\\Python314\\python.exe';
             }
@@ -46,8 +50,7 @@ class PythonAnalyticsService
         $pythonBin = $this->getPythonBinary();
         $scriptPath = base_path('scripts/waste_insights.py');
 
-        // Demonstrate syllabus 4.1.2: escapeshellcmd() and shell_exec() with safe escapeshellarg()
-        $safeCommand = escapeshellcmd($pythonBin . ' ' . $scriptPath) . ' ' . escapeshellarg($base64Payload);
+        $safeCommand = $pythonBin . ' "' . $scriptPath . '" ' . escapeshellarg($base64Payload);
 
         try {
             $rawOutput = shell_exec($safeCommand);
@@ -80,10 +83,8 @@ class PythonAnalyticsService
         ]);
         $escapedPayload = escapeshellarg(base64_encode($demoPayload));
 
-        // 4.1.2 Command Construction using escapeshellcmd
-        $commandString = escapeshellcmd($pythonBin . ' ' . $scriptPath) . ' ' . $escapedPayload;
+        $commandString = $pythonBin . ' "' . $scriptPath . '" ' . $escapedPayload;
 
-        // 4.1.2 Execution using shell_exec
         $rawOutput = shell_exec($commandString);
 
         return [
@@ -121,7 +122,7 @@ class PythonAnalyticsService
         $pythonBin = $this->getPythonBinary();
         $scriptPath = base_path('scripts/run_php_report.py');
 
-        $safeCommand = escapeshellcmd($pythonBin . ' ' . $scriptPath) . ' ' . escapeshellarg($base64Payload);
+        $safeCommand = $pythonBin . ' "' . $scriptPath . '" ' . escapeshellarg($base64Payload);
 
         try {
             $rawOutput = shell_exec($safeCommand);
