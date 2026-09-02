@@ -10,7 +10,7 @@
     <header>
         <div class="header-container">
             <div>
-                <div class="logo-badge"> Standalone Python Analytics Service</div>
+                <div class="logo-badge">🐍 Standalone Python Analytics Service</div>
                 <h1>WasteWise Python Insights</h1>
                 <p class="subtitle">Standalone Python Flask service for WasteWise search trends and analytics</p>
             </div>
@@ -35,8 +35,8 @@
             {% endif %}
         {% endwith %}
 
-        <!-- Feature Grid (3 Primary Focus Areas) -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <!-- Feature Grid (2 Primary Focus Areas) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
             <!-- Card 1: Analyze Real WasteWise Data -->
             <div class="card" style="margin-bottom: 0;">
                 <h2 class="card-title">📊 1. Analyze WasteWise Data</h2>
@@ -53,7 +53,7 @@
                             <option value="organic" {% if selected_focus == 'organic' %}selected{% endif %}>Organic Waste Focus (Ahmedabad)</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">Run Waste Wise Analysis</button>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Run WasteWise Analysis</button>
                 </form>
             </div>
 
@@ -70,26 +70,6 @@
                     </div>
                     <button type="submit" class="btn btn-secondary" style="width: 100%;">Upload & Process CSV</button>
                 </form>
-            </div>
-        </div>
-
-        <!-- Card 3: Service Info & Health Status -->
-        <div class="card">
-            <h2 class="card-title">🟢 3. Service & Health Status</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; align-items: center;">
-                <div>
-                    <p><strong>Service Name:</strong> WasteWise Python Insights</p>
-                    <p><strong>Architecture:</strong> Standalone Flask microservice (Port 5000)</p>
-                    <p><strong>Primary Application:</strong> Laravel (Port 8000)</p>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                    <a href="{{ url_for('health_check') }}" target="_blank" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
-                        🏥 Health Check (GET /health)
-                    </a>
-                    <a href="/api/demo-methods" target="_blank" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
-                        🔄 REST Methods (GET/HEAD/PUT/DELETE)
-                    </a>
-                </div>
             </div>
         </div>
     </main>
