@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Insight Result — WasteWise</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div>
+                <div class="logo-badge">📊 Analysis Result</div>
+                <h1>Waste Insight Result</h1>
+                <p class="subtitle">Calculated Python analytics report</p>
+            </div>
+            <div>
+                <a href="{{ url_for('insights') }}" class="btn btn-outline">← Analyze Again</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Flash Messages Block -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category if category != 'error' else 'error' }}">
+                            {% if category == 'error' %}⚠️{% elif category == 'success' %}✅{% else %}ℹ️{% endif %}
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Generated Insight Banner -->
+        <div class="insight-banner">
+            <div class="insight-title">💡 Generated Insight</div>
+            <div class="insight-text">"{{ result.insight }}"</div>
+        </div>
+
+        <!-- Metric Grid -->
+        <div class="result-metric-grid">
+            <div class="metric-box">
+                <div class="metric-label">Category</div>
+                <div class="metric-value">{{ result.category }}</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">City</div>
+                <div class="metric-value">{{ result.city }}</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-label">Searches Recorded</div>
+                <div class="metric-value">{{ result.searches }}</div>
+            </div>
+        </div>
+
+        <!-- Card 1: Session Information -->
+        <div class="card">
+            <h2 class="card-title">📌 Session Storage Summary</h2>
+            <p style="margin-bottom: 0.5rem;">
+                <strong>Last Analyzed:</strong> {{ result.category }} — {{ result.city }}
+            </p>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">
+                Timestamp: {{ result.analyzed_at }}
+            </p>
+        </div>
+
+        <!-- Card 2: CSV Upload Details if available -->
+        {% if result.csv_filename %}
+        <div class="card">
+            <h2 class="card-title">📊 Uploaded CSV Summary</h2>
+            <p><strong>File Name:</strong> {{ result.csv_filename }}</p>
+            <p><strong>Processed Rows:</strong> {{ result.csv_rows }}</p>
+            <p><strong>Top Category in CSV:</strong> {{ result.csv_top_category }}</p>
+        </div>
+        {% endif %}
+
+        <div style="display: flex; gap: 1rem;">
+            <a href="{{ url_for('insights') }}" class="btn btn-primary">Analyze Another Item</a>
+            <a href="http://127.0.0.1:8000/admin/analytics" class="btn btn-secondary">Return to Main WasteWise App</a>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 WasteWise — Standalone Waste Insights Service</p>
+    </footer>
+</body>
+</html>

@@ -17,6 +17,9 @@
             </p>
         </div>
         <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
+            <a href="http://127.0.0.1:5000" target="_blank" style="background:#10b981;color:#fff;padding:.6rem 1.2rem;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;text-decoration:none;border:none;box-shadow:0 2px 8px rgba(16,185,129,.4);display:inline-flex;align-items:center;gap:.4rem;">
+                🐍 Open Python Insights ↗
+            </a>
             <a href="{{ route('admin.dashboard') }}" style="background:rgba(255,255,255,.2);color:#fff;padding:.6rem 1.2rem;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;text-decoration:none;border:1px solid rgba(255,255,255,.3);">
                 ← Admin Dashboard
             </a>

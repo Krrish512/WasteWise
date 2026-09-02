@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WasteWise Python Insights</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div>
+                <div class="logo-badge">🐍 Python Insights Engine</div>
+                <h1>WasteWise Python Insights</h1>
+                <p class="subtitle">Standalone Python Flask service for WasteWise search trends and analytics</p>
+            </div>
+            <div>
+                <a href="http://127.0.0.1:8000/admin/analytics" class="btn btn-outline">← Return to Main Admin</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Flash Messages Block -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category if category != 'error' else 'error' }}">
+                            {% if category == 'error' %}⚠️{% elif category == 'success' %}✅{% else %}ℹ️{% endif %}
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Form 1: Waste Search Insight Analyzer -->
+        <div class="card">
+            <h2 class="card-title">🔍 Waste Insight Analyzer</h2>
+            <form action="{{ url_for('insights') }}" method="POST">
+                <div class="form-group">
+                    <label for="category">Waste Category</label>
+                    <input type="text" id="category" name="category" value="{{ prefill_category }}" placeholder="e.g. Plastic Waste, Electronic Waste" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="city">City Name</label>
+                    <input type="text" id="city" name="city" value="{{ prefill_city }}" placeholder="e.g. Surat, Ahmedabad, Vadodara" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="searches">Search Count</label>
+                    <input type="number" id="searches" name="searches" value="{{ prefill_searches }}" min="1" max="10000" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Analyze Search Trend</button>
+            </form>
+        </div>
+
+        <!-- Form 2: CSV Analytics Upload -->
+        <div class="card">
+            <h2 class="card-title">📁 Upload CSV Analytics Data</h2>
+            <form action="{{ url_for('upload_csv') }}" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file">Select CSV Analytics File (.csv only)</label>
+                    <input type="file" id="file" name="file" accept=".csv" required>
+                </div>
+                <button type="submit" class="btn btn-secondary">Upload & Process CSV</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 WasteWise — Standalone Waste Insights Service</p>
+    </footer>
+</body>
+</html>
