@@ -35,8 +35,8 @@
             {% endif %}
         {% endwith %}
 
-        <!-- Feature Grid (2 Primary Focus Areas) -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <!-- Feature Grid (3 Primary Focus Areas) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
             <!-- Card 1: Analyze Real WasteWise Data -->
             <div class="card" style="margin-bottom: 0;">
                 <h2 class="card-title">📊 1. Analyze WasteWise Data</h2>
@@ -59,7 +59,7 @@
 
             <!-- Card 2: CSV Data Processing -->
             <div class="card" style="margin-bottom: 0;">
-                <h2 class="card-title">📁 2. CSV Data Processing</h2>
+                <h2 class="card-title">📁 2. CSV Analytics Processing</h2>
                 <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
                     Upload a custom CSV analytics dataset to parse row trends and compute peak search counts.
                 </p>
@@ -70,6 +70,30 @@
                     </div>
                     <button type="submit" class="btn btn-secondary" style="width: 100%;">Upload & Process CSV</button>
                 </form>
+            </div>
+
+            <!-- Card 3: Collection Centre CSV Import -->
+            <div class="card" id="import-section" style="margin-bottom: 0;">
+                <h2 class="card-title">📍 3. Import Collection Centres</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                    Bulk-import Collection Centre records into WasteWise. Rows are validated by Python and forwarded to Laravel.
+                </p>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    <strong>Required Headers:</strong> <code>name, category, city, address</code><br>
+                    <strong>Optional:</strong> <code>latitude, longitude, phone</code>
+                </p>
+                <form action="{{ url_for('import_collection_centres') }}" method="POST" enctype="multipart/form-data" style="margin-bottom: 0.75rem;">
+                    <div class="form-group">
+                        <label for="import_file">Select Collection Centres CSV</label>
+                        <input type="file" id="import_file" name="file" accept=".csv" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Upload & Import Centres</button>
+                </form>
+                <div style="text-align: center;">
+                    <a href="{{ url_for('download_sample_csv') }}" style="font-size: 0.85rem; color: var(--primary-color); font-weight: 600;">
+                        📥 Download Sample Template CSV
+                    </a>
+                </div>
             </div>
         </div>
     </main>

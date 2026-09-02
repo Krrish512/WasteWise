@@ -1,9 +1,21 @@
 import io
 import json
 import os
+import sys
 import unittest
 from unittest.mock import patch, MagicMock
-from flask_service.app import app, analyze_search_records
+
+from flask import session
+
+# Ensure parent directory (wastewise) and local directory are in sys.path
+base_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(base_dir)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+if base_dir not in sys.path:
+    sys.path.insert(0, base_dir)
+
+from flask_service.app import app, analyze_search_records, parse_and_validate_collection_centre_csv
 
 
 class WasteWiseFlaskTestCase(unittest.TestCase):
@@ -117,7 +129,6 @@ class WasteWiseFlaskTestCase(unittest.TestCase):
         }
         with self.client as c:
             c.post('/insights', data={'focus': 'plastic'}, follow_redirects=False)
-            from flask import session
             self.assertEqual(session.get('last_category'), 'Plastic Waste')
             self.assertEqual(session.get('last_item'), 'Plastic Bottle')
             self.assertEqual(session.get('last_searches'), 2)
@@ -274,6 +285,133 @@ class WasteWiseFlaskTestCase(unittest.TestCase):
         response = self.client.get('/insights/result', follow_redirects=False)
         self.assertEqual(response.status_code, 302)
         self.assertIn('/insights', response.headers['Location'])
+
+    # ─── Collection Centre CSV Import Tests ──────────────────────────────
+
+    def test_21_parse_collection_centre_csv_helper_valid(self):
+        """Test parse_and_validate_collection_centre_csv with valid CSV."""
+        import tempfile
+
+        csv_content = (
+            "name,category,city,address,latitude,longitude,phone\n"
+            "Surat Hub,Electronic Waste,Surat,Ring Road,21.17,72.83,9876543210\n"
+            "Ahmedabad Depot,Plastic Waste,Ahmedabad,CG Road,23.02,72.57,9876543211\n"
+        )
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False, encoding='utf-8') as tf:
+            tf.write(csv_content)
+            temp_path = tf.name
+
+        try:
+            rows, errors = parse_and_validate_collection_centre_csv(temp_path)
+            self.assertEqual(len(rows), 2)
+            self.assertEqual(len(errors), 0)
+            self.assertEqual(rows[0]['name'], 'Surat Hub')
+            self.assertEqual(rows[0]['city'], 'Surat')
+            self.assertEqual(rows[0]['latitude'], 21.17)
+        finally:
+            os.remove(temp_path)
+
+    def test_22_parse_collection_centre_csv_helper_missing_headers(self):
+        """Test parse_and_validate_collection_centre_csv with missing headers."""
+        import tempfile
+
+        csv_content = "name,phone\nSurat Hub,9876543210\n"
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False, encoding='utf-8') as tf:
+            tf.write(csv_content)
+            temp_path = tf.name
+
+        try:
+            rows, errors = parse_and_validate_collection_centre_csv(temp_path)
+            self.assertIsNone(rows)
+            self.assertTrue(any('Missing required CSV headers' in err for err in errors))
+        finally:
+            os.remove(temp_path)
+
+    def test_23_parse_collection_centre_csv_helper_invalid_lat_lng(self):
+        """Test parse_and_validate_collection_centre_csv with invalid lat/lng."""
+        import tempfile
+
+        csv_content = (
+            "name,category,city,address,latitude,longitude,phone\n"
+            "Bad Lat Hub,Electronic Waste,Surat,Ring Road,999,72.83,9876543210\n"
+        )
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.csv', delete=False, encoding='utf-8') as tf:
+            tf.write(csv_content)
+            temp_path = tf.name
+
+        try:
+            rows, errors = parse_and_validate_collection_centre_csv(temp_path)
+            self.assertTrue(any('Latitude must be between -90 and 90' in err for err in errors))
+        finally:
+            os.remove(temp_path)
+
+    @patch('urllib.request.urlopen')
+    def test_24_import_collection_centres_route_success(self, mock_urlopen):
+        """Test /import-collection-centres POST route when Laravel API succeeds."""
+        mock_response = MagicMock()
+        mock_response.read.return_value = json.dumps({
+            'success': True,
+            'imported': 2,
+            'updated': 0,
+            'failed': 0
+        }).encode('utf-8')
+        mock_urlopen.return_value.__enter__.return_value = mock_response
+
+        csv_content = (
+            "name,category,city,address,latitude,longitude,phone\n"
+            "Surat Hub,Electronic Waste,Surat,Ring Road,21.17,72.83,9876543210\n"
+        )
+        data = {
+            'file': (io.BytesIO(csv_content.encode('utf-8')), 'centres.csv')
+        }
+        response = self.client.post('/import-collection-centres', data=data, content_type='multipart/form-data', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Collection Centres imported successfully', response.data)
+        self.assertIn(b'2 new centres created', response.data)
+
+    @patch('urllib.request.urlopen')
+    def test_25_import_collection_centres_route_laravel_validation_error(self, mock_urlopen):
+        """Test /import-collection-centres POST route when Laravel API returns 422 error."""
+        import urllib.error
+        err_body = json.dumps({
+            'success': False,
+            'imported': 0,
+            'updated': 0,
+            'failed': 1,
+            'errors': [{'row': 1, 'field': 'city', 'message': "City 'Nonexistent' not found in database."}]
+        }).encode('utf-8')
+
+        fp = io.BytesIO(err_body)
+        mock_err = urllib.error.HTTPError('http://127.0.0.1:8000/api/admin/collection-centres/import', 422, 'Unprocessable Entity', {}, fp)
+        mock_urlopen.side_effect = mock_err
+
+        csv_content = (
+            "name,category,city,address\n"
+            "Bad Hub,Electronic Waste,Nonexistent,Ring Road\n"
+        )
+        data = {
+            'file': (io.BytesIO(csv_content.encode('utf-8')), 'bad_centres.csv')
+        }
+        response = self.client.post('/import-collection-centres', data=data, content_type='multipart/form-data', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Laravel Validation Error', response.data)
+        self.assertIn(b'Nonexistent', response.data)
+
+    def test_26_import_collection_centres_invalid_extension(self):
+        """Test /import-collection-centres with non-csv file extension."""
+        data = {
+            'file': (io.BytesIO(b'malicious content'), 'script.sh')
+        }
+        response = self.client.post('/import-collection-centres', data=data, content_type='multipart/form-data', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Only .csv files are permitted', response.data)
+
+    def test_27_download_sample_csv_route(self):
+        """Test /download-sample-csv route serves the sample CSV file."""
+        response = self.client.get('/download-sample-csv')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Surat E-Waste Recycling Hub', response.data)
+        self.assertEqual(response.headers['Content-Disposition'], 'attachment; filename=sample_collection_centres.csv')
 
 
 if __name__ == '__main__':

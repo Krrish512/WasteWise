@@ -12,7 +12,8 @@ from flask import (
     url_for,
     session,
     jsonify,
-    flash
+    flash,
+    send_from_directory
 )
 from werkzeug.utils import secure_filename
 
@@ -322,6 +323,220 @@ def upload_csv():
     except Exception as e:
         flash(f"Error processing CSV file: {str(e)}", "error")
         return redirect(url_for('insights'))
+
+
+def parse_and_validate_collection_centre_csv(filepath):
+    """
+    Parse and perform initial Python-side validation on uploaded Collection Centre CSV file.
+    Validates presence of required headers: name, category, city, address.
+    Checks data formats for each row. Returns (valid_rows, error_messages).
+    """
+    valid_rows = []
+    errors = []
+
+    try:
+        with open(filepath, mode='r', encoding='utf-8-sig', errors='replace') as f:
+            reader = csv.reader(f)
+            header_row = next(reader, None)
+
+            if not header_row:
+                return None, ["The uploaded CSV file is empty."]
+
+            headers = [h.strip().lower() for h in header_row]
+
+            # Determine column mapping
+            col_map = {}
+            for idx, h in enumerate(headers):
+                if 'name' in h:
+                    col_map['name'] = idx
+                elif 'category' in h:
+                    col_map['category'] = idx
+                elif 'city' in h:
+                    col_map['city'] = idx
+                elif 'address' in h:
+                    col_map['address'] = idx
+                elif 'lat' in h:
+                    col_map['latitude'] = idx
+                elif 'long' in h or 'lng' in h:
+                    col_map['longitude'] = idx
+                elif 'phone' in h:
+                    col_map['phone'] = idx
+
+            # Check required headers
+            required = ['name', 'category', 'city', 'address']
+            missing = [req for req in required if req not in col_map]
+            if missing:
+                return None, [f"Missing required CSV headers: {', '.join(missing)}. Header row found: {', '.join(header_row)}"]
+
+            row_num = 1
+            for row in reader:
+                row_num += 1
+                if not row or not any(field.strip() for field in row):
+                    continue
+
+                def get_val(key):
+                    idx = col_map.get(key)
+                    if idx is not None and len(row) > idx:
+                        return row[idx].strip()
+                    return ''
+
+                name = get_val('name')
+                category = get_val('category')
+                city = get_val('city')
+                address = get_val('address')
+                phone = get_val('phone')
+                lat_raw = get_val('latitude')
+                lng_raw = get_val('longitude')
+
+                # Basic row checks
+                if not name:
+                    errors.append(f"Row {row_num}: Centre Name is required.")
+                if not category:
+                    errors.append(f"Row {row_num}: Waste Category is required.")
+                if not city:
+                    errors.append(f"Row {row_num}: City is required.")
+                if not address:
+                    errors.append(f"Row {row_num}: Address is required.")
+
+                lat_val = None
+                if lat_raw:
+                    try:
+                        lat_val = float(lat_raw)
+                        if not (-90 <= lat_val <= 90):
+                            errors.append(f"Row {row_num}: Latitude must be between -90 and 90.")
+                    except ValueError:
+                        errors.append(f"Row {row_num}: Latitude must be a numeric value.")
+
+                lng_val = None
+                if lng_raw:
+                    try:
+                        lng_val = float(lng_raw)
+                        if not (-180 <= lng_val <= 180):
+                            errors.append(f"Row {row_num}: Longitude must be between -180 and 180.")
+                    except ValueError:
+                        errors.append(f"Row {row_num}: Longitude must be a numeric value.")
+
+                row_dict = {
+                    'name': name,
+                    'category': category,
+                    'city': city,
+                    'address': address,
+                    'phone': phone if phone else None,
+                    'latitude': lat_val,
+                    'longitude': lng_val,
+                }
+                valid_rows.append(row_dict)
+
+            if not valid_rows and not errors:
+                errors.append("CSV file contains no valid data rows.")
+
+            return valid_rows, errors
+
+    except Exception as e:
+        return None, [f"Error reading CSV file: {str(e)}"]
+
+
+@app.route('/import-collection-centres', methods=['POST'])
+def import_collection_centres():
+    """
+    Flask Collection Centre CSV Import Flow:
+    1. Accept .csv upload with size/extension checks.
+    2. Safely parse and validate rows in Python.
+    3. Forward structured JSON payload to protected Laravel API endpoint.
+    4. Handle response & row-level validation errors cleanly.
+    """
+    if 'file' not in request.files:
+        flash("No file field submitted in request.", "error")
+        return redirect(url_for('insights'))
+
+    file = request.files['file']
+
+    if file.filename == '':
+        flash("No file selected for upload.", "error")
+        return redirect(url_for('insights'))
+
+    if not allowed_file(file.filename):
+        flash("Invalid file type. Only .csv files are permitted.", "error")
+        return redirect(url_for('insights'))
+
+    safe_name = secure_filename(file.filename)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_")
+    filename = f"centres_{timestamp}{safe_name}"
+    save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+    try:
+        file.save(save_path)
+
+        rows, parse_errors = parse_and_validate_collection_centre_csv(save_path)
+
+        if parse_errors or not rows:
+            err_msg = "CSV parsing failed: " + "; ".join(parse_errors[:3])
+            flash(err_msg, "error")
+            return redirect(url_for('insights'))
+
+        # Prepare JSON payload for protected Laravel API
+        payload = json.dumps({'centres': rows}).encode('utf-8')
+        api_url = f"{LARAVEL_API_BASE}/api/admin/collection-centres/import"
+
+        secret_key = os.environ.get('SECRET_KEY', 'dev-wastewise-flask-secret-key-2026')
+        req = urllib.request.Request(api_url, data=payload, headers={
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Admin-Api-Key': secret_key,
+            'User-Agent': 'WasteWise-Flask-Import/1.0',
+        })
+
+        try:
+            with urllib.request.urlopen(req, timeout=15) as response:
+                resp_raw = response.read().decode('utf-8')
+                resp_data = json.loads(resp_raw)
+
+                if resp_data.get('success'):
+                    imported = resp_data.get('imported', 0)
+                    updated = resp_data.get('updated', 0)
+                    flash(
+                        f"Collection Centres imported successfully! "
+                        f"({imported} new centres created, {updated} existing centres updated).",
+                        "success"
+                    )
+                else:
+                    flash(f"Import failed: {resp_data.get('message', 'Validation errors occurred.')}", "error")
+
+        except urllib.error.HTTPError as http_err:
+            try:
+                err_body = http_err.read().decode('utf-8')
+                err_json = json.loads(err_body)
+                errors_list = err_json.get('errors', [])
+                if errors_list and isinstance(errors_list, list):
+                    first_err = errors_list[0]
+                    detail = f"Row {first_err.get('row', '?')} ({first_err.get('field', 'field')}): {first_err.get('message', '')}"
+                    flash(f"Laravel Validation Error: {detail} (Total failed: {len(errors_list)})", "error")
+                else:
+                    flash(f"Import failed with HTTP {http_err.code}: {err_json.get('message', http_err.reason)}", "error")
+            except Exception:
+                flash(f"Laravel API returned error (HTTP {http_err.code}): {http_err.reason}", "error")
+
+        except urllib.error.URLError as url_err:
+            flash(f"Could not connect to main WasteWise application: {url_err.reason}", "error")
+
+        return redirect(url_for('insights'))
+
+    except Exception as e:
+        flash(f"Error during Collection Centre import: {str(e)}", "error")
+        return redirect(url_for('insights'))
+
+
+@app.route('/download-sample-csv', methods=['GET'])
+def download_sample_csv():
+    """
+    Provide downloadable sample CSV template for Collection Centre bulk import.
+    """
+    return send_from_directory(
+        BASE_DIR,
+        'sample_collection_centres.csv',
+        as_attachment=True,
+        download_name='sample_collection_centres.csv'
+    )
 
 # -----------------------------------------------------------------------------
 # 5.3 & 5.4 JSON API Endpoints

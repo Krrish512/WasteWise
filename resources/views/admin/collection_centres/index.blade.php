@@ -15,9 +15,14 @@
                 </h1>
                 <p style="color:var(--text-muted);font-size:.95rem;">Manage authorised waste collection centres and locations</p>
             </div>
-            <a href="{{ route('admin.collection-centres.create') }}" style="background:var(--primary);color:#fff;padding:.75rem 1.4rem;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;display:inline-flex;align-items:center;gap:.5rem;box-shadow:var(--shadow-sm);">
-                ✨ Add Collection Centre
-            </a>
+            <div style="display:flex;gap:.75rem;align-items:center;">
+                <a href="http://127.0.0.1:5000/insights#import-section" target="_blank" style="background:var(--bg-base);color:var(--text-dark);border:1px solid var(--border);padding:.75rem 1.4rem;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;display:inline-flex;align-items:center;gap:.5rem;box-shadow:var(--shadow-sm);">
+                    📥 Bulk Import CSV ↗
+                </a>
+                <a href="{{ route('admin.collection-centres.create') }}" style="background:var(--primary);color:#fff;padding:.75rem 1.4rem;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;display:inline-flex;align-items:center;gap:.5rem;box-shadow:var(--shadow-sm);">
+                    ✨ Add Collection Centre
+                </a>
+            </div>
         </div>
 
         <!-- Table Card -->
