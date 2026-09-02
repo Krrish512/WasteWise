@@ -1841,3 +1841,102 @@ ul { list-style: none; }
 }
 
 .toast.show { transform: translateY(0); }
+
+/* ── Knowledge Hub Layout & Pagination ────────────────────────────────────── */
+.knowledge-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+@media (max-width: 991px) {
+    .knowledge-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .knowledge-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+}
+
+/* Scoped Knowledge Pagination */
+.knowledge-pagination {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.knowledge-pagination nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 1rem;
+}
+
+/* Hide duplicate unstyled mobile pagination block inside tailwind pagination */
+.knowledge-pagination nav > div:first-child {
+    display: none !important;
+}
+
+.knowledge-pagination nav > div:last-child {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.knowledge-pagination svg {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+    max-width: 20px !important;
+    max-height: 20px !important;
+    display: inline-block !important;
+    vertical-align: middle;
+}
+
+.knowledge-pagination p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.knowledge-pagination span.inline-flex,
+.knowledge-pagination a.inline-flex {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.knowledge-pagination a.inline-flex:hover {
+    background: var(--primary-pale);
+    border-color: var(--border);
+    color: var(--primary-dark);
+}
+
+@media (max-width: 640px) {
+    .knowledge-pagination nav > div:last-child {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+

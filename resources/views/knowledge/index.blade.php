@@ -76,7 +76,7 @@
                 <a href="{{ route('knowledge.index') }}" style="background:var(--primary);color:#fff;padding:.65rem 1.4rem;border-radius:var(--radius-full);font-weight:700;text-decoration:none;font-size:.9rem;">View All Articles</a>
             </div>
         @else
-            <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:2rem;">
+            <div class="knowledge-grid">
                 @foreach($articles as $article)
                     <div style="background:#fff;border:1px solid var(--border-light);border-radius:var(--radius-xl);overflow:hidden;box-shadow:var(--shadow-sm);transition:var(--transition);display:flex;flex-direction:column;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='var(--shadow-md)';" onmouseout="this.style.transform='none';this.style.boxShadow='var(--shadow-sm)';">
                         
@@ -124,7 +124,7 @@
             </div>
 
             @if($articles->hasPages())
-                <div style="margin-top:3rem;">
+                <div class="knowledge-pagination" style="margin-top:3rem;">
                     {{ $articles->links() }}
                 </div>
             @endif
