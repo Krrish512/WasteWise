@@ -168,7 +168,7 @@
                     </span>
                     @if($reportExists)
                         <span style="background:#dcfce7;color:#166534;border:1px solid #86efac;padding:.2rem .75rem;border-radius:var(--radius-full);font-size:.78rem;font-weight:800;">
-                            ✅ Ready (waste_report.txt)
+                            ✅ Ready (waste_report.json)
                         </span>
                     @else
                         <span style="background:#fef2f2;color:#991b1b;border:1px solid #fca5a5;padding:.2rem .75rem;border-radius:var(--radius-full);font-size:.78rem;font-weight:800;">

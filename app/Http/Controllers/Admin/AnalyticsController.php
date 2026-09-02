@@ -23,7 +23,7 @@ class AnalyticsController extends Controller
         $insights = $this->analyticsService->getWasteInsights();
         $academicDemo = $this->analyticsService->demonstratePhpToPythonAcademic();
 
-        $reportPath = storage_path('app/python_reports/waste_report.txt');
+        $reportPath = storage_path('app/python_reports/waste_report.json');
         $reportExists = file_exists($reportPath);
         $reportLastModified = $reportExists ? date('Y-m-d H:i:s', filemtime($reportPath)) : null;
 
@@ -44,7 +44,7 @@ class AnalyticsController extends Controller
 
         if (isset($result['status']) && $result['status'] === 'success') {
             return redirect()->route('admin.analytics.view-report')
-                ->with('success', 'Smart Waste Analytics Report generated successfully using Python integration!');
+                ->with('success', 'WasteWise JSON Analytics Report generated successfully via Python!');
         }
 
         return redirect()->route('admin.analytics.index')
@@ -52,40 +52,47 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * View generated Python report styled in HTML.
+     * View generated Python report as formatted JSON.
      */
     public function viewReport()
     {
         $insights = $this->analyticsService->getWasteInsights();
-        $reportPath = storage_path('app/python_reports/waste_report.txt');
+        $reportPath = storage_path('app/python_reports/waste_report.json');
         $reportExists = file_exists($reportPath);
         $reportLastModified = $reportExists ? date('Y-m-d H:i:s', filemtime($reportPath)) : null;
         $reportSize = $reportExists ? filesize($reportPath) : 0;
-        $reportContent = $reportExists ? file_get_contents($reportPath) : null;
+        
+        $reportJsonString = null;
+        if ($reportExists) {
+            $rawContent = file_get_contents($reportPath);
+            $decoded = json_decode($rawContent, true);
+            // Ensure clean pretty printing
+            $reportJsonString = is_array($decoded) ? json_encode($decoded, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : $rawContent;
+        }
 
         return view('admin.analytics.report', compact(
             'insights',
             'reportExists',
             'reportLastModified',
             'reportSize',
-            'reportContent'
+            'reportJsonString'
         ));
     }
 
     /**
-     * Download the raw generated text report file.
+     * Download the raw generated JSON report file.
      */
     public function downloadReport()
     {
-        $reportPath = storage_path('app/python_reports/waste_report.txt');
+        $reportPath = storage_path('app/python_reports/waste_report.json');
 
         if (!file_exists($reportPath)) {
             return redirect()->route('admin.analytics.view-report')
                 ->with('error', 'Report file does not exist yet. Please generate a report first.');
         }
 
-        return response()->download($reportPath, 'WasteWise_Analytics_Report.txt', [
-            'Content-Type' => 'text/plain; charset=UTF-8',
+        return response()->download($reportPath, 'waste_report.json', [
+            'Content-Type' => 'application/json; charset=UTF-8',
         ]);
     }
 }

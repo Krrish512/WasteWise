@@ -98,14 +98,30 @@ class PythonAnalyticsService
     }
 
     /**
-     * Generate PHP report via Python (Unit 4.2 Subprocess & OS Module).
+     * Generate WasteWise JSON report via Python (Unit 4.2 Subprocess & OS Module).
      */
     public function generatePythonReport(): array
     {
+        $searches = SearchHistory::with(['wasteItem.category', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $searchData = $searches->map(function ($s) {
+            return [
+                'search_id'       => $s->id,
+                'user_name'       => $s->user ? $s->user->name : 'Guest User',
+                'waste_item_name' => $s->wasteItem ? $s->wasteItem->name : 'General Item',
+                'category_name'   => ($s->wasteItem && $s->wasteItem->category) ? $s->wasteItem->category->name : 'Uncategorized',
+                'searched_at'     => $s->created_at ? $s->created_at->toDateTimeString() : null,
+            ];
+        })->toArray();
+
+        $base64Payload = base64_encode(json_encode($searchData));
+
         $pythonBin = $this->getPythonBinary();
         $scriptPath = base_path('scripts/run_php_report.py');
 
-        $safeCommand = escapeshellcmd($pythonBin . ' ' . $scriptPath);
+        $safeCommand = escapeshellcmd($pythonBin . ' ' . $scriptPath) . ' ' . escapeshellarg($base64Payload);
 
         try {
             $rawOutput = shell_exec($safeCommand);

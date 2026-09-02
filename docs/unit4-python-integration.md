@@ -55,7 +55,7 @@ This document provides a technical walkthrough of the Course 504 Unit 4 syllabus
                    v
 +--------------------------------------+
 | storage/app/python_reports/          |
-| waste_report.txt                     |
+| waste_report.json                    |
 +--------------------------------------+
 ```
 

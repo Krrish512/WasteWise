@@ -75,41 +75,47 @@ class AdminAnalyticsTest extends TestCase
         $response->assertSee('Plastic Waste');
     }
 
-    public function test_admin_can_generate_python_report_via_subprocess(): void
+    public function test_admin_can_generate_python_json_report_via_subprocess(): void
     {
         $response = $this->actingAs($this->admin)->post('/admin/analytics/generate-report');
         $response->assertRedirect(route('admin.analytics.view-report'));
         $response->assertSessionHas('success');
 
-        $reportPath = storage_path('app/python_reports/waste_report.txt');
+        $reportPath = storage_path('app/python_reports/waste_report.json');
         $this->assertFileExists($reportPath);
+        
+        $json = json_decode(file_get_contents($reportPath), true);
+        $this->assertIsArray($json);
+        $this->assertArrayHasKey('generated_at', $json);
+        $this->assertArrayHasKey('total_searches', $json);
+        $this->assertArrayHasKey('category_breakdown', $json);
     }
 
-    public function test_admin_can_view_styled_html_python_report(): void
+    public function test_admin_can_view_styled_json_python_report(): void
     {
         // First generate
         $this->actingAs($this->admin)->post('/admin/analytics/generate-report');
 
         $response = $this->actingAs($this->admin)->get('/admin/analytics/report');
         $response->assertStatus(200);
-        $response->assertSee('Executive Analytics Report');
-        $response->assertSee('Total Searches');
-        $response->assertSee('Download Report');
+        $response->assertSee('waste_report.json');
+        $response->assertSee('total_searches');
+        $response->assertSee('Download JSON Report');
     }
 
-    public function test_admin_can_download_generated_python_report(): void
+    public function test_admin_can_download_generated_python_json_report(): void
     {
         // First generate
         $this->actingAs($this->admin)->post('/admin/analytics/generate-report');
 
         $response = $this->actingAs($this->admin)->get('/admin/analytics/download-report');
         $response->assertStatus(200);
-        $response->assertHeader('content-disposition', 'attachment; filename=WasteWise_Analytics_Report.txt');
+        $response->assertHeader('content-disposition', 'attachment; filename=waste_report.json');
     }
 
     public function test_missing_report_shows_friendly_message(): void
     {
-        $reportPath = storage_path('app/python_reports/waste_report.txt');
+        $reportPath = storage_path('app/python_reports/waste_report.json');
         if (file_exists($reportPath)) {
             unlink($reportPath);
         }
