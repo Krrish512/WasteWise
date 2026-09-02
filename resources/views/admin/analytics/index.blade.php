@@ -7,13 +7,13 @@
     <div class="container" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
         <div>
             <div style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);padding:.3rem .8rem;border-radius:var(--radius-full);font-size:.8rem;font-weight:700;margin-bottom:.6rem;color:#dcfce7;">
-                🐍 Course 504 Unit 4 • PHP ↔ Python Integration
+                🐍 Smart Analytics Engine
             </div>
             <h1 class="admin-dash-title" style="font-family:'Outfit',sans-serif;font-size:2.2rem;font-weight:900;margin:0;">
                 📊 Smart Waste Insights & Analytics
             </h1>
             <p class="admin-dash-sub" style="color:#a7f3d0;font-size:1rem;margin-top:.4rem;max-width:650px;">
-                Real-time MySQL search data analyzed dynamically using Python scripts via PHP <code>shell_exec()</code>, <code>subprocess</code>, and the <code>os</code> module.
+                Real-time search data analyzed dynamically using WasteWise's Python analytics integration.
             </p>
         </div>
         <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
@@ -90,7 +90,7 @@
         </div>
         <div style="flex:1;">
             <div style="font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#065f46;margin-bottom:.3rem;">
-                🐍 Python Generated Smart Insight (scripts/waste_insights.py)
+                💡 Python Generated Insight
             </div>
             <div style="font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:800;color:#064e3b;line-height:1.4;">
                 "{{ $insights['insight'] ?? 'No search history recorded yet.' }}"
@@ -103,8 +103,8 @@
         </div>
     </div>
 
-    <!-- Main Two Column Grid: Category Distribution & Python Subprocess Report -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:3rem;">
+    <!-- Main Two Column Grid: Category Distribution & Python Report Generator -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
         
         <!-- Left: Category Distribution Table -->
         <div style="background:#fff;border:1px solid var(--border-light);border-radius:var(--radius-xl);padding:2rem;box-shadow:var(--shadow-sm);">
@@ -152,16 +152,16 @@
             @endif
         </div>
 
-        <!-- Right: Python 4.2 Subprocess & OS Module Report Generator -->
+        <!-- Right: Python Report Generator -->
         <div style="background:#fff;border:1px solid var(--border-light);border-radius:var(--radius-xl);padding:2rem;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;">
             <h3 style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text-dark);margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem;">
-                ⚙️ Unit 4.2 Subprocess & OS Module Report
+                🧾 Python Report Generator
             </h3>
             <p style="color:var(--text-muted);font-size:.92rem;margin-bottom:1.5rem;line-height:1.5;">
-                Demonstrates Python executing PHP commands via <code>subprocess.check_output()</code> &amp; <code>Popen()</code>, and writing files using <code>os.makedirs()</code>, <code>os.walk()</code>, and <code>os.write()</code>.
+                Generate a waste activity report using WasteWise's Python integration.
             </p>
 
-            <div style="background:#f8fafc;border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.5rem;flex:1;">
+            <div style="background:#f8fafc;border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:1.25rem;flex:1;display:flex;flex-direction:column;">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;">
                     <span style="font-size:.85rem;font-weight:700;color:var(--text-mid);">
                         📄 Report File Status:
@@ -179,8 +179,7 @@
 
                 @if($reportExists)
                     <div style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem;">
-                        📅 Last Updated: <strong>{{ $reportLastModified }}</strong><br>
-                        📁 Location: <code>storage/app/python_reports/waste_report.txt</code>
+                        📅 Last Updated: <strong>{{ $reportLastModified }}</strong>
                     </div>
                 @endif
 
@@ -189,71 +188,19 @@
                     <form action="{{ route('admin.analytics.generate-report') }}" method="POST" style="margin:0;">
                         @csrf
                         <button type="submit" style="background:var(--primary);color:#fff;border:none;padding:.75rem 1.4rem;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;box-shadow:var(--shadow-sm);">
-                            ⚙️ Generate Python Report
+                            ⚙️ Generate Report
                         </button>
                     </form>
 
                     @if($reportExists)
                         <a href="{{ route('admin.analytics.view-report') }}" target="_blank" style="background:#fff;color:var(--primary-dark);border:1.5px solid var(--primary);padding:.75rem 1.4rem;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;">
-                            📄 View Report Output
+                            📄 View Report
                         </a>
                     @endif
                 </div>
             </div>
-
-            <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:var(--radius-md);padding:1rem 1.25rem;font-size:.85rem;color:#9a3412;line-height:1.5;">
-                📌 <strong>Security Guarantee:</strong> All Python &amp; subprocess calls execute hardcoded, validated scripts with controlled parameters. No untrusted input is passed to shell commands.
-            </div>
         </div>
 
-    </div>
-
-    <!-- Unit 4 Syllabus Viva Documentation Card -->
-    <div style="background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-xl);padding:2.5rem;box-shadow:var(--shadow-sm);">
-        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:1.5rem;">
-            <div style="font-size:1.8rem;">🎓</div>
-            <div>
-                <h3 style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:900;color:var(--text-dark);margin:0;">
-                    Course 504 Unit 4 Syllabus Technical Integration Audit
-                </h3>
-                <div style="font-size:.88rem;color:var(--text-muted);font-weight:500;">
-                    Complete coverage of Unit 4 PHP ↔ Python inter-process execution requirements for Viva verification.
-                </div>
-            </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:1.5rem;">
-            
-            <!-- 4.1 PHP -> Python -->
-            <div style="background:#f8fafc;border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:1.5rem;">
-                <h4 style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;color:var(--primary-dark);margin-bottom:.75rem;">
-                    🔹 4.1 Executing Python using PHP
-                </h4>
-                <ul style="font-size:.88rem;color:var(--text-mid);line-height:1.7;list-style:disc;padding-left:1.25rem;">
-                    <li><strong>4.1.1 Output Capture &amp; Echo:</strong> PHP captures Python <code>stdout</code> via <code>shell_exec()</code> and decodes JSON output.</li>
-                    <li><strong>4.1.2 Command Security:</strong> Uses <code>escapeshellcmd()</code> for script path and <code>escapeshellarg()</code> for base64 payload.</li>
-                    <li><strong>Script Path:</strong> <code>scripts/waste_insights.py</code></li>
-                    <li><strong>Command Executed:</strong><br>
-                        <code style="font-size:.78rem;background:#e2e8f0;padding:.2rem .4rem;border-radius:4px;word-break:break-all;">
-                            {{ $academicDemo['prepared_command'] ?? 'N/A' }}
-                        </code>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- 4.2 Python -> PHP Subprocess & OS -->
-            <div style="background:#f8fafc;border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:1.5rem;">
-                <h4 style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;color:#1d4ed8;margin-bottom:.75rem;">
-                    🔹 4.2 Python subprocess &amp; os Modules
-                </h4>
-                <ul style="font-size:.88rem;color:var(--text-mid);line-height:1.7;list-style:disc;padding-left:1.25rem;">
-                    <li><strong>4.2.1 subprocess:</strong> <code>check_call()</code>, <code>check_output()</code>, <code>decode()</code>, <code>Popen()</code>, <code>communicate()</code>, <code>split()</code> demonstrated in <code>scripts/run_php_report.py</code>.</li>
-                    <li><strong>4.2.2 os module:</strong> <code>os.path.join()</code>, <code>os.path.exists()</code>, <code>os.path.isfile()</code>, <code>os.path.isdir()</code>, <code>os.makedirs()</code>, <code>os.mkdir()</code>, <code>os.listdir()</code>, <code>os.walk()</code>, <code>os.chdir()</code>, <code>os.write()</code>, <code>os.close()</code>.</li>
-                    <li><strong>Report Path:</strong> <code>storage/app/python_reports/waste_report.txt</code></li>
-                </ul>
-            </div>
-
-        </div>
     </div>
 
 </div>
