@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="wastewise-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#16a34a" />
+      <stop offset="100%" stop-color="#0d9488" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#wastewise-grad)" />
+  <path d="M44 16 C30 16 18 26 18 41 C18 45 21 48 26 48 C40 48 48 34 48 20 C48 17.8 46.2 16 44 16 Z" fill="#ffffff" />
+  <path d="M22 44 C 30 36, 38 28, 44 20" stroke="#15803d" stroke-width="3.5" stroke-linecap="round" fill="none" />
+</svg>
