@@ -133,9 +133,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('knowledge-articles', AdminKnowledgeArticleController::class);
         Route::patch('/knowledge-articles/{knowledgeArticle}/toggle-published', [AdminKnowledgeArticleController::class, 'togglePublished'])->name('knowledge-articles.toggle-published');
 
-        // Phase 12: Smart Waste Analytics & Python Integration (Unit 4)
+        // Phase 12: Smart Waste Analytics & Python Integration
         Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
         Route::post('/analytics/generate-report', [AnalyticsController::class, 'generateReport'])->name('analytics.generate-report');
+        Route::get('/analytics/report', [AnalyticsController::class, 'viewReport'])->name('analytics.report');
         Route::get('/analytics/view-report', [AnalyticsController::class, 'viewReport'])->name('analytics.view-report');
+        Route::get('/analytics/download-report', [AnalyticsController::class, 'downloadReport'])->name('analytics.download-report');
     });
 });

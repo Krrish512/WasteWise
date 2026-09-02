@@ -78,21 +78,46 @@ class AdminAnalyticsTest extends TestCase
     public function test_admin_can_generate_python_report_via_subprocess(): void
     {
         $response = $this->actingAs($this->admin)->post('/admin/analytics/generate-report');
-        $response->assertRedirect('/admin/analytics');
+        $response->assertRedirect(route('admin.analytics.view-report'));
         $response->assertSessionHas('success');
 
         $reportPath = storage_path('app/python_reports/waste_report.txt');
         $this->assertFileExists($reportPath);
     }
 
-    public function test_admin_can_view_generated_python_report(): void
+    public function test_admin_can_view_styled_html_python_report(): void
     {
         // First generate
         $this->actingAs($this->admin)->post('/admin/analytics/generate-report');
 
-        $response = $this->actingAs($this->admin)->get('/admin/analytics/view-report');
+        $response = $this->actingAs($this->admin)->get('/admin/analytics/report');
         $response->assertStatus(200);
-        $response->assertSee('WASTEWISE SMART WASTE ANALYTICS REPORT');
+        $response->assertSee('Executive Analytics Report');
+        $response->assertSee('Total Searches');
+        $response->assertSee('Download Report');
+    }
+
+    public function test_admin_can_download_generated_python_report(): void
+    {
+        // First generate
+        $this->actingAs($this->admin)->post('/admin/analytics/generate-report');
+
+        $response = $this->actingAs($this->admin)->get('/admin/analytics/download-report');
+        $response->assertStatus(200);
+        $response->assertHeader('content-disposition', 'attachment; filename=WasteWise_Analytics_Report.txt');
+    }
+
+    public function test_missing_report_shows_friendly_message(): void
+    {
+        $reportPath = storage_path('app/python_reports/waste_report.txt');
+        if (file_exists($reportPath)) {
+            unlink($reportPath);
+        }
+
+        $response = $this->actingAs($this->admin)->get('/admin/analytics/report');
+        $response->assertStatus(200);
+        $response->assertSee('Report Not Available Yet');
+        $response->assertSee('Report not available yet. Please generate a report first.');
     }
 
     public function test_existing_functionality_does_not_regress(): void

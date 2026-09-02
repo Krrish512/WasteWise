@@ -75,7 +75,7 @@ def run_python_php_report_utility():
 
     report_content = f"""==================================================
 WASTEWISE SMART WASTE ANALYTICS REPORT
-Generated via Python (Unit 4.2 Subprocess & OS Module)
+Generated via WasteWise Python Integration
 Date: {now_str}
 ==================================================
 

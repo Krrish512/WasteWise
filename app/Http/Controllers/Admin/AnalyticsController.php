@@ -43,8 +43,8 @@ class AnalyticsController extends Controller
         $result = $this->analyticsService->generatePythonReport();
 
         if (isset($result['status']) && $result['status'] === 'success') {
-            return redirect()->route('admin.analytics.index')
-                ->with('success', 'Python Analytics Report generated successfully via subprocess & OS module!');
+            return redirect()->route('admin.analytics.view-report')
+                ->with('success', 'Smart Waste Analytics Report generated successfully using Python integration!');
         }
 
         return redirect()->route('admin.analytics.index')
@@ -52,22 +52,40 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * View generated Python report content.
+     * View generated Python report styled in HTML.
      */
     public function viewReport()
+    {
+        $insights = $this->analyticsService->getWasteInsights();
+        $reportPath = storage_path('app/python_reports/waste_report.txt');
+        $reportExists = file_exists($reportPath);
+        $reportLastModified = $reportExists ? date('Y-m-d H:i:s', filemtime($reportPath)) : null;
+        $reportSize = $reportExists ? filesize($reportPath) : 0;
+        $reportContent = $reportExists ? file_get_contents($reportPath) : null;
+
+        return view('admin.analytics.report', compact(
+            'insights',
+            'reportExists',
+            'reportLastModified',
+            'reportSize',
+            'reportContent'
+        ));
+    }
+
+    /**
+     * Download the raw generated text report file.
+     */
+    public function downloadReport()
     {
         $reportPath = storage_path('app/python_reports/waste_report.txt');
 
         if (!file_exists($reportPath)) {
-            return redirect()->route('admin.analytics.index')
-                ->with('error', 'Report file does not exist yet. Please generate the Python report first.');
+            return redirect()->route('admin.analytics.view-report')
+                ->with('error', 'Report file does not exist yet. Please generate a report first.');
         }
 
-        $content = file_get_contents($reportPath);
-
-        return response($content, 200, [
+        return response()->download($reportPath, 'WasteWise_Analytics_Report.txt', [
             'Content-Type' => 'text/plain; charset=UTF-8',
-            'Content-Disposition' => 'inline; filename="waste_report.txt"',
         ]);
     }
 }
