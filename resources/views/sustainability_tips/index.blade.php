@@ -3,28 +3,28 @@
 @section('title', '🌱 Sustainability Tips & Eco Guide – WasteWise')
 
 @section('content')
-<section class="section" style="padding-block:2.25rem 3.5rem;">
+<section class="section">
     <div class="container">
         
         <!-- Hero Header Banner -->
-        <div style="background:linear-gradient(135deg, #064e3b 0%, #047857 50%, #10b981 100%);color:#fff;border-radius:var(--radius-xl);padding:2rem 1.5rem;text-align:center;margin-bottom:1.75rem;box-shadow:var(--shadow-md);">
-            <div style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.18);backdrop-filter:blur(10px);padding:.3rem .9rem;border-radius:var(--radius-full);font-size:.8rem;font-weight:600;margin-bottom:.75rem;color:#dcfce7;">
+        <div class="hero-compact">
+            <div class="hero-compact-badge">
                 🌱 Sustainable Living & Eco Advice
             </div>
-            <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.6rem, 3.2vw, 2.1rem);font-weight:800;line-height:1.2;margin-bottom:.5rem;">
+            <h1 class="hero-compact-title">
                 Sustainability Tips & Practical Eco Guides
             </h1>
-            <p style="color:#dcfce7;font-size:.95rem;max-width:620px;margin:0 auto 1.25rem;line-height:1.55;">
+            <p class="hero-compact-subtitle" style="margin-bottom: 1.15rem;">
                 Empower your journey toward zero waste with actionable tips on composting, reducing plastic consumption, conserving energy, and smart waste management.
             </p>
             
             <!-- Quick Search Bar -->
-            <form action="{{ route('sustainability-tips.index') }}" method="GET" style="max-width:500px;margin:0 auto;display:flex;gap:.4rem;background:#fff;padding:.35rem;border-radius:var(--radius-full);box-shadow:0 6px 20px rgba(0,0,0,0.12);">
+            <form action="{{ route('sustainability-tips.index') }}" method="GET" style="max-width:500px;margin:0 auto;display:flex;gap:.4rem;background:#fff;padding:.3rem;border-radius:var(--radius-full);box-shadow:0 6px 20px rgba(0,0,0,0.12);">
                 @if(request('category'))
                     <input type="hidden" name="category" value="{{ request('category') }}">
                 @endif
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="🔍 Search eco tips, composting, zero waste..." style="flex:1;border:none;padding:.5rem 1rem;font-size:.875rem;border-radius:var(--radius-full);outline:none;color:var(--text-dark);">
-                <button type="submit" style="background:var(--primary-dark);color:#fff;border:none;padding:.5rem 1.2rem;border-radius:var(--radius-full);font-weight:700;font-size:.85rem;cursor:pointer;transition:var(--transition);">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="🔍 Search eco tips, composting, zero waste..." style="flex:1;border:none;padding:.45rem drop-inline;font-size:14px;border-radius:var(--radius-full);outline:none;color:var(--text-dark);">
+                <button type="submit" style="background:var(--primary-dark);color:#fff;border:none;padding:.45rem 1.15rem;border-radius:var(--radius-full);font-weight:700;font-size:13.5px;cursor:pointer;transition:var(--transition);">
                     Search
                 </button>
             </form>

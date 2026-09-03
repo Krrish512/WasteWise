@@ -3,18 +3,18 @@
 @section('title', 'Announcements & Updates – WasteWise')
 
 @section('content')
-<section class="section" style="padding-block:2rem 3rem;">
+<section class="section">
     <div class="container">
         
         <!-- Hero Header -->
-        <div style="background:linear-gradient(135deg, #065f46 0%, #16a34a 100%);color:#fff;border-radius:var(--radius-xl);padding:2.5rem 2rem;text-align:center;margin-bottom:2rem;box-shadow:var(--shadow-md);max-width:1200px;margin-inline:auto;">
-            <div style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.2);backdrop-filter:blur(10px);padding:.3rem .85rem;border-radius:var(--radius-full);font-size:.8rem;font-weight:600;margin-bottom:.75rem;color:#dcfce7;">
+        <div class="hero-compact">
+            <div class="hero-compact-badge">
                 📢 Community Bulletins & Eco News
             </div>
-            <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(2rem, 3.2vw, 2.35rem);font-weight:800;line-height:1.2;margin-bottom:.5rem;">
+            <h1 class="hero-compact-title">
                 Announcements & Updates
             </h1>
-            <p style="color:#dcfce7;font-size:1rem;max-width:600px;margin:0 auto;line-height:1.55;">
+            <p class="hero-compact-subtitle">
                 Stay informed with the latest recycling initiatives, community drop-off drives, and sustainable waste management guidelines.
             </p>
         </div>
