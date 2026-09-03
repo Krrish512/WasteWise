@@ -3,31 +3,31 @@
 @section('title', 'Admin Dashboard – WasteWise')
 
 @section('content')
-<section class="section" style="padding-block:2.5rem 5rem;">
+<section class="section" style="padding-block:2rem 3.5rem;">
     <div class="container">
         
         <!-- Welcome Hero Banner -->
-        <div style="background:linear-gradient(135deg, #065f46 0%, #16a34a 100%);color:#fff;border-radius:var(--radius-xl);padding:2.5rem;box-shadow:var(--shadow-lg);margin-bottom:2.5rem;position:relative;overflow:hidden;">
-            <div style="position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1.5rem;">
+        <div style="background:linear-gradient(135deg, #065f46 0%, #16a34a 100%);color:#fff;border-radius:var(--radius-xl);padding:1.75rem 1.5rem;box-shadow:var(--shadow-md);margin-bottom:1.75rem;position:relative;overflow:hidden;">
+            <div style="position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1.25rem;">
                 <div>
-                    <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.2);backdrop-filter:blur(10px);padding:.35rem .9rem;border-radius:var(--radius-full);font-size:.85rem;font-weight:600;margin-bottom:1rem;color:#dcfce7;">
+                    <div style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.2);backdrop-filter:blur(10px);padding:.3rem .85rem;border-radius:var(--radius-full);font-size:.8rem;font-weight:600;margin-bottom:.75rem;color:#dcfce7;">
                         🔒 WasteWise Administrator
                     </div>
-                    <h1 style="font-family:'Outfit',sans-serif;font-size:2.2rem;font-weight:800;line-height:1.2;margin-bottom:.5rem;">
+                    <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.5rem, 3vw, 1.85rem);font-weight:800;line-height:1.2;margin-bottom:.4rem;">
                         WasteWise Management Console
                     </h1>
-                    <p style="color:#dcfce7;font-size:1.05rem;max-width:550px;">
+                    <p style="color:#dcfce7;font-size:.925rem;max-width:520px;line-height:1.5;">
                         Logged in as <strong style="color:#fff;">{{ auth()->user()->email }}</strong>. Full real-time oversight of waste items, categories, centres, users, and feedback.
                     </p>
                 </div>
 
-                <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
-                    <a href="{{ route('admin.analytics.index') }}" style="background:#fff;color:var(--primary-dark);padding:.75rem 1.4rem;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;box-shadow:var(--shadow-sm);">
+                <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;">
+                    <a href="{{ route('admin.analytics.index') }}" style="background:#fff;color:var(--primary-dark);padding:.55rem 1.15rem;border-radius:var(--radius-full);font-weight:700;font-size:.85rem;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;box-shadow:var(--shadow-sm);">
                         📊 Smart Waste Insights (Python)
                     </a>
                     <form action="{{ route('admin.logout') }}" method="POST" style="margin:0;">
                         @csrf
-                        <button type="submit" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:.75rem 1.4rem;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;transition:var(--transition);" onmouseover="this.style.background='rgba(255,255,255,.25)';" onmouseout="this.style.background='rgba(255,255,255,.15)';">
+                        <button type="submit" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:.55rem 1.15rem;border-radius:var(--radius-full);font-weight:700;font-size:.85rem;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;transition:var(--transition);" onmouseover="this.style.background='rgba(255,255,255,.25)';" onmouseout="this.style.background='rgba(255,255,255,.15)';">
                             🚪 Logout Admin
                         </button>
                     </form>

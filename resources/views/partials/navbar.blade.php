@@ -21,7 +21,7 @@
 
                 @guest
                     <a class="nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">🔑 Login</a>
-                    <a class="nav-link {{ request()->routeIs('register') ? 'active' : '' }}" href="{{ route('register') }}" style="background:var(--primary);color:#fff;padding:.4rem .9rem;border-radius:var(--radius-full);font-weight:600;">✨ Register</a>
+                    <a class="nav-link nav-link-cta {{ request()->routeIs('register') ? 'active' : '' }}" href="{{ route('register') }}">✨ Register</a>
                 @endguest
 
                 @auth
@@ -29,13 +29,13 @@
                         <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">🔒 Admin Dashboard</a>
                         <form action="{{ route('logout') }}" method="POST" style="display:inline;">
                             @csrf
-                            <button type="submit" class="nav-link" style="background:none;border:none;cursor:pointer;color:#dc2626;font-weight:600;">🚪 Logout</button>
+                            <button type="submit" class="nav-link nav-link-logout">🚪 Logout</button>
                         </form>
                     @else
                         <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">👤 Dashboard</a>
                         <form action="{{ route('logout') }}" method="POST" style="display:inline;">
                             @csrf
-                            <button type="submit" class="nav-link" style="background:none;border:none;cursor:pointer;color:#dc2626;font-weight:600;">🚪 Logout</button>
+                            <button type="submit" class="nav-link nav-link-logout">🚪 Logout</button>
                         </form>
                     @endif
                 @endauth

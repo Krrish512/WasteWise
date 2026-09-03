@@ -3,26 +3,26 @@
 @section('title', 'User Dashboard – WasteWise')
 
 @section('content')
-<section class="section" style="padding-block:2.5rem 5rem;">
+<section class="section" style="padding-block:2rem 3.5rem;">
     <div class="container">
         
         <!-- Welcome Hero Banner -->
-        <div style="background:linear-gradient(135deg, #065f46 0%, #16a34a 100%);color:#fff;border-radius:var(--radius-xl);padding:2.5rem;box-shadow:var(--shadow-lg);margin-bottom:2.5rem;position:relative;overflow:hidden;">
-            <div style="position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1.5rem;">
+        <div style="background:linear-gradient(135deg, #065f46 0%, #16a34a 100%);color:#fff;border-radius:var(--radius-xl);padding:1.75rem 1.5rem;box-shadow:var(--shadow-md);margin-bottom:1.75rem;position:relative;overflow:hidden;">
+            <div style="position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1.25rem;">
                 <div>
-                    <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.2);backdrop-filter:blur(10px);padding:.35rem .9rem;border-radius:var(--radius-full);font-size:.85rem;font-weight:600;margin-bottom:1rem;color:#dcfce7;">
+                    <div style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.2);backdrop-filter:blur(10px);padding:.3rem .85rem;border-radius:var(--radius-full);font-size:.8rem;font-weight:600;margin-bottom:.75rem;color:#dcfce7;">
                         🌱 WasteWise Eco Dashboard
                     </div>
-                    <h1 style="font-family:'Outfit',sans-serif;font-size:2.2rem;font-weight:800;line-height:1.2;margin-bottom:.5rem;">
+                    <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.5rem, 3vw, 1.85rem);font-weight:800;line-height:1.2;margin-bottom:.4rem;">
                         Welcome back, {{ $user->name }}!
                     </h1>
-                    <p style="color:#dcfce7;font-size:1.05rem;max-width:550px;">
+                    <p style="color:#dcfce7;font-size:.925rem;max-width:520px;line-height:1.5;">
                         Logged in as <strong style="color:#fff;">{{ $user->email }}</strong>. Track your waste search activities and discover eco-friendly disposal solutions.
                     </p>
                 </div>
 
-                <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-                    <a href="{{ route('home') }}" style="background:#fff;color:#065f46;padding:.8rem 1.5rem;border-radius:var(--radius-full);font-weight:700;font-size:.95rem;display:inline-flex;align-items:center;gap:.5rem;box-shadow:var(--shadow-md);transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
+                    <a href="{{ route('home') }}" style="background:#fff;color:#065f46;padding:.6rem 1.25rem;border-radius:var(--radius-full);font-weight:700;font-size:.875rem;display:inline-flex;align-items:center;gap:.4rem;box-shadow:var(--shadow-sm);transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
                         🔍 Search Waste Items
                     </a>
                 </div>

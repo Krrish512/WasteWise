@@ -9,6 +9,7 @@ class WasteItem extends Model
     protected $fillable = [
         'name',
         'description',
+        'keywords',
         'category_id',
         'disposal_method_id',
     ];

@@ -3,40 +3,40 @@
 @section('title', 'User Feedback & Suggestions – WasteWise')
 
 @section('content')
-<section class="section" style="padding-block:2.5rem 5rem;">
-    <div class="container" style="max-width:720px;">
+<section class="section" style="padding-block:2.25rem 3.5rem;">
+    <div class="container" style="max-width:680px;">
         
         <!-- Hero Header -->
-        <div style="text-align:center;margin-bottom:2.5rem;">
-            <div style="display:inline-flex;align-items:center;gap:.5rem;background:var(--primary-pale);color:var(--primary-dark);padding:.35rem 1rem;border-radius:var(--radius-full);font-size:.85rem;font-weight:700;margin-bottom:1rem;">
+        <div style="text-align:center;margin-bottom:1.75rem;">
+            <div style="display:inline-flex;align-items:center;gap:.4rem;background:var(--primary-pale);color:var(--primary-dark);padding:.3rem .85rem;border-radius:var(--radius-full);font-size:.8rem;font-weight:700;margin-bottom:.75rem;">
                 💬 Community Feedback
             </div>
-            <h1 style="font-family:'Outfit',sans-serif;font-size:2.3rem;font-weight:800;color:var(--text-dark);line-height:1.2;margin-bottom:.6rem;">
+            <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.5rem, 3vw, 1.9rem);font-weight:800;color:var(--text-dark);line-height:1.2;margin-bottom:.4rem;">
                 User Feedback &amp; Suggestions
             </h1>
-            <p style="color:var(--text-muted);font-size:1.05rem;max-width:550px;margin:0 auto;">
+            <p style="color:var(--text-muted);font-size:.925rem;max-width:500px;margin:0 auto;line-height:1.55;">
                 Share your experience using WasteWise. Your feedback helps us build a cleaner, greener waste management ecosystem.
             </p>
         </div>
 
         <!-- Form Card -->
-        <div style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:2.5rem;box-shadow:var(--shadow-md);">
+        <div style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.75rem 1.5rem;box-shadow:var(--shadow-md);">
             
             <form action="{{ route('feedback.store') }}" method="POST">
                 @csrf
 
                 <!-- Contact Info -->
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;">
                     <div>
-                        <label style="display:block;font-weight:600;margin-bottom:.4rem;color:var(--text-dark);">Your Name <span style="color:#dc2626;">*</span></label>
-                        <input type="text" name="name" value="{{ old('name', auth()->check() ? auth()->user()->name : '') }}" required maxlength="255" style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.95rem;" placeholder="e.g. Soumya Sharma">
+                        <label style="display:block;font-weight:600;margin-bottom:.35rem;font-size:.85rem;color:var(--text-dark);">Your Name <span style="color:#dc2626;">*</span></label>
+                        <input type="text" name="name" value="{{ old('name', auth()->check() ? auth()->user()->name : '') }}" required maxlength="255" style="width:100%;padding:.55rem .85rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.875rem;" placeholder="e.g. Soumya Sharma">
                         @error('name')
                             <span style="color:#dc2626;font-size:.85rem;margin-top:.25rem;display:block;">{{ $message }}</span>
                         @enderror
                     </div>
                     <div>
-                        <label style="display:block;font-weight:600;margin-bottom:.4rem;color:var(--text-dark);">Email Address <span style="color:#dc2626;">*</span></label>
-                        <input type="email" name="email" value="{{ old('email', auth()->check() ? auth()->user()->email : '') }}" required maxlength="255" style="width:100%;padding:.75rem 1rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.95rem;" placeholder="e.g. soumya@example.com">
+                        <label style="display:block;font-weight:600;margin-bottom:.35rem;font-size:.85rem;color:var(--text-dark);">Email Address <span style="color:#dc2626;">*</span></label>
+                        <input type="email" name="email" value="{{ old('email', auth()->check() ? auth()->user()->email : '') }}" required maxlength="255" style="width:100%;padding:.55rem .85rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.875rem;" placeholder="e.g. soumya@example.com">
                         @error('email')
                             <span style="color:#dc2626;font-size:.85rem;margin-top:.25rem;display:block;">{{ $message }}</span>
                         @enderror

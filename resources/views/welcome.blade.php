@@ -420,6 +420,8 @@
                     <p class="not-found-desc" id="not-found-msg">
                         Sorry, we couldn't find this waste item. Try another name such as Old Laptop, Old Mobile, Plastic Bottle, or Newspaper.
                     </p>
+                    <div id="not-found-suggestions"></div>
+                    <div id="not-found-admin-note" style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1.5rem;font-style:italic;max-width:550px;margin-left:auto;margin-right:auto"></div>
                     <div class="chips" style="justify-content:center;margin-bottom:1.5rem">
                         <button class="chip" data-chip="Old Laptop">💻 Old Laptop</button>
                         <button class="chip" data-chip="Old Mobile">📱 Old Mobile</button>

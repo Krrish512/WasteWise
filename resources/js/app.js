@@ -211,7 +211,7 @@ async function doSearch(query) {
 
         if (resp.status === 404) {
             const data = await resp.json().catch(() => ({}));
-            showNotFound(data.message);
+            showNotFound(data.message, data.suggestions, data.admin_note);
             return;
         }
 
@@ -223,7 +223,7 @@ async function doSearch(query) {
         const data = await resp.json();
 
         if (!data.success || !data.data) {
-            showNotFound(data.message);
+            showNotFound(data.message, data.suggestions, data.admin_note);
             return;
         }
 
@@ -237,11 +237,31 @@ async function doSearch(query) {
     }
 }
 
-function showNotFound(msg) {
+function showNotFound(msg, suggestions, adminNote) {
     const msgEl = document.getElementById('not-found-msg');
     if (msgEl) {
         msgEl.textContent = msg || 'Sorry, we couldn\'t find this waste item. Try another name such as Old Laptop, Old Mobile, Plastic Bottle, or Newspaper.';
     }
+
+    const suggestionsEl = document.getElementById('not-found-suggestions');
+    if (suggestionsEl) {
+        if (suggestions && suggestions.length > 0) {
+            let html = '<p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:0.75rem;font-weight:600">💡 Suggested items in catalog:</p><div class="chips" style="justify-content:center;margin-bottom:1.5rem">';
+            suggestions.forEach(item => {
+                html += `<button class="chip" onclick="triggerSearch('${item.name}')">🔍 ${item.name}</button>`;
+            });
+            html += '</div>';
+            suggestionsEl.innerHTML = html;
+        } else {
+            suggestionsEl.innerHTML = '';
+        }
+    }
+
+    const adminNoteEl = document.getElementById('not-found-admin-note');
+    if (adminNoteEl) {
+        adminNoteEl.textContent = adminNote || '';
+    }
+
     showResultState('notFound');
 }
 
