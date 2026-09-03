@@ -10,32 +10,32 @@
 
             <!-- Desktop Nav Links -->
             <div class="nav-links">
-                <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}" id="nav-home">🏠 Home</a>
-                <a class="nav-link {{ request()->routeIs('knowledge.*') ? 'active' : '' }}" href="{{ route('knowledge.index') }}">📚 Knowledge Hub</a>
-                <a class="nav-link {{ request()->routeIs('sustainability-tips.*') ? 'active' : '' }}" href="{{ route('sustainability-tips.index') }}">🌱 Tips</a>
-                <a class="nav-link {{ request()->routeIs('announcements.*') ? 'active' : '' }}" href="{{ route('announcements.index') }}">📢 Updates</a>
-                <a class="nav-link" href="{{ url('/#how') }}" id="nav-how">⚙️ How It Works</a>
-                <a class="nav-link" href="{{ url('/#centres') }}" id="nav-centres">📍 Collection Centres</a>
-                <a class="nav-link" href="{{ url('/#about') }}" id="nav-about">ℹ️ About</a>
-                <a class="nav-link {{ request()->routeIs('feedback.*') ? 'active' : '' }}" href="{{ route('feedback.create') }}">💬 Feedback</a>
+                <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}" id="nav-home">Home</a>
+                <a class="nav-link {{ request()->routeIs('knowledge.*') ? 'active' : '' }}" href="{{ route('knowledge.index') }}">Knowledge Hub</a>
+                <a class="nav-link {{ request()->routeIs('sustainability-tips.*') ? 'active' : '' }}" href="{{ route('sustainability-tips.index') }}">Tips</a>
+                <a class="nav-link {{ request()->routeIs('announcements.*') ? 'active' : '' }}" href="{{ route('announcements.index') }}">Updates</a>
+                <a class="nav-link" href="{{ url('/#how') }}" id="nav-how">How It Works</a>
+                <a class="nav-link" href="{{ url('/#centres') }}" id="nav-centres">Collection Centres</a>
+                <a class="nav-link" href="{{ url('/#about') }}" id="nav-about">About</a>
+                <a class="nav-link {{ request()->routeIs('feedback.*') ? 'active' : '' }}" href="{{ route('feedback.create') }}">Feedback</a>
 
                 @guest
-                    <a class="nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">🔑 Login</a>
-                    <a class="nav-link nav-link-cta {{ request()->routeIs('register') ? 'active' : '' }}" href="{{ route('register') }}">✨ Register</a>
+                    <a class="nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">Login</a>
+                    <a class="nav-link nav-link-cta {{ request()->routeIs('register') ? 'active' : '' }}" href="{{ route('register') }}">Register</a>
                 @endguest
 
                 @auth
                     @if(auth()->user()->isAdmin())
-                        <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">🔒 Admin Dashboard</a>
-                        <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                        <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Admin Dashboard</a>
+                        <form action="{{ route('logout') }}" method="POST" style="display:inline;flex-shrink:0;">
                             @csrf
-                            <button type="submit" class="nav-link nav-link-logout">🚪 Logout</button>
+                            <button type="submit" class="nav-link nav-link-logout">Logout</button>
                         </form>
                     @else
-                        <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">👤 Dashboard</a>
-                        <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                        <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
+                        <form action="{{ route('logout') }}" method="POST" style="display:inline;flex-shrink:0;">
                             @csrf
-                            <button type="submit" class="nav-link nav-link-logout">🚪 Logout</button>
+                            <button type="submit" class="nav-link nav-link-logout">Logout</button>
                         </form>
                     @endif
                 @endauth
@@ -60,32 +60,32 @@
             <span class="logo-text" style="font-size:1.1rem">WasteWise</span>
         </div>
         <div class="mobile-nav-links">
-            <a class="mobile-nav-link" href="{{ route('home') }}">🏠 Home</a>
-            <a class="mobile-nav-link {{ request()->routeIs('knowledge.*') ? 'active' : '' }}" href="{{ route('knowledge.index') }}">📚 Knowledge Hub</a>
-            <a class="mobile-nav-link {{ request()->routeIs('sustainability-tips.*') ? 'active' : '' }}" href="{{ route('sustainability-tips.index') }}">🌱 Sustainability Tips</a>
-            <a class="mobile-nav-link {{ request()->routeIs('announcements.*') ? 'active' : '' }}" href="{{ route('announcements.index') }}">📢 Updates</a>
-            <a class="mobile-nav-link" href="{{ url('/#how') }}">⚙️ How It Works</a>
-            <a class="mobile-nav-link" href="{{ url('/#centres') }}">📍 Collection Centres</a>
-            <a class="mobile-nav-link" href="{{ url('/#about') }}">ℹ️ About</a>
-            <a class="mobile-nav-link" href="{{ route('feedback.create') }}">💬 Feedback</a>
+            <a class="mobile-nav-link" href="{{ route('home') }}">Home</a>
+            <a class="mobile-nav-link {{ request()->routeIs('knowledge.*') ? 'active' : '' }}" href="{{ route('knowledge.index') }}">Knowledge Hub</a>
+            <a class="mobile-nav-link {{ request()->routeIs('sustainability-tips.*') ? 'active' : '' }}" href="{{ route('sustainability-tips.index') }}">Sustainability Tips</a>
+            <a class="mobile-nav-link {{ request()->routeIs('announcements.*') ? 'active' : '' }}" href="{{ route('announcements.index') }}">Updates</a>
+            <a class="mobile-nav-link" href="{{ url('/#how') }}">How It Works</a>
+            <a class="mobile-nav-link" href="{{ url('/#centres') }}">Collection Centres</a>
+            <a class="mobile-nav-link" href="{{ url('/#about') }}">About</a>
+            <a class="mobile-nav-link" href="{{ route('feedback.create') }}">Feedback</a>
 
             @guest
-                <a class="mobile-nav-link" href="{{ route('login') }}">🔑 Login</a>
-                <a class="mobile-nav-link" href="{{ route('register') }}">✨ Register</a>
+                <a class="mobile-nav-link" href="{{ route('login') }}">Login</a>
+                <a class="mobile-nav-link" href="{{ route('register') }}">Register</a>
             @endguest
 
             @auth
                 @if(auth()->user()->isAdmin())
-                    <a class="mobile-nav-link" href="{{ route('admin.dashboard') }}">🔒 Admin Dashboard</a>
+                    <a class="mobile-nav-link" href="{{ route('admin.dashboard') }}">Admin Dashboard</a>
                     <form action="{{ route('logout') }}" method="POST" style="margin-top:.5rem;">
                         @csrf
-                        <button type="submit" class="mobile-nav-link" style="width:100%;text-align:left;background:none;border:none;color:#dc2626;font-weight:600;">🚪 Logout</button>
+                        <button type="submit" class="mobile-nav-link" style="width:100%;text-align:left;background:none;border:none;color:#dc2626;font-weight:600;">Logout</button>
                     </form>
                 @else
-                    <a class="mobile-nav-link" href="{{ route('dashboard') }}">👤 Dashboard</a>
+                    <a class="mobile-nav-link" href="{{ route('dashboard') }}">Dashboard</a>
                     <form action="{{ route('logout') }}" method="POST" style="margin-top:.5rem;">
                         @csrf
-                        <button type="submit" class="mobile-nav-link" style="width:100%;text-align:left;background:none;border:none;color:#dc2626;font-weight:600;">🚪 Logout</button>
+                        <button type="submit" class="mobile-nav-link" style="width:100%;text-align:left;background:none;border:none;color:#dc2626;font-weight:600;">Logout</button>
                     </form>
                 @endif
             @endauth
