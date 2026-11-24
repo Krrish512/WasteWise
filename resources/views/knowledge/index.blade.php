@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', '📚 Waste Knowledge Hub – WasteWise')
+@section('title', 'Waste Knowledge Hub – WasteWise')
 
 @section('content')
 <!-- Hero Section -->
 <section style="background:linear-gradient(135deg, #065f46 0%, #047857 50%, #10b981 100%);color:#fff;padding-block:3.5rem 3rem;position:relative;overflow:hidden;">
     <div class="container" style="position:relative;z-index:2;text-align:center;max-width:850px;">
         <div style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);padding:.4rem 1.1rem;border-radius:var(--radius-full);font-size:.88rem;font-weight:700;margin-bottom:1.2rem;color:#dcfce7;">
-            📚 Educational Resource
+            Educational Resource
         </div>
         <h1 style="font-family:'Outfit',sans-serif;font-size:2.8rem;font-weight:900;line-height:1.25;margin-bottom:1rem;letter-spacing:-0.02em;">
-            📚 Waste Knowledge Hub
+            Waste Knowledge Hub
         </h1>
         <p style="color:#dcfce7;font-size:1.15rem;max-width:680px;margin:0 auto 2.5rem;line-height:1.6;font-weight:400;">
             Learn how different types of waste should be handled, recycled, and disposed responsibly.

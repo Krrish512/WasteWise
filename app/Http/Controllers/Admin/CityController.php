@@ -34,8 +34,9 @@ class CityController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'  => 'required|string|max:255',
-            'state' => 'nullable|string|max:255',
+            'name'     => 'required|string|max:255',
+            'state'    => 'nullable|string|max:255',
+            'district' => 'nullable|string|max:255',
         ]);
 
         City::create($validated);
@@ -58,8 +59,9 @@ class CityController extends Controller
     public function update(Request $request, City $city)
     {
         $validated = $request->validate([
-            'name'  => 'required|string|max:255',
-            'state' => 'nullable|string|max:255',
+            'name'     => 'required|string|max:255',
+            'state'    => 'nullable|string|max:255',
+            'district' => 'nullable|string|max:255',
         ]);
 
         $city->update($validated);

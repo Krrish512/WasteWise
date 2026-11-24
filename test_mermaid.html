@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body { background: white; margin: 0; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+.mermaid-container { background: #ffffff; padding: 20px; border: 1px solid #cbd5e1; border-radius: 8px; display: inline-block; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+</script>
+</head>
+<body>
+<div class="mermaid-container">
+<div class="mermaid">
+graph TD
+    User([Citizen User]) -->|1. Search Request| Laravel[Laravel Web Server]
+    Laravel -->|2. Query Items| DB[(MySQL Database)]
+    Laravel -->|3. Trigger Insights| Python[scripts/waste_insights.py]
+    Python -->|4. Return JSON Analytics| Laravel
+    Laravel -->|5. Display Guidance & Charts| User
+</div>
+</div>
+</body>
+</html>

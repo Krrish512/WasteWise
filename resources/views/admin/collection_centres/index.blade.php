@@ -13,7 +13,7 @@
                 <h1 style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:var(--text-dark);margin-top:.2rem;">
                     📍 Collection Centres
                 </h1>
-                <p style="color:var(--text-muted);font-size:.95rem;">Manage authorised waste collection centres and locations</p>
+                <p style="color:var(--text-muted);font-size:.95rem;">Manage authorised waste collection centres, recyclers, and staging facilities</p>
             </div>
             <div style="display:flex;gap:.75rem;align-items:center;">
                 <a href="http://127.0.0.1:5000/insights#import-section" target="_blank" style="background:var(--bg-base);color:var(--text-dark);border:1px solid var(--border);padding:.75rem 1.4rem;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;display:inline-flex;align-items:center;gap:.5rem;box-shadow:var(--shadow-sm);">
@@ -24,6 +24,18 @@
                 </a>
             </div>
         </div>
+
+        @if(session('success'))
+            <div style="background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;padding:1rem 1.25rem;border-radius:var(--radius-md);margin-bottom:1.5rem;font-weight:600;">
+                ✓ {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div style="background:#fef2f2;color:#991b1b;border:1px solid #fecaca;padding:1rem 1.25rem;border-radius:var(--radius-md);margin-bottom:1.5rem;font-weight:600;">
+                ✕ {{ session('error') }}
+            </div>
+        @endif
 
         <!-- Table Card -->
         <div style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:2rem;box-shadow:var(--shadow-md);">
@@ -38,20 +50,42 @@
                         <thead>
                             <tr style="background:var(--bg-base);border-bottom:2px solid var(--border-light);color:var(--text-muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;">
                                 <th style="padding:.9rem 1rem;">Centre Name</th>
-                                <th style="padding:.9rem 1rem;">City</th>
-                                <th style="padding:.9rem 1rem;">Category</th>
-                                <th style="padding:.9rem 1rem;">Address</th>
-                                <th style="padding:.9rem 1rem;">Phone</th>
+                                <th style="padding:.9rem 1rem;">City & District</th>
+                                <th style="padding:.9rem 1rem;">Categories</th>
+                                <th style="padding:.9rem 1rem;">Type & Status</th>
+                                <th style="padding:.9rem 1rem;">GPS</th>
                                 <th style="padding:.9rem 1rem;text-align:right;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($centres as $centre)
                                 <tr style="border-bottom:1px solid var(--border-light);">
-                                    <td style="padding:1rem;font-weight:700;color:var(--text-dark);">{{ $centre->name }}</td>
-                                    <td style="padding:1rem;color:var(--text-mid);">{{ $centre->city ? $centre->city->name : '—' }}</td>
+                                    <td style="padding:1rem;color:var(--text-dark);">
+                                        <div style="font-weight:700;">{{ $centre->name }}</div>
+                                        @if($centre->authorization_id)
+                                            <span style="font-size:.78rem;color:var(--text-muted);display:inline-block;margin-top:.2rem;">
+                                                ID: {{ $centre->authorization_id }}
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td style="padding:1rem;color:var(--text-mid);">
+                                        <div>{{ $centre->city ? $centre->city->name : '—' }}</div>
+                                        @if($centre->district || ($centre->city && $centre->city->district))
+                                            <span style="font-size:.8rem;color:var(--text-muted);">
+                                                Dist: {{ $centre->district ?? $centre->city->district }}
+                                            </span>
+                                        @endif
+                                    </td>
                                     <td style="padding:1rem;">
-                                        @if($centre->category)
+                                        @if($centre->categories && $centre->categories->isNotEmpty())
+                                            <div style="display:flex;flex-wrap:wrap;gap:.3rem;">
+                                                @foreach($centre->categories as $cat)
+                                                    <span style="background:var(--primary-pale);color:var(--primary-dark);padding:.2rem .55rem;border-radius:var(--radius-full);font-size:.78rem;font-weight:600;">
+                                                        📦 {{ $cat->name }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @elseif($centre->category)
                                             <span style="background:var(--primary-pale);color:var(--primary-dark);padding:.2rem .6rem;border-radius:var(--radius-full);font-size:.85rem;font-weight:600;">
                                                 📦 {{ $centre->category->name }}
                                             </span>
@@ -59,10 +93,35 @@
                                             <span style="color:var(--text-muted);">—</span>
                                         @endif
                                     </td>
-                                    <td style="padding:1rem;color:var(--text-mid);max-width:250px;">{{ Str::limit($centre->address, 60) }}</td>
-                                    <td style="padding:1rem;color:var(--text-muted);">{{ $centre->phone ?? '—' }}</td>
+                                    <td style="padding:1rem;">
+                                        <div style="display:flex;flex-direction:column;gap:.25rem;align-items:flex-start;">
+                                            <span style="font-size:.8rem;background:#f1f5f9;color:#334155;padding:.2rem .5rem;border-radius:4px;font-weight:600;text-transform:capitalize;">
+                                                {{ str_replace('_', ' ', $centre->facility_type ?? 'public_dropoff') }}
+                                            </span>
+                                            @if(($centre->status ?? 'active') === 'active')
+                                                <span style="font-size:.75rem;background:#dcfce7;color:#166534;padding:.15rem .45rem;border-radius:4px;font-weight:600;">
+                                                    Active
+                                                </span>
+                                            @elseif(($centre->status ?? '') === 'pending_verification')
+                                                <span style="font-size:.75rem;background:#fef3c7;color:#92400e;padding:.15rem .45rem;border-radius:4px;font-weight:600;">
+                                                    Pending
+                                                </span>
+                                            @else
+                                                <span style="font-size:.75rem;background:#f1f5f9;color:#64748b;padding:.15rem .45rem;border-radius:4px;font-weight:600;">
+                                                    {{ ucfirst($centre->status ?? 'Active') }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td style="padding:1rem;color:var(--text-muted);font-size:.85rem;">
+                                        @if($centre->latitude && $centre->longitude)
+                                            <span style="color:#059669;font-weight:600;" title="{{ $centre->latitude }}, {{ $centre->longitude }}">✓ GPS</span>
+                                        @else
+                                            <span style="color:#eab308;font-weight:600;" title="No GPS coordinates (Staged Safe)">⏳ Staged (No GPS)</span>
+                                        @endif
+                                    </td>
                                     <td style="padding:1rem;text-align:right;white-space:nowrap;">
-                                        <a href="{{ route('admin.collection-centres.edit', $centre) }}" style="background:#f1f5f9;color:var(--text-dark);padding:.4rem .8rem;border-radius:var(--radius-md);font-weight:600;font-size:.85rem;margin-right:.4rem;">
+                                        <a href="{{ route('admin.collection-centres.edit', $centre) }}" style="background:#f1f5f9;color:var(--text-dark);padding:.4rem .8rem;border-radius:var(--radius-md);font-weight:600;font-size:.85rem;margin-right:.4rem;text-decoration:none;">
                                             ✏️ Edit
                                         </a>
                                         <form action="{{ route('admin.collection-centres.destroy', $centre) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this collection centre?');">

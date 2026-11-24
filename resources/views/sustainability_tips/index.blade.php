@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', '🌱 Sustainability Tips & Eco Guide – WasteWise')
+@section('title', 'Sustainability Tips & Eco Guide – WasteWise')
 
 @section('content')
 <section class="section">
@@ -9,7 +9,7 @@
         <!-- Hero Header Banner -->
         <div class="hero-compact">
             <div class="hero-compact-badge">
-                🌱 Sustainable Living & Eco Advice
+                Sustainable Living & Eco Advice
             </div>
             <h1 class="hero-compact-title">
                 Sustainability Tips & Practical Eco Guides

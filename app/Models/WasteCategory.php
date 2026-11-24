@@ -20,11 +20,24 @@ class WasteCategory extends Model
     }
 
     /**
-     * A category has many CollectionCentres (FK: category_id).
+     * A category has many CollectionCentres (FK: category_id) - backward compatible.
      */
     public function collectionCentres()
     {
         return $this->hasMany(CollectionCentre::class, 'category_id');
+    }
+
+    /**
+     * Many-to-many collection centres relationship via pivot table.
+     */
+    public function centres()
+    {
+        return $this->belongsToMany(
+            CollectionCentre::class,
+            'collection_centre_waste_category',
+            'waste_category_id',
+            'collection_centre_id'
+        )->withTimestamps();
     }
 
     /**

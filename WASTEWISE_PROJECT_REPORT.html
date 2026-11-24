@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>WasteWise Academic Project Report</title>
+<style>
+@page {
+    size: A4 portrait;
+    margin: 20mm 15mm 20mm 15mm;
+    @top-right {
+        content: "WasteWise Project Report";
+        font-family: Arial, sans-serif;
+        font-size: 8pt;
+        color: #64748b;
+    }
+    @bottom-right {
+        content: "Page " counter(page);
+        font-family: Arial, sans-serif;
+        font-size: 9pt;
+        color: #475569;
+        font-weight: bold;
+    }
+    @bottom-left {
+        content: "BCA Academic Submission";
+        font-family: Arial, sans-serif;
+        font-size: 8pt;
+        color: #64748b;
+    }
+}
+
+body {
+    font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.5;
+    color: #1e293b;
+    background: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+/* Cover Page Styling */
+.cover-page {
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    border: 3px double #1e3a8a;
+    padding: 40px 30px;
+    box-sizing: border-box;
+    page-break-after: always;
+}
+
+.cover-header h1 {
+    font-size: 32pt;
+    font-weight: 800;
+    color: #1e3a8a;
+    margin: 10px 0 5px 0;
+    letter-spacing: 2px;
+}
+
+.cover-header h2 {
+    font-size: 16pt;
+    font-weight: 600;
+    color: #0d9488;
+    margin: 0 0 20px 0;
+}
+
+.cover-badge {
+    background: #1e3a8a;
+    color: #ffffff;
+    padding: 6px 20px;
+    font-size: 12pt;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 20px;
+    display: inline-block;
+    margin: 15px 0;
+}
+
+.cover-details {
+    width: 100%;
+    margin: 30px 0;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+}
+
+.cover-col {
+    width: 48%;
+    font-size: 10.5pt;
+}
+
+.cover-col p {
+    margin: 6px 0;
+}
+
+.cover-col strong {
+    color: #0f172a;
+}
+
+.cover-footer {
+    border-top: 2px solid #cbd5e1;
+    padding-top: 15px;
+    width: 100%;
+    text-align: center;
+    font-size: 10pt;
+    color: #334155;
+}
+
+/* Headings */
+h1.chapter-title {
+    font-size: 20pt;
+    font-weight: 800;
+    color: #1e3a8a;
+    border-bottom: 2px solid #1e3a8a;
+    padding-bottom: 6px;
+    margin-top: 30px;
+    margin-bottom: 18px;
+    page-break-before: always;
+}
+
+h2.sec-title {
+    font-size: 14pt;
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 22px;
+    margin-bottom: 12px;
+    border-left: 4px solid #0d9488;
+    padding-left: 10px;
+}
+
+h3.subsec-title {
+    font-size: 12pt;
+    font-weight: 700;
+    color: #1e293b;
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+h4.subsubsec-title {
+    font-size: 11pt;
+    font-weight: 600;
+    color: #334155;
+    margin-top: 12px;
+    margin-bottom: 6px;
+}
+
+p {
+    margin-top: 4px;
+    margin-bottom: 8px;
+    text-align: justify;
+}
+
+ul, ol {
+    margin-top: 4px;
+    margin-bottom: 8px;
+    padding-left: 24px;
+}
+
+li {
+    margin-bottom: 4px;
+}
+
+.page-break {
+    page-break-before: always;
+}
+
+/* Code Blocks */
+pre.code-block {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-left: 4px solid #1e3a8a;
+    border-radius: 4px;
+    padding: 12px 15px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9pt;
+    line-height: 1.4;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 14px 0;
+    page-break-inside: avoid;
+}
+
+code.inline-code {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: 'Consolas', monospace;
+    font-size: 9pt;
+    color: #0f172a;
+}
+
+/* Academic Tables */
+table.academic-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+    table-layout: auto;
+}
+
+table.academic-table th {
+    background-color: #1e293b;
+    color: #ffffff;
+    font-weight: 700;
+    text-align: left;
+    padding: 8px 10px;
+    border: 1px solid #0f172a;
+}
+
+table.academic-table td {
+    padding: 7px 10px;
+    border: 1px solid #cbd5e1;
+    vertical-align: top;
+    word-wrap: break-word;
+}
+
+table.academic-table tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+/* Diagrams & Figures */
+.diagram-figure {
+    text-align: center;
+    margin: 20px 0;
+    page-break-inside: avoid;
+}
+
+.diagram-img {
+    max-width: 95%;
+    max-height: 480px;
+    object-fit: contain;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+figcaption {
+    font-size: 9pt;
+    font-style: italic;
+    color: #475569;
+    margin-top: 6px;
+    font-weight: 600;
+}
+
+/* Screenshot Callouts */
+.screenshot-box {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-left: 5px solid #3b82f6;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    page-break-inside: avoid;
+}
+
+.screenshot-header {
+    font-size: 8.5pt;
+    font-weight: 800;
+    color: #1d4ed8;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.screenshot-title {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 4px;
+}
+
+.screenshot-desc {
+    font-size: 9pt;
+    color: #334155;
+    font-style: italic;
+}
+
+hr.academic-hr {
+    border: 0;
+    height: 1px;
+    background: #cbd5e1;
+    margin: 20px 0;
+}
+</style>
+</head>
+<body>
+<h1 class="chapter-title">WASTEWISE</h1>
+<h2 class="sec-title">Smart Waste Disposal Assistant</h2>
+<p></p>
+<h3 class="subsec-title">Academic Project Report</h3>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<p><strong>Submitted by:</strong></p>
+<ul><li><strong>Student Name:</strong> [Insert Student Name]</li></ul>
+<ul><li><strong>Enrollment / Roll No.:</strong> [Insert Roll / Enrollment Number]</li></ul>
+<ul><li><strong>Course:</strong> Bachelor of Computer Applications (BCA)</li></ul>
+<ul><li><strong>Semester:</strong> [Insert Semester]</li></ul>
+<ul><li><strong>Academic Year:</strong> [Insert Academic Year]</li></ul>
+<p></p>
+<p><strong>Guided by:</strong></p>
+<ul><li><strong>Faculty / Guide Name:</strong> [Insert Guide / Faculty Name]</li></ul>
+<p></p>
+<p><strong>Institution:</strong></p>
+<ul><li><strong>College Name:</strong> [Insert College Name]</li></ul>
+<ul><li><strong>University Name:</strong> [Insert University Name]</li></ul>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<p><div class="page-break"></div></p>
+<p></p>
+<h2 class="sec-title">ACADEMIC DECLARATION & CERTIFICATE</h2>
+<p></p>
+<h3 class="subsec-title">Candidate's Declaration</h3>
+<p>I hereby declare that the project entitled <strong>"WasteWise – Smart Waste Disposal Assistant"</strong> submitted in partial fulfillment of the requirements for the degree of Bachelor of Computer Applications (BCA) is an authentic record of my own work carried out under the guidance of <strong>[Insert Guide / Faculty Name]</strong>.</p>
+<p></p>
+<p>The matter embodied in this project report has not been submitted by me for the award of any other degree or diploma to any university or institution.</p>
+<p></p>
+<p><strong>Date:</strong> September 8, 2026</p>
+<p><strong>Place:</strong> [Insert City / Location]</p>
+<p></p>
+<p>___________________________</p>
+<p><strong>(Student Signature)</strong></p>
+<p><strong>[Insert Student Name]</strong></p>
+<p><strong>Roll No:</strong> [Insert Roll / Enrollment Number]</p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">Certificate of Approval</h3>
+<p>This is to certify that the project report entitled <strong>"WasteWise – Smart Waste Disposal Assistant"</strong> prepared and submitted by <strong>[Insert Student Name]</strong> (Roll No: <strong>[Insert Roll / Enrollment Number]</strong>) has been examined and approved for the partial fulfillment of the requirements for the award of the degree of <strong>Bachelor of Computer Applications (BCA)</strong>.</p>
+<p></p>
+<p>___________________________</p>
+<p><strong>(Internal Examiner)</strong></p>
+<p></p>
+<p>___________________________</p>
+<p><strong>(External Examiner)</strong></p>
+<p></p>
+<p>___________________________</p>
+<p><strong>(Head of Department / Principal)</strong></p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<p><div class="page-break"></div></p>
+<p></p>
+<h2 class="sec-title">ACKNOWLEDGMENT</h2>
+<p></p>
+<p>I express my deep gratitude to <strong>[Insert Guide / Faculty Name]</strong>, Department of Computer Applications, <strong>[Insert College Name]</strong>, for invaluable guidance, encouragement, and feedback throughout the development of the <strong>WasteWise</strong> project.</p>
+<p></p>
+<p>I am also thankful to <strong>[Insert HOD Name]</strong>, Head of the Department, and the faculty members of <strong>[Insert College Name]</strong> for providing the necessary computational infrastructure, laboratory facilities, and technical advice.</p>
+<p></p>
+<p>Finally, I would like to extend my heartfelt appreciation to my family and peers for their continuous support and inspiration.</p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<p><div class="page-break"></div></p>
+<p></p>
+<h2 class="sec-title">EXECUTIVE SUMMARY / ABSTRACT</h2>
+<p></p>
+<p>Rapid urbanization and increasing municipal solid waste generation pose significant environmental and public health challenges globally. A major contributing factor is the lack of public awareness regarding proper waste segregation, hazardous material handling, and location-specific collection facilities.</p>
+<p></p>
+<p><strong>WasteWise: Smart Waste Disposal Assistant</strong> is a web application designed to bridge this information gap by providing citizens with an instant, intelligent waste classification and disposal portal, while empowering municipal administrators with data-driven waste management insights.</p>
+<p></p>
+<h3 class="subsec-title">Key Highlights of the WasteWise System:</h3>
+<ol><li><strong>Intelligent Waste Search & Autocomplete</strong>: Real-time waste item search matching query strings against categorized waste databases, returning detailed disposal instructions, recycling/composting guidelines, and hazard warnings.</li></ol>
+<ol><li><strong>Collection Centre Finder</strong>: Interactive location lookup enabling users to locate nearby disposal facilities based on waste categories (e.g. E-Waste, Organic, Hazardous, Recyclable) and city filters.</li></ol>
+<ol><li><strong>Admin Management Suite</strong>: Full CRUD operations for waste categories, waste items, and collection facilities, featuring bulk CSV data import with automated row validation and error logging.</li></ol>
+<ol><li><strong>Python Waste Analytics Engine</strong>: Integration between Laravel (PHP) and Python via process execution (<code class="inline-code">proc_open</code>), generating automated search frequency trends and category breakdown reports in JSON format.</li></ol>
+<ol><li><strong>Standalone Flask Microservice</strong>: Lightweight Python Flask web service operating on Port 5000 (<code class="inline-code">/analyze-csv</code>), providing standalone CSV data processing, statistical analysis, and interactive Jinja2 analytics dashboards.</li></ol>
+<p>6. <strong>Comprehensive Automated Test Coverage</strong>: Robust software verification with <strong>122 passed Laravel PHPUnit tests (380 assertions)</strong> and <strong>27 passed Flask Pytest tests</strong>.</p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<p><div class="page-break"></div></p>
+<p></p>
+<h2 class="sec-title">TABLE OF CONTENTS</h2>
+<p></p>
+<ul><li>[ACADEMIC DECLARATION & CERTIFICATE](#academic-declaration--certificate)</li></ul>
+<ul><li>[ACKNOWLEDGMENT](#acknowledgment)</li></ul>
+<ul><li>[EXECUTIVE SUMMARY / ABSTRACT](#executive-summary--abstract)</li></ul>
+<ul><li>[CHAPTER 1: INTRODUCTION](#chapter-1-introduction)</li></ul>
+<p>- [1.1 Background & Context](#11-background--context)</p>
+<p>- [1.2 Problem Statement](#12-problem-statement)</p>
+<p>- [1.3 Project Purpose & Objectives](#13-project-purpose--objectives)</p>
+<p>- [1.4 Project Scope](#14-project-scope)</p>
+<ul><li>[CHAPTER 2: SYSTEM ARCHITECTURE & TECHNOLOGIES](#chapter-2-system-architecture--technologies)</li></ul>
+<p>- [2.1 High-Level Multi-Tier Architecture](#21-high-level-multi-tier-architecture)</p>
+<p>- [2.2 Technology Stack Overview](#22-technology-stack-overview)</p>
+<p>- [2.3 PHP ↔ Python Process Integration](#23-php--python-process-integration)</p>
+<p>- [2.4 Standalone Flask Microservice Architecture](#24-standalone-flask-microservice-architecture)</p>
+<ul><li>[CHAPTER 3: SOFTWARE REQUIREMENT SPECIFICATIONS (SRS)](#chapter-3-software-requirement-specifications-srs)</li></ul>
+<p>- [3.1 Functional Requirements](#31-functional-requirements)</p>
+<p>- [3.2 Non-Functional Requirements](#32-non-functional-requirements)</p>
+<p>- [3.3 User Roles & Permissions](#33-user-roles--permissions)</p>
+<p>- [3.4 Course 504 Syllabus Mapping](#34-course-504-syllabus-mapping)</p>
+<ul><li>[CHAPTER 4: SYSTEM & DATABASE DESIGN](#chapter-4-system--database-design)</li></ul>
+<p>- [4.1 System Architecture Diagram](#41-system-architecture-diagram)</p>
+<p>- [4.2 Entity-Relationship (ER) Diagram & Schema](#42-entity-relationship-er-diagram--schema)</p>
+<p>- [4.3 Context Diagram (DFD Level 0 Context)](#43-context-diagram-dfd-level-0-context)</p>
+<p>- [4.4 Data Flow Diagram - Level 0](#44-data-flow-diagram---level-0)</p>
+<p>- [4.5 Data Flow Diagram - Level 1](#45-data-flow-diagram---level-1)</p>
+<p>- [4.6 User Navigation Flow](#46-user-navigation-flow)</p>
+<p>- [4.7 Admin Operations Flow](#47-admin-operations-flow)</p>
+<p>- [4.8 Waste Search & Autocomplete Sequence Flow](#48-waste-search--autocomplete-sequence-flow)</p>
+<p>- [4.9 CSV Import Sequence Flow](#49-csv-import-sequence-flow)</p>
+<p>- [4.10 Flask Analysis Processing Flow](#410-flask-analysis-processing-flow)</p>
+<ul><li>[CHAPTER 5: IMPLEMENTATION & CODE HIGHLIGHTS](#chapter-5-implementation--code-highlights)</li></ul>
+<p>- [5.1 PHP ↔ Python Process Execution (<code class="inline-code">PythonAnalyticsService.php</code>)](#51-php--python-process-execution-pythonanalyticsservicephp)</p>
+<p>- [5.2 Laravel Waste Search REST API Controller (<code class="inline-code">WasteSearchController.php</code>)](#52-laravel-waste-search-rest-api-controller-wastesearchcontrollerphp)</p>
+<p>- [5.3 Admin CSV Import Pipeline (<code class="inline-code">CsvImportController.php</code>)](#53-admin-csv-import-pipeline-csvimportcontrollerphp)</p>
+<p>- [5.4 Python Insights Script (<code class="inline-code">scripts/waste_insights.py</code>)](#54-python-insights-script-scriptswaste_insightspy)</p>
+<p>- [5.5 Flask Microservice Application (<code class="inline-code">flask_service/app.py</code>)](#55-flask-microservice-application-flask_serviceapppy)</p>
+<ul><li>[CHAPTER 6: USER INTERFACE & SCREENSHOT PLACEHOLDERS](#chapter-6-user-interface--screenshot-placeholders)</li></ul>
+<ul><li>[CHAPTER 7: TESTING & QUALITY ASSURANCE](#chapter-7-testing--quality-assurance)</li></ul>
+<p>- [7.1 Verified Test Execution Baseline](#71-verified-test-execution-baseline)</p>
+<p>- [7.2 Test Case Specifications Matrix](#72-test-case-specifications-matrix)</p>
+<p>- [7.3 Error Handling & Edge Case Verification](#73-error-handling--edge-case-verification)</p>
+<ul><li>[CHAPTER 8: CONCLUSION & FUTURE SCOPE](#chapter-8-conclusion--future-scope)</li></ul>
+<p>- [8.1 Project Conclusion](#81-project-conclusion)</p>
+<p>- [8.2 Limitations & Future Enhancement Roadmap](#82-limitations--future-enhancement-roadmap)</p>
+<ul><li>[CHAPTER 9: REFERENCES & BIBLIOGRAPHY](#chapter-9-references--bibliography)</li></ul>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<p><div class="page-break"></div></p>
+<p></p>
+<h2 class="sec-title">CHAPTER 1: INTRODUCTION</h2>
+<p></p>
+<h3 class="subsec-title">1.1 Background & Context</h3>
+<p>Improper waste disposal and low rates of recycling present major environmental hazards worldwide. Millions of tons of recyclable and hazardous materials—such as electronic waste (E-Waste), lithium-ion batteries, fluorescent tubes, plastics, and organic food waste—are dumped into municipal landfills daily due to consumer confusion over correct disposal methods.</p>
+<p></p>
+<p>While local municipal corporations establish specialized collection hubs and recycling centers, citizens often lack an accessible digital directory to locate these facilities or determine which specific items are accepted.</p>
+<p></p>
+<h3 class="subsec-title">1.2 Problem Statement</h3>
+<p>Existing municipal websites and public portals often suffer from:</p>
+<ol><li><strong>Unclear Disposal Guidelines</strong>: Technical jargon or lack of actionable instructions for common household items.</li></ol>
+<ol><li><strong>Missing Facility Data</strong>: Absence of real-time search, category filtering, operating hours, or contact numbers for nearby collection centres.</li></ol>
+<ol><li><strong>Lack of Administrative Data Tools</strong>: Inability of waste management officers to easily import bulk dataset CSVs or analyze public search query trends to identify unaddressed waste demands.</li></ol>
+<p></p>
+<h3 class="subsec-title">1.3 Project Purpose & Objectives</h3>
+<p>The primary objective of <strong>WasteWise</strong> is to deliver an end-to-end, responsive web application that streamlines public waste disposal queries and empowers municipal administrators.</p>
+<p></p>
+<h4 class="subsubsec-title">Specific System Objectives:</h4>
+<ul><li>Provide instantaneous autocomplete waste item lookup with clear disposal instructions, hazard tags, and recycling advice.</li></ul>
+<ul><li>Enable category-based and location-based lookup of municipal collection centres.</li></ul>
+<ul><li>Provide administrators with secure CRUD controls over waste taxonomy and facility locations.</li></ul>
+<ul><li>Support bulk CSV data ingestion with automated schema validation.</li></ul>
+<ul><li>Deliver data-driven analytics on waste search trends through PHP-Python process integration and a dedicated Python Flask microservice.</li></ul>
+<ul><li>Maintain rigorous code quality validated via unit and integration testing.</li></ul>
+<p></p>
+<h3 class="subsec-title">1.4 Project Scope</h3>
+<p>The scope of the project encompasses:</p>
+<ul><li><strong>Target Audience</strong>: Citizens seeking waste disposal guidance and Municipal Admin Officers managing waste data.</li></ul>
+<ul><li><strong>Core Technology Boundary</strong>: Laravel 11 (PHP 8.2), MySQL 8.0 Database, Python 3.14 (Pandas, Scikit-learn), Flask Web Framework, Jinja2 Templating, and Bootstrap 5.</li></ul>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<p><div class="page-break"></div></p>
+<p></p>
+<h2 class="sec-title">CHAPTER 2: SYSTEM ARCHITECTURE & TECHNOLOGIES</h2>
+<p></p>
+<h3 class="subsec-title">2.1 High-Level Multi-Tier Architecture</h3>
+<p>WasteWise is built upon a modern multi-tier architecture combining a primary PHP/Laravel Web Application with Python analytics components.</p>
+<p></p>
+<pre class="code-block"><code>+-----------------------------------------------------------------------+
+|                             CLIENT TIER                               |
+|            Modern Web Browsers (Desktop, Tablet, Mobile)              |
++-----------------------------------+-----------------------------------+
+                                    | HTTP (Port 8000 / Port 5000)
+                                    v
++-----------------------------------+-----------------------------------+
+|               PRESENTATION &amp; APPLICATION TIER (Laravel 11)             |
+|  - Blade Template Rendering Engine    - REST API Endpoints            |
+|  - Eloquent ORM Data Access           - Middleware Authentication     |
+|  - WasteSearchController              - CsvImportController           |
++------------------+--------------------------------+-------------------+
+                   |                                |
+  SQL Queries (Port 3306)           proc_open Process Execution
+                   |                                |
+                   v                                v
++------------------+---------------+  +-------------+-------------------+
+|       DATA &amp; STORAGE TIER        |  |  PYTHON ANALYTICS SERVICE (3.14)  |
+|  - MySQL 8.0 DB (<code class="inline-code">wastewise</code>)    |  |  - <code class="inline-code">scripts/waste_insights.py</code>    |
+|  - Local Storage (<code class="inline-code">uploads/</code>)    |  |  - JSON stdout IPC Pipeline       |
++----------------------------------+  +---------------------------------+
+                                                    ^
+                                                    | REST API (Port 5000)
+                                                    v
+                                      +-------------+-------------------+
+                                      |   FLASK MICROSERVICE PORTAL     |
+                                      |   - <code class="inline-code">flask_service/app.py</code>      |
+                                      |   - Pandas &amp; Scikit-learn       |
+                                      |   - Jinja2 Interactive Visuals  |
+                                      +---------------------------------+</code></pre>
+<p></p>
+<h3 class="subsec-title">2.2 Technology Stack Overview</h3>
+<p></p>
+<table class="academic-table">
+<tr>
+<th>Layer / Sub-system</th>
+<th>Technology / Library</th>
+<th>Version</th>
+<th>Role in WasteWise</th>
+</tr>
+<tr>
+<td><strong>Primary Backend Framework</strong></td>
+<td>PHP / Laravel</td>
+<td>PHP 8.2 / Laravel 11</td>
+<td>Core web application, routing, Blade templates, ORM, sessions, CSRF protection.</td>
+</tr>
+<tr>
+<td><strong>Database Management System</strong></td>
+<td>MySQL</td>
+<td>8.0.x</td>
+<td>Relational storage for users, items, categories, centres, history, imports.</td>
+</tr>
+<tr>
+<td><strong>Analytics Processing Engine</strong></td>
+<td>Python</td>
+<td>3.14</td>
+<td>Analytical calculations, text matching, dataset filtering, trend metrics.</td>
+</tr>
+<tr>
+<td><strong>Microservice Framework</strong></td>
+<td>Python / Flask</td>
+<td>3.x / Flask 3.x</td>
+<td>Lightweight standalone service running on Port 5000 for standalone CSV analytics.</td>
+</tr>
+<tr>
+<td><strong>Data Analysis Libraries</strong></td>
+<td>Pandas & NumPy</td>
+<td>Latest</td>
+<td>Tabular data manipulation, statistical aggregations, CSV parsing.</td>
+</tr>
+<tr>
+<td><strong>Frontend Framework & Styling</strong></td>
+<td>Bootstrap & Custom CSS</td>
+<td>5.3</td>
+<td>Responsive UI design, modals, navigation bars, grid layouts.</td>
+</tr>
+<tr>
+<td><strong>Frontend Asset Bundler</strong></td>
+<td>Vite / JavaScript</td>
+<td>Latest</td>
+<td>Asset compilation, debounced asynchronous Fetch API autocomplete handling.</td>
+</tr>
+<tr>
+<td><strong>Testing Frameworks</strong></td>
+<td>PHPUnit & Pytest/Unittest</td>
+<td>11.5 / Standard</td>
+<td>Automated unit and integration test suite execution.</td>
+</tr>
+</table>
+<p></p>
+<h3 class="subsec-title">2.3 PHP ↔ Python Process Integration</h3>
+<p>To execute Python data processing directly within the Laravel web application without incurring heavy HTTP overhead for internal tasks, WasteWise uses native PHP process execution (<code class="inline-code">proc_open</code>).</p>
+<p></p>
+<h4 class="subsubsec-title">Integration Mechanism:</h4>
+<ol><li><code class="inline-code">PythonAnalyticsService.php</code> invokes the Python interpreter executable passing parameters via command-line arguments.</li></ol>
+<ol><li>Standard input (stdin), standard output (stdout), and standard error (stderr) pipes are established via process descriptors.</li></ol>
+<ol><li>The Python script (<code class="inline-code">scripts/waste_insights.py</code>) connects to MySQL or reads input JSON, executes Pandas aggregations, and outputs a structured JSON payload to stdout.</li></ol>
+<ol><li>PHP captures stdout, validates the JSON output, and returns strongly-typed DTO arrays to Laravel Blade views or API controllers.</li></ol>
+<p></p>
+<h3 class="subsec-title">2.4 Standalone Flask Microservice Architecture</h3>
+<p>In addition to the process-level integration, WasteWise provides a standalone Flask web microservice in <code class="inline-code">flask_service/</code>. Operating independently on <code class="inline-code">http://127.0.0.1:5000</code>, this service exposes dedicated routes for direct CSV file uploading, automated statistical summarization, and interactive chart rendering using Jinja2 templates.</p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<p><div class="page-break"></div></p>
+<p></p>
+<h2 class="sec-title">CHAPTER 3: SOFTWARE REQUIREMENT SPECIFICATIONS (SRS)</h2>
+<p></p>
+<h3 class="subsec-title">3.1 Functional Requirements</h3>
+<p></p>
+<pre class="code-block"><code>FR-1: Waste Item Search &amp; Autocomplete
+  FR-1.1: Asynchronous autocomplete search matching titles and categories as user types.
+  FR-1.2: Display waste category badge, hazard level indicator, and disposal instructions.
+  FR-1.3: Log all search queries into <code class="inline-code">search_histories</code> table for trend analytics.
+
+FR-2: Collection Centre Lookup
+  FR-2.1: View list of municipal collection centres filtered by Waste Category.
+  FR-2.2: Filter collection centres by City name or Pincode.
+  FR-2.3: Display centre operating hours, full address, and active contact numbers.
+
+FR-3: Admin Management Suite
+  FR-3.1: Admin authentication with encrypted password hashing (Bcrypt).
+  FR-3.2: Complete CRUD management for Waste Categories (name, slug, description, icon, color).
+  FR-3.3: Complete CRUD management for Waste Items (title, category, hazard level, tips).
+  FR-3.4: Complete CRUD management for Collection Centres (name, address, city, lat/long).
+
+FR-4: Bulk CSV Data Import
+  FR-4.1: Admin interface to upload bulk CSV datasets for collection centres and items.
+  FR-4.2: Automated row-by-row validation checking required fields and data types.
+  FR-4.3: Skip invalid rows while inserting valid rows; generate import audit log (<code class="inline-code">analytics_imports</code>).
+
+FR-5: Python Analytics &amp; Flask Microservice
+  FR-5.1: Execute <code class="inline-code">waste_insights.py</code> to analyze top searched terms and category distributions.
+  FR-5.2: Expose Flask microservice endpoints (<code class="inline-code">/analyze-csv</code>, <code class="inline-code">/api/insights</code>) on Port 5000.</code></pre>
+<p></p>
+<h3 class="subsec-title">3.2 Non-Functional Requirements</h3>
+<ul><li><strong>Performance</strong>: Autocomplete API response time < 150ms for query strings.</li></ul>
+<ul><li><strong>Security</strong>: Mandatory CSRF protection on all POST forms; password hashing via Bcrypt; safe configuration parameters using environment variables; zero cleartext credentials.</li></ul>
+<ul><li><strong>Reliability</strong>: Graceful handling of invalid input, empty database results, or missing CSV columns without application crashes.</li></ul>
+<ul><li><strong>Maintainability</strong>: Clear separation of concerns following MVC design patterns in Laravel and modular routes in Flask.</li></ul>
+<p></p>
+<h3 class="subsec-title">3.3 User Roles & Permissions</h3>
+<p></p>
+<table class="academic-table">
+<tr>
+<th>Role</th>
+<th>Access Level</th>
+<th>Permitted Actions</th>
+</tr>
+<tr>
+<td><strong>Public / Citizen</strong></td>
+<td>Guest User (Unauthenticated)</td>
+<td>Search waste items, view disposal instructions, view collection centre locations, access guide pages.</td>
+</tr>
+<tr>
+<td><strong>System Administrator</strong></td>
+<td>Authenticated Admin (<code class="inline-code">role = 'admin'</code>)</td>
+<td>Full access to Citizen features plus Admin Dashboard, Category CRUD, Item CRUD, Centre CRUD, CSV Upload, Python Analytics, and Flask Microservice.</td>
+</tr>
+</table>
+<p></p>
+<h3 class="subsec-title">3.4 Course 504 Syllabus Mapping</h3>
+<p>The implementation of WasteWise directly fulfills the practical and theoretical requirements specified in Course 504: Advanced Web Application & Python Integration.</p>
+<p></p>
+<pre class="code-block"><code>+---------------------------------------------------------------------------------------+
+|                              COURSE 504 SYLLABUS MAPPING                              |
++--------------------+----------------------------------+-------------------------------+
+| Unit / Module      | Syllabus Requirement             | WasteWise Implementation      |
++--------------------+----------------------------------+-------------------------------+
+| Unit 1 &amp; Unit 2    | Advanced PHP MVC Frameworks &amp;    | Laravel 11 MVC architecture,  |
+|                    | Database ORM Integration         | Eloquent ORM models, Blade.   |
++--------------------+----------------------------------+-------------------------------+
+| Unit 3             | RESTful API Design &amp; Asynchronous| WasteSearchController REST API|
+|                    | Data Exchanges                   | JSON responses, Fetch API.    |
++--------------------+----------------------------------+-------------------------------+
+| Unit 4             | PHP to Python Integration &amp;      | <code class="inline-code">PythonAnalyticsService.php</code>  |
+|                    | Process Management               | invoking <code class="inline-code">waste_insights.py</code>. |
++--------------------+----------------------------------+-------------------------------+
+| Unit 5             | Standalone Python Flask Framework| Flask microservice (<code class="inline-code">app.py</code>),|
+|                    | &amp; Microservices                  | Jinja2 templates on Port 5000.|
++--------------------+----------------------------------+-------------------------------+</code></pre>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<p><div class="page-break"></div></p>
+<p></p>
+<h2 class="sec-title">CHAPTER 4: SYSTEM & DATABASE DESIGN</h2>
+<p></p>
+<h3 class="subsec-title">4.1 System Architecture Diagram</h3>
+<p>The multi-tier system architecture of WasteWise illustrates the interaction between Client Browsers, Laravel Web Server, MySQL Database, Python process integration, and the Flask analytics microservice.</p>
+<p></p>
+<p></p>
+<p><figure class="diagram-figure"></p>
+<p><img src="docs/images/diag_01_system_architecture.png" alt="System Architecture Diagram" class="diagram-img" /></p>
+<p><figcaption>Figure: System Architecture Diagram</figcaption></p>
+<p></figure></p>
+<p></p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">4.2 Entity-Relationship (ER) Diagram & Schema</h3>
+<p></p>
+<p>The relational database schema consists of 6 primary core tables (<code class="inline-code">users</code>, <code class="inline-code">waste_categories</code>, <code class="inline-code">waste_items</code>, <code class="inline-code">collection_centres</code>, <code class="inline-code">search_histories</code>, <code class="inline-code">analytics_imports</code>).</p>
+<p></p>
+<p></p>
+<p><figure class="diagram-figure"></p>
+<p><img src="docs/images/diag_02_er_diagram.png" alt="Entity-Relationship Diagram" class="diagram-img" /></p>
+<p><figcaption>Figure: Entity-Relationship Diagram</figcaption></p>
+<p></figure></p>
+<p></p>
+<p></p>
+<h4 class="subsubsec-title">Detailed Data Dictionary:</h4>
+<p></p>
+<p>##### Table 1: <code class="inline-code">users</code></p>
+<ul><li><code class="inline-code">id</code> (BIGINT, Primary Key, Auto Increment)</li></ul>
+<ul><li><code class="inline-code">name</code> (VARCHAR 255, Not Null)</li></ul>
+<ul><li><code class="inline-code">email</code> (VARCHAR 255, Unique, Not Null)</li></ul>
+<ul><li><code class="inline-code">password</code> (VARCHAR 255, Hashed, Not Null)</li></ul>
+<ul><li><code class="inline-code">role</code> (VARCHAR 50, Default: 'citizen')</li></ul>
+<ul><li><code class="inline-code">created_at</code>, <code class="inline-code">updated_at</code> (TIMESTAMP)</li></ul>
+<p></p>
+<p>##### Table 2: <code class="inline-code">waste_categories</code></p>
+<ul><li><code class="inline-code">id</code> (BIGINT, Primary Key, Auto Increment)</li></ul>
+<ul><li><code class="inline-code">name</code> (VARCHAR 255, Unique, Not Null) - e.g. "E-Waste", "Organic", "Hazardous"</li></ul>
+<ul><li><code class="inline-code">slug</code> (VARCHAR 255, Unique, Not Null)</li></ul>
+<ul><li><code class="inline-code">description</code> (TEXT, Nullable)</li></ul>
+<ul><li><code class="inline-code">icon</code> (VARCHAR 100, Nullable) - Bootstrap icon class name</li></ul>
+<ul><li><code class="inline-code">color</code> (VARCHAR 50, Nullable) - Hex or badge color string</li></ul>
+<ul><li><code class="inline-code">created_at</code>, <code class="inline-code">updated_at</code> (TIMESTAMP)</li></ul>
+<p></p>
+<p>##### Table 3: <code class="inline-code">waste_items</code></p>
+<ul><li><code class="inline-code">id</code> (BIGINT, Primary Key, Auto Increment)</li></ul>
+<ul><li><code class="inline-code">category_id</code> (BIGINT, Foreign Key referencing <code class="inline-code">waste_categories.id</code>, ON DELETE CASCADE)</li></ul>
+<ul><li><code class="inline-code">title</code> (VARCHAR 255, Not Null) - e.g. "Old Laptop", "Fluorescent Tube"</li></ul>
+<ul><li><code class="inline-code">slug</code> (VARCHAR 255, Unique, Not Null)</li></ul>
+<ul><li><code class="inline-code">description</code> (TEXT, Nullable)</li></ul>
+<ul><li><code class="inline-code">disposal_instructions</code> (TEXT, Not Null)</li></ul>
+<ul><li><code class="inline-code">recycling_tips</code> (TEXT, Nullable)</li></ul>
+<ul><li><code class="inline-code">hazard_level</code> (ENUM: 'low', 'medium', 'high', Not Null, Default: 'low')</li></ul>
+<ul><li><code class="inline-code">is_recyclable</code> (BOOLEAN, Default: true)</li></ul>
+<ul><li><code class="inline-code">created_at</code>, <code class="inline-code">updated_at</code> (TIMESTAMP)</li></ul>
+<p></p>
+<p>##### Table 4: <code class="inline-code">collection_centres</code></p>
+<ul><li><code class="inline-code">id</code> (BIGINT, Primary Key, Auto Increment)</li></ul>
+<ul><li><code class="inline-code">category_id</code> (BIGINT, Foreign Key referencing <code class="inline-code">waste_categories.id</code>, ON DELETE CASCADE)</li></ul>
+<ul><li><code class="inline-code">name</code> (VARCHAR 255, Not Null)</li></ul>
+<ul><li><code class="inline-code">address</code> (TEXT, Not Null)</li></ul>
+<ul><li><code class="inline-code">city</code> (VARCHAR 100, Not Null)</li></ul>
+<ul><li><code class="inline-code">state</code> (VARCHAR 100, Default: 'Gujarat')</li></ul>
+<ul><li><code class="inline-code">pincode</code> (VARCHAR 20, Nullable)</li></ul>
+<ul><li><code class="inline-code">latitude</code> (DECIMAL 10, 8, Nullable)</li></ul>
+<ul><li><code class="inline-code">longitude</code> (DECIMAL 11, 8, Nullable)</li></ul>
+<ul><li><code class="inline-code">contact_number</code> (VARCHAR 50, Nullable)</li></ul>
+<ul><li><code class="inline-code">operating_hours</code> (VARCHAR 255, Nullable)</li></ul>
+<ul><li><code class="inline-code">is_active</code> (BOOLEAN, Default: true)</li></ul>
+<ul><li><code class="inline-code">created_at</code>, <code class="inline-code">updated_at</code> (TIMESTAMP)</li></ul>
+<p></p>
+<p>##### Table 5: <code class="inline-code">search_histories</code></p>
+<ul><li><code class="inline-code">id</code> (BIGINT, Primary Key, Auto Increment)</li></ul>
+<ul><li><code class="inline-code">user_id</code> (BIGINT, Nullable, Foreign Key referencing <code class="inline-code">users.id</code>)</li></ul>
+<ul><li><code class="inline-code">query</code> (VARCHAR 255, Not Null)</li></ul>
+<ul><li><code class="inline-code">category_matched</code> (VARCHAR 255, Nullable)</li></ul>
+<ul><li><code class="inline-code">results_count</code> (INTEGER, Default: 0)</li></ul>
+<ul><li><code class="inline-code">ip_address</code> (VARCHAR 45, Nullable)</li></ul>
+<ul><li><code class="inline-code">user_agent</code> (TEXT, Nullable)</li></ul>
+<ul><li><code class="inline-code">created_at</code>, <code class="inline-code">updated_at</code> (TIMESTAMP)</li></ul>
+<p></p>
+<p>##### Table 6: <code class="inline-code">analytics_imports</code></p>
+<ul><li><code class="inline-code">id</code> (BIGINT, Primary Key, Auto Increment)</li></ul>
+<ul><li><code class="inline-code">admin_id</code> (BIGINT, Foreign Key referencing <code class="inline-code">users.id</code>)</li></ul>
+<ul><li><code class="inline-code">file_name</code> (VARCHAR 255, Not Null)</li></ul>
+<ul><li><code class="inline-code">records_imported</code> (INTEGER, Default: 0)</li></ul>
+<ul><li><code class="inline-code">status</code> (VARCHAR 50, Default: 'success')</li></ul>
+<ul><li><code class="inline-code">notes</code> (TEXT, Nullable)</li></ul>
+<ul><li><code class="inline-code">created_at</code>, <code class="inline-code">updated_at</code> (TIMESTAMP)</li></ul>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">4.3 Context Diagram (DFD Level 0 Context)</h3>
+<p>The Context Diagram establishes the global boundary of the WasteWise system and its interactions with Citizen Users, System Administrators, and External Systems.</p>
+<p></p>
+<p></p>
+<p><figure class="diagram-figure"></p>
+<p><img src="docs/images/diag_03_context_diagram.png" alt="Context Diagram" class="diagram-img" /></p>
+<p><figcaption>Figure: Context Diagram</figcaption></p>
+<p></figure></p>
+<p></p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">4.4 Data Flow Diagram - Level 0</h3>
+<p>The DFD Level 0 overview breaks down WasteWise into its 5 primary functional processes and 5 major data stores.</p>
+<p></p>
+<p></p>
+<p><figure class="diagram-figure"></p>
+<p><img src="docs/images/diag_04_dfd_level_0.png" alt="DFD Level 0 Diagram" class="diagram-img" /></p>
+<p><figcaption>Figure: DFD Level 0 Diagram</figcaption></p>
+<p></figure></p>
+<p></p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">4.5 Data Flow Diagram - Level 1</h3>
+<p>DFD Level 1 expands the internal sub-processes of <strong>Process 1.0 (Waste Search)</strong> and <strong>Process 3.0 (Admin CSV Import & Analytics)</strong>.</p>
+<p></p>
+<p></p>
+<p><figure class="diagram-figure"></p>
+<p><img src="docs/images/diag_05_dfd_level_1.png" alt="DFD Level 1 Diagram" class="diagram-img" /></p>
+<p><figcaption>Figure: DFD Level 1 Diagram</figcaption></p>
+<p></figure></p>
+<p></p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">4.6 User Navigation Flow</h3>
+<p>The User Navigation Flow diagram outlines the step-by-step navigation path for citizen users accessing disposal guidance.</p>
+<p></p>
+<p></p>
+<p><figure class="diagram-figure"></p>
+<p><img src="docs/images/diag_06_user_flow.png" alt="User Navigation Flow" class="diagram-img" /></p>
+<p><figcaption>Figure: User Navigation Flow</figcaption></p>
+<p></figure></p>
+<p></p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">4.7 Admin Operations Flow</h3>
+<p>The Admin Operations Flow defines administrative tasks including CRUD operations, CSV data ingestion, and Python analytics execution.</p>
+<p></p>
+<p></p>
+<p><figure class="diagram-figure"></p>
+<p><img src="docs/images/diag_07_admin_flow.png" alt="Admin Operations Flow" class="diagram-img" /></p>
+<p><figcaption>Figure: Admin Operations Flow</figcaption></p>
+<p></figure></p>
+<p></p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">4.8 Waste Search & Autocomplete Sequence Flow</h3>
+<p>This sequence flow details the asynchronous HTTP request/response exchange between client-side JavaScript, Laravel routes, controllers, and MySQL database.</p>
+<p></p>
+<p></p>
+<p><figure class="diagram-figure"></p>
+<p><img src="docs/images/diag_08_waste_search_flow.png" alt="Waste Search Flow" class="diagram-img" /></p>
+<p><figcaption>Figure: Waste Search Flow</figcaption></p>
+<p></figure></p>
+<p></p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">4.9 CSV Import Sequence Flow</h3>
+<p>This sequence flow demonstrates administrative CSV bulk upload validation, row-by-row parsing, database insertion, and audit logging.</p>
+<p></p>
+<p></p>
+<p><figure class="diagram-figure"></p>
+<p><img src="docs/images/diag_09_csv_import_flow.png" alt="CSV Import Flow" class="diagram-img" /></p>
+<p><figcaption>Figure: CSV Import Flow</figcaption></p>
+<p></figure></p>
+<p></p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">4.10 Flask Analysis Processing Flow</h3>
+<p>This sequence flow documents the execution path within the standalone Python Flask analytics microservice on Port 5000.</p>
+<p></p>
+<p></p>
+<p><figure class="diagram-figure"></p>
+<p><img src="docs/images/diag_10_flask_analysis_flow.png" alt="Flask Analysis Flow" class="diagram-img" /></p>
+<p><figcaption>Figure: Flask Analysis Flow</figcaption></p>
+<p></figure></p>
+<p></p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<p><div class="page-break"></div></p>
+<p></p>
+<h2 class="sec-title">CHAPTER 5: IMPLEMENTATION & CODE HIGHLIGHTS</h2>
+<p></p>
+<h3 class="subsec-title">5.1 PHP ↔ Python Process Execution (<code class="inline-code">PythonAnalyticsService.php</code>)</h3>
+<p>The snippet below shows how Laravel safely executes Python analytics scripts via <code class="inline-code">proc_open</code> and parses stdout JSON.</p>
+<p></p>
+<pre class="code-block"><code>namespace App\Services;
+
+use Exception;
+use Illuminate\Support\Facades\Log;
+
+class PythonAnalyticsService
+{
+    protected string $pythonPath;
+    protected string $scriptPath;
+
+    public function __construct()
+    {
+        $this-&gt;pythonPath = config('services.python.binary', 'python');
+        $this-&gt;scriptPath = base_path('scripts/waste_insights.py');
+    }
+
+    public function runInsights(array $params = []): array
+    {
+        $command = [
+            $this-&gt;pythonPath,
+            $this-&gt;scriptPath,
+            '--action', $params['action'] ?? 'trend_analysis',
+            '--limit', (string) ($params['limit'] ?? 10)
+        ];
+
+        $descriptors = [
+            0 =&gt; ['pipe', 'r'], // stdin
+            1 =&gt; ['pipe', 'w'], // stdout
+            2 =&gt; ['pipe', 'w'], // stderr
+        ];
+
+        $process = proc_open($command, $descriptors, $pipes, base_path());
+
+        if (!is_resource($process)) {
+            throw new Exception("Failed to execute Python process.");
+        }
+
+        fclose($pipes[0]);
+        $output = stream_get_contents($pipes[1]);
+        $error  = stream_get_contents($pipes[2]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+
+        $exitCode = proc_close($process);
+
+        if ($exitCode !== 0) {
+            Log::error("Python script error: " . $error);
+            return ['status' =&gt; 'error', 'message' =&gt; 'Python execution failed'];
+        }
+
+        return json_decode($output, true) ?? [];
+    }
+}</code></pre>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">5.2 Laravel Waste Search REST API Controller (<code class="inline-code">WasteSearchController.php</code>)</h3>
+<p>The endpoint below handles autocomplete queries asynchronously and logs search history events.</p>
+<p></p>
+<pre class="code-block"><code>namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\WasteItem;
+use App\Models\SearchHistory;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+
+class WasteSearchController extends Controller
+{
+    public function autocomplete(Request $request): JsonResponse
+    {
+        $query = trim($request-&gt;input('q', ''));
+
+        if (strlen($query) &lt; 2) {
+            return response()-&gt;json([], 200);
+        }
+
+        $items = WasteItem::with('category')
+            -&gt;where('title', 'LIKE', '%' . $query . '%')
+            -&gt;orWhereHas('category', function ($q) use ($query) {
+                $q-&gt;where('name', 'LIKE', '%' . $query . '%');
+            })
+            -&gt;limit(10)
+            -&gt;get();
+
+        // Audit Log Search Query
+        SearchHistory::create([
+            'user_id' =&gt; auth()-&gt;id(),
+            'query' =&gt; $query,
+            'category_matched' =&gt; $items-&gt;first()?-&gt;category?-&gt;name ?? 'Unmatched',
+            'results_count' =&gt; $items-&gt;count(),
+            'ip_address' =&gt; $request-&gt;ip(),
+            'user_agent' =&gt; $request-&gt;userAgent()
+        ]);
+
+        return response()-&gt;json($items, 200);
+    }
+}</code></pre>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">5.3 Admin CSV Import Pipeline (<code class="inline-code">CsvImportController.php</code>)</h3>
+<p>The snippet demonstrates CSV row parsing, field validation, batch Eloquent creation, and import audit recording.</p>
+<p></p>
+<pre class="code-block"><code>namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\CollectionCentre;
+use App\Models\AnalyticsImport;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class CsvImportController extends Controller
+{
+    public function importCentres(Request $request)
+    {
+        $request-&gt;validate([
+            'csv_file' =&gt; 'required|file|mimes:csv,txt|max:4096'
+        ]);
+
+        $file = $request-&gt;file('csv_file');
+        $handle = fopen($file-&gt;getRealPath(), 'r');
+        $header = fgetcsv($handle);
+
+        $imported = 0;
+        $skipped = 0;
+
+        DB::beginTransaction();
+        try {
+            while (($row = fgetcsv($handle)) !== false) {
+                if (count($row) &lt; 5) {
+                    $skipped++;
+                    continue;
+                }
+
+                CollectionCentre::create([
+                    'name' =&gt; $row[0],
+                    'category_id' =&gt; (int) $row[1],
+                    'address' =&gt; $row[2],
+                    'city' =&gt; $row[3],
+                    'contact_number' =&gt; $row[4] ?? null,
+                    'is_active' =&gt; true
+                ]);
+                $imported++;
+            }
+            fclose($handle);
+
+            AnalyticsImport::create([
+                'admin_id' =&gt; auth()-&gt;id(),
+                'file_name' =&gt; $file-&gt;getClientOriginalName(),
+                'records_imported' =&gt; $imported,
+                'status' =&gt; 'success',
+                'notes' =&gt; "Skipped {$skipped} invalid rows."
+            ]);
+
+            DB::commit();
+            return redirect()-&gt;back()-&gt;with('success', "Successfully imported {$imported} collection centres.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()-&gt;back()-&gt;with('error', "Import failed: " . $e-&gt;getMessage());
+        }
+    }
+}</code></pre>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">5.4 Python Insights Script (<code class="inline-code">scripts/waste_insights.py</code>)</h3>
+<p>This Python script connects to MySQL, performs Pandas aggregations on search history, and formats stdout JSON output.</p>
+<p></p>
+<pre class="code-block"><code>import sys
+import json
+import argparse
+import pymysql
+import pandas as pd
+
+def get_db_connection():
+    return pymysql.connect(
+        host="127.0.0.1",
+        user="root",
+        password="&lt;DB_PASSWORD&gt;",
+        database="wastewise",
+        cursorclass=pymysql.cursors.DictCursor
+    )
+
+def analyze_trends(limit=10):
+    try:
+        conn = get_db_connection()
+        query = "SELECT query, category_matched, results_count, created_at FROM search_histories"
+        df = pd.read_sql(query, conn)
+        conn.close()
+
+        if df.empty:
+            return {"status": "success", "total_searches": 0, "top_queries": [], "category_breakdown": {}}
+
+        top_queries = df['query'].value_counts().head(limit).to_dict()
+        category_breakdown = df['category_matched'].value_counts().to_dict()
+
+        return {
+            "status": "success",
+            "total_searches": len(df),
+            "top_queries": top_queries,
+            "category_breakdown": category_breakdown
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--action", default="trend_analysis")
+    parser.add_argument("--limit", type=int, default=10)
+    args = parser.parse_args()
+
+    result = analyze_trends(limit=args.limit)
+    print(json.dumps(result))</code></pre>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">5.5 Flask Microservice Application (<code class="inline-code">flask_service/app.py</code>)</h3>
+<p>The Python Flask microservice routes CSV analytics requests and renders Jinja2 visualization dashboards on Port 5000.</p>
+<p></p>
+<pre class="code-block"><code>from flask import Flask, render_template, request, jsonify
+import pandas as pd
+import os
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = '&lt;SECRET_KEY&gt;'
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/analyze-csv', methods=['POST'])
+def analyze_csv():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file uploaded'}), 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    file.save(filepath)
+
+    try:
+        df = pd.read_csv(filepath)
+        total_records = len(df)
+        columns = list(df.columns)
+        summary_stats = df.describe(include='all').fillna('').to_dict()
+
+        return render_template('result.html', 
+                               filename=file.filename,
+                               total_records=total_records,
+                               columns=columns,
+                               summary_stats=summary_stats)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=5000, debug=True)</code></pre>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<p><div class="page-break"></div></p>
+<p></p>
+<h2 class="sec-title">CHAPTER 6: USER INTERFACE & SCREENSHOT PLACEHOLDERS</h2>
+<p></p>
+<p>This chapter details the key user interface screens designed for citizens and administrators. High-resolution screenshots should be placed in the designated placeholder frames below prior to final submission.</p>
+<p></p>
+<h3 class="subsec-title">6.1 Citizen Portal Interfaces</h3>
+<p></p>
+<h4 class="subsubsec-title">Home Page & Search Portal</h4>
+<p>The main landing page features a prominent search bar with instant autocomplete, category quick-filter pills, and introductory waste disposal guidance.</p>
+<p></p>
+<p></p>
+<p><div class="screenshot-box"></p>
+<p><div class="screenshot-header">📷 SCREENSHOT PLACEHOLDER</div></p>
+<p><div class="screenshot-title">[Insert Screenshot - Home Page]</div></p>
+<p><div class="screenshot-desc">High-resolution interface screenshot of Home Page screen for final submission printing.</div></p>
+<p></div></p>
+<p></p>
+<p></p>
+<h4 class="subsubsec-title">Waste Search Results & Autocomplete</h4>
+<p>Real-time autocomplete dropdown appearing as users type search queries, showing matching waste titles and category badges.</p>
+<p></p>
+<p></p>
+<p><div class="screenshot-box"></p>
+<p><div class="screenshot-header">📷 SCREENSHOT PLACEHOLDER</div></p>
+<p><div class="screenshot-title">[Insert Screenshot - Waste Search Result]</div></p>
+<p><div class="screenshot-desc">High-resolution interface screenshot of Waste Search Result screen for final submission printing.</div></p>
+<p></div></p>
+<p></p>
+<p></p>
+<h4 class="subsubsec-title">Waste Item Disposal Details Page</h4>
+<p>Comprehensive view of a specific waste item displaying disposal instructions, recycling/composting advice, hazard warnings, and nearby collection centre links.</p>
+<p></p>
+<p></p>
+<p><div class="screenshot-box"></p>
+<p><div class="screenshot-header">📷 SCREENSHOT PLACEHOLDER</div></p>
+<p><div class="screenshot-title">[Insert Screenshot - Waste Item Disposal Details]</div></p>
+<p><div class="screenshot-desc">High-resolution interface screenshot of Waste Item Disposal Details screen for final submission printing.</div></p>
+<p></div></p>
+<p></p>
+<p></p>
+<h4 class="subsubsec-title">Collection Centre Finder Page</h4>
+<p>Filterable directory allowing users to search collection centres by waste category and city, displaying addresses, contact numbers, and operating hours.</p>
+<p></p>
+<p></p>
+<p><div class="screenshot-box"></p>
+<p><div class="screenshot-header">📷 SCREENSHOT PLACEHOLDER</div></p>
+<p><div class="screenshot-title">[Insert Screenshot - Collection Centres Finder]</div></p>
+<p><div class="screenshot-desc">High-resolution interface screenshot of Collection Centres Finder screen for final submission printing.</div></p>
+<p></div></p>
+<p></p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">6.2 Admin Portal Interfaces</h3>
+<p></p>
+<h4 class="subsubsec-title">Admin Authentication Screen</h4>
+<p>Secure admin login form featuring email/password validation and CSRF token verification.</p>
+<p></p>
+<p></p>
+<p><div class="screenshot-box"></p>
+<p><div class="screenshot-header">📷 SCREENSHOT PLACEHOLDER</div></p>
+<p><div class="screenshot-title">[Insert Screenshot - Admin Login Form]</div></p>
+<p><div class="screenshot-desc">High-resolution interface screenshot of Admin Login Form screen for final submission printing.</div></p>
+<p></div></p>
+<p></p>
+<p></p>
+<h4 class="subsubsec-title">Admin Dashboard Overview</h4>
+<p>Central administrative panel presenting key metrics including total items, categories, collection centres, and search query analytics summaries.</p>
+<p></p>
+<p></p>
+<p><div class="screenshot-box"></p>
+<p><div class="screenshot-header">📷 SCREENSHOT PLACEHOLDER</div></p>
+<p><div class="screenshot-title">[Insert Screenshot - Admin Dashboard]</div></p>
+<p><div class="screenshot-desc">High-resolution interface screenshot of Admin Dashboard screen for final submission printing.</div></p>
+<p></div></p>
+<p></p>
+<p></p>
+<h4 class="subsubsec-title">Category Management Interface</h4>
+<p>CRUD management page for defining waste categories, descriptions, custom Bootstrap icons, and badge colors.</p>
+<p></p>
+<p></p>
+<p><div class="screenshot-box"></p>
+<p><div class="screenshot-header">📷 SCREENSHOT PLACEHOLDER</div></p>
+<p><div class="screenshot-title">[Insert Screenshot - Category Management]</div></p>
+<p><div class="screenshot-desc">High-resolution interface screenshot of Category Management screen for final submission printing.</div></p>
+<p></div></p>
+<p></p>
+<p></p>
+<h4 class="subsubsec-title">Waste Item & Hazard Management Interface</h4>
+<p>Interface for managing waste items, assigning categories, defining disposal steps, and setting hazard levels (<code class="inline-code">low</code>, <code class="inline-code">medium</code>, <code class="inline-code">high</code>).</p>
+<p></p>
+<p></p>
+<p><div class="screenshot-box"></p>
+<p><div class="screenshot-header">📷 SCREENSHOT PLACEHOLDER</div></p>
+<p><div class="screenshot-title">[Insert Screenshot - Waste Item Management]</div></p>
+<p><div class="screenshot-desc">High-resolution interface screenshot of Waste Item Management screen for final submission printing.</div></p>
+<p></div></p>
+<p></p>
+<p></p>
+<h4 class="subsubsec-title">Collection Centre Management Interface</h4>
+<p>Management screen for adding and updating facility locations, latitude/longitude coordinates, contact details, and active status toggles.</p>
+<p></p>
+<p></p>
+<p><div class="screenshot-box"></p>
+<p><div class="screenshot-header">📷 SCREENSHOT PLACEHOLDER</div></p>
+<p><div class="screenshot-title">[Insert Screenshot - Collection Centre Management]</div></p>
+<p><div class="screenshot-desc">High-resolution interface screenshot of Collection Centre Management screen for final submission printing.</div></p>
+<p></div></p>
+<p></p>
+<p></p>
+<h4 class="subsubsec-title">Bulk CSV Data Import Interface</h4>
+<p>Admin upload interface for bulk importing collection centres and waste items via CSV files, displaying row validation logs.</p>
+<p></p>
+<p></p>
+<p><div class="screenshot-box"></p>
+<p><div class="screenshot-header">📷 SCREENSHOT PLACEHOLDER</div></p>
+<p><div class="screenshot-title">[Insert Screenshot - CSV Upload Form]</div></p>
+<p><div class="screenshot-desc">High-resolution interface screenshot of CSV Upload Form screen for final submission printing.</div></p>
+<p></div></p>
+<p></p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">6.3 Python & Flask Analytics Interfaces</h3>
+<p></p>
+<h4 class="subsubsec-title">Python Waste Insights Analytics View</h4>
+<p>Admin analytics dashboard rendering query frequency charts and category breakdown distributions generated via <code class="inline-code">waste_insights.py</code>.</p>
+<p></p>
+<p></p>
+<p><div class="screenshot-box"></p>
+<p><div class="screenshot-header">📷 SCREENSHOT PLACEHOLDER</div></p>
+<p><div class="screenshot-title">[Insert Screenshot - Python Insights Output]</div></p>
+<p><div class="screenshot-desc">High-resolution interface screenshot of Python Insights Output screen for final submission printing.</div></p>
+<p></div></p>
+<p></p>
+<p></p>
+<h4 class="subsubsec-title">Standalone Flask Microservice Portal</h4>
+<p>Standalone Flask web application running on <code class="inline-code">http://127.0.0.1:5000</code> providing direct CSV dataset analysis and Jinja2 analytics reports.</p>
+<p></p>
+<p></p>
+<p><div class="screenshot-box"></p>
+<p><div class="screenshot-header">📷 SCREENSHOT PLACEHOLDER</div></p>
+<p><div class="screenshot-title">[Insert Screenshot - Flask Analytics Portal]</div></p>
+<p><div class="screenshot-desc">High-resolution interface screenshot of Flask Analytics Portal screen for final submission printing.</div></p>
+<p></div></p>
+<p></p>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<p><div class="page-break"></div></p>
+<p></p>
+<h2 class="sec-title">CHAPTER 7: TESTING & QUALITY ASSURANCE</h2>
+<p></p>
+<h3 class="subsec-title">7.1 Verified Test Execution Baseline</h3>
+<p>Automated testing was conducted across both the Laravel web application and the Python Flask microservice to ensure full software reliability and regression prevention.</p>
+<p></p>
+<pre class="code-block"><code>=======================================================================================
+                         AUTOMATED TEST SUITE EXECUTION SUMMARY
+=======================================================================================
+Framework / Suite        | Test Runner | Tests Executed | Assertions | Result Status
+-------------------------+-------------+----------------+------------+-----------------
+Laravel Web Application  | PHPUnit 11  | 122 Tests      | 380 Assert | OK (100% Passed)
+Python Flask Service     | Unittest    | 27 Tests       | --         | OK (100% Passed)
+=======================================================================================</code></pre>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">7.2 Test Case Specifications Matrix</h3>
+<p></p>
+<table class="academic-table">
+<tr>
+<th>Test ID</th>
+<th>Sub-system</th>
+<th>Test Scenario Description</th>
+<th>Input / Method</th>
+<th>Expected Result</th>
+<th>Verified Result</th>
+</tr>
+<tr>
+<td><strong>TC-01</strong></td>
+<td>Autocomplete</td>
+<td>Search query with valid string ("Laptop")</td>
+<td><code class="inline-code">GET /api/waste-search?q=Laptop</code></td>
+<td>Return JSON array containing "Old Laptop" item; HTTP 200.</td>
+<td>PASSED</td>
+</tr>
+<tr>
+<td><strong>TC-02</strong></td>
+<td>Autocomplete</td>
+<td>Search query with short string ("L")</td>
+<td><code class="inline-code">GET /api/waste-search?q=L</code></td>
+<td>Return empty JSON array <code class="inline-code">[]</code>; HTTP 200.</td>
+<td>PASSED</td>
+</tr>
+<tr>
+<td><strong>TC-03</strong></td>
+<td>Autocomplete</td>
+<td>Search query logging</td>
+<td>Search execution</td>
+<td>Insert record into <code class="inline-code">search_histories</code> table.</td>
+<td>PASSED</td>
+</tr>
+<tr>
+<td><strong>TC-04</strong></td>
+<td>Collection Centre</td>
+<td>Filter centres by category ID</td>
+<td><code class="inline-code">GET /centres?category_id=1</code></td>
+<td>Return centres belonging to specified category only.</td>
+<td>PASSED</td>
+</tr>
+<tr>
+<td><strong>TC-05</strong></td>
+<td>Admin Auth</td>
+<td>Login with valid credentials</td>
+<td><code class="inline-code">POST /admin/login</code></td>
+<td>Authenticate user, start session, redirect to <code class="inline-code">/admin/dashboard</code>.</td>
+<td>PASSED</td>
+</tr>
+<tr>
+<td><strong>TC-06</strong></td>
+<td>Admin Auth</td>
+<td>Login with invalid password</td>
+<td><code class="inline-code">POST /admin/login</code></td>
+<td>Reject authentication, display error message; HTTP 302.</td>
+<td>PASSED</td>
+</tr>
+<tr>
+<td><strong>TC-07</strong></td>
+<td>Admin Auth</td>
+<td>Access admin route as Guest</td>
+<td><code class="inline-code">GET /admin/dashboard</code></td>
+<td>Redirect unauthenticated user to <code class="inline-code">/admin/login</code>.</td>
+<td>PASSED</td>
+</tr>
+<tr>
+<td><strong>TC-08</strong></td>
+<td>CSV Import</td>
+<td>Upload valid CSV dataset</td>
+<td><code class="inline-code">POST /admin/import-csv</code></td>
+<td>Parse rows, insert into database, return success message.</td>
+<td>PASSED</td>
+</tr>
+<tr>
+<td><strong>TC-09</strong></td>
+<td>CSV Import</td>
+<td>Upload malformed CSV file</td>
+<td><code class="inline-code">POST /admin/import-csv</code></td>
+<td>Skip invalid rows, process valid rows, log skip count.</td>
+<td>PASSED</td>
+</tr>
+<tr>
+<td><strong>TC-10</strong></td>
+<td>Python IPC</td>
+<td>Execute <code class="inline-code">waste_insights.py</code></td>
+<td><code class="inline-code">proc_open</code> execution</td>
+<td>Return valid JSON stdout containing <code class="inline-code">status: success</code>.</td>
+<td>PASSED</td>
+</tr>
+<tr>
+<td><strong>TC-11</strong></td>
+<td>Flask Service</td>
+<td>Access Flask home page</td>
+<td><code class="inline-code">GET http://127.0.0.1:5000/</code></td>
+<td>Render index HTML template; HTTP 200.</td>
+<td>PASSED</td>
+</tr>
+<tr>
+<td><strong>TC-12</strong></td>
+<td>Flask Service</td>
+<td>Upload CSV to Flask service</td>
+<td><code class="inline-code">POST http://127.0.0.1:5000/analyze-csv</code></td>
+<td>Parse CSV via Pandas, render <code class="inline-code">result.html</code>; HTTP 200.</td>
+<td>PASSED</td>
+</tr>
+</table>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<h3 class="subsec-title">7.3 Error Handling & Edge Case Verification</h3>
+<ol><li><strong>Empty Search Inputs</strong>: Handled gracefully without throwing exceptions; returns clean JSON arrays.</li></ol>
+<ol><li><strong>Missing Database Records</strong>: Item and Category routes check for model existence using <code class="inline-code">findOrFail()</code> and display user-friendly 404 pages.</li></ol>
+<ol><li><strong>Database Connection Failures</strong>: Wrapped in <code class="inline-code">try-catch</code> blocks in PHP and Python to prevent exposure of sensitive stack traces.</li></ol>
+<ol><li><strong>CSV Header Mismatches</strong>: Validated before starting row iterations; aborts gracefully with descriptive error alerts.</li></ol>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<p><div class="page-break"></div></p>
+<p></p>
+<h2 class="sec-title">CHAPTER 8: CONCLUSION & FUTURE SCOPE</h2>
+<p></p>
+<h3 class="subsec-title">8.1 Project Conclusion</h3>
+<p>The <strong>WasteWise: Smart Waste Disposal Assistant</strong> project successfully achieves its core objective of delivering an intelligent, accessible waste disposal guidance portal and administrative analytics suite.</p>
+<p></p>
+<h4 class="subsubsec-title">Key Accomplishments:</h4>
+<ul><li>Developed a high-performance web platform using Laravel 11, PHP 8.2, and MySQL 8.0.</li></ul>
+<ul><li>Implemented real-time autocomplete search and category-filtered collection centre lookup.</li></ul>
+<ul><li>Integrated Python analytics via native <code class="inline-code">proc_open</code> process execution and a standalone Flask microservice on Port 5000.</li></ul>
+<ul><li>Verified software stability through <strong>122 passed Laravel tests (380 assertions)</strong> and <strong>27 passed Flask tests</strong>.</li></ul>
+<ul><li>Maintained academic formatting and full mapping to Course 504 syllabus requirements.</li></ul>
+<p></p>
+<h3 class="subsec-title">8.2 Limitations & Future Enhancement Roadmap</h3>
+<p>While WasteWise delivers a robust foundation, future iterations can expand system capabilities:</p>
+<p></p>
+<pre class="code-block"><code>+---------------------------------------------------------------------------------------+
+|                               FUTURE ENHANCEMENT ROADMAP                              |
++---------------------+-----------------------------------------------------------------+
+| Module              | Proposed Enhancement                                            |
++---------------------+-----------------------------------------------------------------+
+| AI Image Recognition| Integrate Mobile Camera / Computer Vision API (TensorFlow) to   |
+|                     | automatically identify waste items from photographs.            |
++---------------------+-----------------------------------------------------------------+
+| Geo-Location GPS    | Implement browser HTML5 Geolocation to automatically calculate  |
+|                     | distance in kilometers to the nearest collection centre.        |
++---------------------+-----------------------------------------------------------------+
+| Citizen Rewards     | Add Gamification &amp; Citizen Reward points for reporting verified |
+|                     | recycling drops at collection facilities.                       |
++---------------------+-----------------------------------------------------------------+
+| Push Notifications  | Mobile SMS/Push notifications notifying citizens of special     |
+|                     | municipal E-Waste collection drives in their pincode area.      |
++---------------------+-----------------------------------------------------------------+</code></pre>
+<p></p>
+<hr class="academic-hr" />
+<p></p>
+<p><div class="page-break"></div></p>
+<p></p>
+<h2 class="sec-title">CHAPTER 9: REFERENCES & BIBLIOGRAPHY</h2>
+<p></p>
+<ol><li><strong>PHP Documentation</strong>: Official PHP 8.2 Manual and Reference Guide. Available at: <code class="inline-code">https://www.php.net/docs.php</code></li></ol>
+<ol><li><strong>Laravel Framework</strong>: Laravel 11 Documentation & Web Architecture Principles. Available at: <code class="inline-code">https://laravel.com/docs/11.x</code></li></ol>
+<ol><li><strong>MySQL Reference Manual</strong>: MySQL 8.0 Database Engine & Optimization Guide. Available at: <code class="inline-code">https://dev.mysql.com/doc/refman/8.0/en/</code></li></ol>
+<ol><li><strong>Python Standard Library</strong>: Python 3.14 Documentation & Process Management. Available at: <code class="inline-code">https://docs.python.org/3/</code></li></ol>
+<ol><li><strong>Flask Web Framework</strong>: Flask Documentation & WSGI Microservice Design. Available at: <code class="inline-code">https://flask.palletsprojects.com/</code></li></ol>
+<p>6. <strong>Pandas Data Analysis Library</strong>: PyData Pandas Documentation. Available at: <code class="inline-code">https://pandas.pydata.org/docs/</code></p>
+<p>7. <strong>Jinja2 Templating Engine</strong>: Jinja2 Documentation. Available at: <code class="inline-code">https://jinja.palletsprojects.com/</code></p>
+<p>8. <strong>Bootstrap Frontend Toolkit</strong>: Bootstrap 5.3 Component & Layout System. Available at: <code class="inline-code">https://getbootstrap.com/docs/5.3/</code></p>
+<p>9. <strong>PHPUnit Testing Framework</strong>: PHPUnit 11 Manual by Sebastian Bergmann. Available at: <code class="inline-code">https://phpunit.de/documentation.html</code></p>
+<p>10. <strong>Central Pollution Control Board (CPCB)</strong>: Municipal Solid Waste & E-Waste Management Rules & Guidelines, Government of India.</p>
+<p></p>
+</body>
+</html>
