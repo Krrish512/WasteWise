@@ -34,6 +34,27 @@ class WasteItemSeeder extends Seeder
                 'keywords' => 'charger, adapter, cable, wire, power cord, phone charger',
             ],
             [
+                'name' => 'Lead-Acid Battery (Car / Inverter / UPS)',
+                'category' => 'Hazardous & Battery Waste',
+                'method' => 'GPCB Lead-Acid Battery Recycler',
+                'description' => 'Heavy lead-acid rechargeable battery from cars, motorcycles, inverter backups, and UPS systems containing sulfuric acid and lead plates.',
+                'keywords' => 'lead acid, lead acid battery, car battery, inverter battery, ups battery, automotive battery, vehicle battery, lead battery, exide, amaron',
+            ],
+            [
+                'name' => 'Lithium-Ion Battery (Phone / Laptop / EV)',
+                'category' => 'Electronic Waste',
+                'method' => 'Lithium-Ion Battery Take-Back',
+                'description' => 'Rechargeable lithium-ion cell or battery pack from smartphones, laptops, power banks, tablets, and electric scooters.',
+                'keywords' => 'lithium, li ion, lithium ion, lithium battery, phone battery, laptop battery, power bank, ev battery, 18650, drone battery, li-po',
+            ],
+            [
+                'name' => 'Batteries',
+                'category' => 'Electronic Waste',
+                'method' => 'Lithium-Ion Battery Take-Back',
+                'description' => 'Used household alkaline and rechargeable batteries including AA, AAA, 9V cells, and rechargeable packs.',
+                'keywords' => 'battery, batteries, cells, aa, aaa, rechargeable, alkaline',
+            ],
+            [
                 'name' => 'Plastic Bottle',
                 'category' => 'Plastic Waste',
                 'method' => 'Dry Waste Recycling',
@@ -95,13 +116,6 @@ class WasteItemSeeder extends Seeder
                 'method' => 'E-Waste Recycling Centre',
                 'description' => 'Unused or broken touchscreen tablet devices.',
                 'keywords' => 'tablet, ipad, screen, gadget, electronic, android tablet',
-            ],
-            [
-                'name' => 'Batteries',
-                'category' => 'Electronic Waste',
-                'method' => 'E-Waste Recycling Centre',
-                'description' => 'Used household batteries including AA, AAA, and rechargeable cells.',
-                'keywords' => 'battery, batteries, cells, aa, aaa, rechargeable, lithium',
             ],
             [
                 'name' => 'Magazines',

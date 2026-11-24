@@ -302,7 +302,7 @@ class WasteWiseFlaskTestCase(unittest.TestCase):
             temp_path = tf.name
 
         try:
-            rows, errors = parse_and_validate_collection_centre_csv(temp_path)
+            rows, errors, *warnings = parse_and_validate_collection_centre_csv(temp_path)
             self.assertEqual(len(rows), 2)
             self.assertEqual(len(errors), 0)
             self.assertEqual(rows[0]['name'], 'Surat Hub')
@@ -321,7 +321,7 @@ class WasteWiseFlaskTestCase(unittest.TestCase):
             temp_path = tf.name
 
         try:
-            rows, errors = parse_and_validate_collection_centre_csv(temp_path)
+            rows, errors, *warnings = parse_and_validate_collection_centre_csv(temp_path)
             self.assertIsNone(rows)
             self.assertTrue(any('Missing required CSV headers' in err for err in errors))
         finally:
@@ -340,7 +340,7 @@ class WasteWiseFlaskTestCase(unittest.TestCase):
             temp_path = tf.name
 
         try:
-            rows, errors = parse_and_validate_collection_centre_csv(temp_path)
+            rows, errors, *warnings = parse_and_validate_collection_centre_csv(temp_path)
             self.assertTrue(any('Latitude must be between -90 and 90' in err for err in errors))
         finally:
             os.remove(temp_path)
@@ -412,6 +412,110 @@ class WasteWiseFlaskTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Surat E-Waste Recycling Hub', response.data)
         self.assertEqual(response.headers['Content-Disposition'], 'attachment; filename=sample_collection_centres.csv')
+
+
+    def test_28_automatic_delimiter_and_bom_detection(self):
+        """Test automatic delimiter detection (semicolon, tab) with UTF-8-SIG BOM."""
+        csv_semicolon = (
+            "\ufeffname;category;city;address;phone\n"
+            "Semicolon Centre;Plastic Waste;Surat;Ring Road;9876543210\n"
+        )
+        test_file = os.path.join(base_dir, 'test_semicolon.csv')
+        with open(test_file, 'w', encoding='utf-8-sig') as f:
+            f.write(csv_semicolon)
+
+        try:
+            rows, errors, warnings = parse_and_validate_collection_centre_csv(test_file)
+            self.assertEqual(len(errors), 0)
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]['name'], 'Semicolon Centre')
+            self.assertEqual(rows[0]['city'], 'Surat')
+        finally:
+            if os.path.exists(test_file):
+                os.remove(test_file)
+
+    def test_29_extended_18_column_schema_parsing(self):
+        """Test extended 18-column research schema with backward compatibility."""
+        csv_18 = (
+            "centre_name,district,city,category,address,phone,latitude,longitude,"
+            "facility_type,public_access,authorization_status,authorization_id,"
+            "authorization_valid_until,website,source_url,verification_date,confidence,notes\n"
+            "Eco Hub,Surat District,Surat,Electronic Waste,GIDC Sachin,9876543210,21.17,72.83,"
+            "authorized_recycler,business_industrial_only,verified,GPCB-001,2028-12-31,"
+            "https://ecohub.in,https://gpcb.gov.in,2026-08-01,high,Government verified\n"
+        )
+        test_file = os.path.join(base_dir, 'test_18col.csv')
+        with open(test_file, 'w', encoding='utf-8') as f:
+            f.write(csv_18)
+
+        try:
+            rows, errors, warnings = parse_and_validate_collection_centre_csv(test_file)
+            self.assertEqual(len(errors), 0)
+            self.assertEqual(len(rows), 1)
+            r = rows[0]
+            self.assertEqual(r['name'], 'Eco Hub')
+            self.assertEqual(r['district'], 'Surat District')
+            self.assertEqual(r['facility_type'], 'authorized_recycler')
+            self.assertEqual(r['public_access'], 'business_industrial_only')
+            self.assertEqual(r['authorization_id'], 'GPCB-001')
+            self.assertEqual(r['confidence'], 'high')
+        finally:
+            if os.path.exists(test_file):
+                os.remove(test_file)
+
+    def test_30_optional_coordinates_not_dropped(self):
+        """Test that rows without GPS coordinates are kept safely rather than dropped."""
+        csv_no_coords = (
+            "name,category,city,address,latitude,longitude\n"
+            "Staged Recycler,Electronic Waste,Rajkot,GIDC Area,,\n"
+        )
+        test_file = os.path.join(base_dir, 'test_no_coords.csv')
+        with open(test_file, 'w', encoding='utf-8') as f:
+            f.write(csv_no_coords)
+
+        try:
+            rows, errors, warnings = parse_and_validate_collection_centre_csv(test_file)
+            self.assertEqual(len(errors), 0)
+            self.assertEqual(len(rows), 1)
+            self.assertIsNone(rows[0]['latitude'])
+            self.assertIsNone(rows[0]['longitude'])
+        finally:
+            if os.path.exists(test_file):
+                os.remove(test_file)
+
+    def test_31_gujarat_bounding_box_warning(self):
+        """Test coordinates outside Gujarat bounding box (20-24.8, 68-74.6) trigger warnings, not errors."""
+        csv_outside = (
+            "name,category,city,address,latitude,longitude\n"
+            "Delhi Outpost,Electronic Waste,Delhi,Connaught Place,28.6139,77.2090\n"
+        )
+        test_file = os.path.join(base_dir, 'test_outside.csv')
+        with open(test_file, 'w', encoding='utf-8') as f:
+            f.write(csv_outside)
+
+        try:
+            rows, errors, warnings = parse_and_validate_collection_centre_csv(test_file)
+            self.assertEqual(len(errors), 0)
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(len(warnings), 1)
+            self.assertIn('outside the Gujarat bounding box', warnings[0])
+        finally:
+            if os.path.exists(test_file):
+                os.remove(test_file)
+
+    def test_32_api_insights_endpoint(self):
+        """Test /api/insights JSON endpoint for Laravel HTTP client integration."""
+        response = self.client.post('/api/insights', json={
+            'records': [
+                {'category_name': 'Plastic Waste', 'waste_item_name': 'Plastic Bottle'},
+                {'category_name': 'Plastic Waste', 'waste_item_name': 'Plastic Container'},
+            ]
+        })
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        self.assertEqual(data['status'], 'success')
+        self.assertEqual(data['source'], 'flask')
+        self.assertEqual(data['top_category'], 'Plastic Waste')
 
 
 if __name__ == '__main__':

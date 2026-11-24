@@ -16,6 +16,8 @@ class Feedback extends Model
      */
     protected $fillable = [
         'user_id',
+        'collection_centre_id',
+        'issue_type',
         'name',
         'email',
         'rating',
@@ -34,7 +36,7 @@ class Feedback extends Model
     {
         return [
             'rating'      => 'integer',
-            'ease_of_use'  => 'integer',
+            'ease_of_use' => 'integer',
             'helpful'     => 'boolean',
             'recommend'   => 'boolean',
             'is_reviewed' => 'boolean',
@@ -47,5 +49,13 @@ class Feedback extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Feedback may report a specific CollectionCentre.
+     */
+    public function collectionCentre()
+    {
+        return $this->belongsTo(CollectionCentre::class, 'collection_centre_id');
     }
 }

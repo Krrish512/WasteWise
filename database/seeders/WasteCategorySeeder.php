@@ -12,7 +12,11 @@ class WasteCategorySeeder extends Seeder
         $categories = [
             [
                 'name' => 'Electronic Waste',
-                'description' => 'Discarded electronic devices and accessories like mobiles, laptops, and chargers.',
+                'description' => 'Discarded electronic devices and accessories like mobiles, laptops, chargers, and lithium-ion battery packs.',
+            ],
+            [
+                'name' => 'Hazardous & Battery Waste',
+                'description' => 'Spent automotive lead-acid batteries, industrial inverter cells, and chemical hazardous waste requiring specialized GPCB authorization.',
             ],
             [
                 'name' => 'Plastic Waste',

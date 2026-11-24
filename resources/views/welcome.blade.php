@@ -10,6 +10,7 @@
     <meta property="og:description" content="Discover the safest way to dispose of your waste. Real-time guidance powered by expert data.">
     <meta property="og:type" content="website">
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>WasteWise – Smart Waste Disposal Assistant</title>
 
     <!-- Google Fonts -->
@@ -449,6 +450,21 @@
             <!-- ── SUCCESS STATE ── -->
             <div id="result-success" style="display:none">
                 <div class="result-card">
+                    <!-- Safety Warning Banner (Lithium-Ion / Critical Warnings) -->
+                    <div id="res-safety-banner" style="display:none;background:#fef2f2;border:2px solid #ef4444;border-radius:var(--radius-lg);padding:1rem 1.25rem;margin:1.5rem 1.5rem 0 1.5rem;box-shadow:var(--shadow-sm);">
+                        <div style="display:flex;align-items:flex-start;gap:.85rem;">
+                            <span style="font-size:1.75rem;line-height:1;">⚠️</span>
+                            <div>
+                                <h3 style="color:#991b1b;font-size:1rem;font-weight:800;margin-bottom:.25rem;text-transform:uppercase;letter-spacing:.03em;">
+                                    High Priority Safety Warning
+                                </h3>
+                                <p id="res-safety-warning-text" style="color:#7f1d1d;font-size:.9rem;line-height:1.5;font-weight:600;margin:0;">
+                                    Never crush, puncture, or send Lithium-Ion batteries to Lead-Acid scrap dealers—fire and toxic gas hazard; use authorized e-waste / Li-ion take-back channels.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Card Header -->
                     <div class="result-card-header">
                         <div class="result-category-badge">
@@ -501,12 +517,43 @@
 
                         <!-- Collection Centres -->
                         <div class="result-section">
-                            <h2 class="result-section-title">
-                                <span class="icon">📍</span> Nearby Collection Centres
-                            </h2>
+                            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:.75rem;">
+                                <h2 class="result-section-title" style="margin-bottom:0;">
+                                    <span class="icon">📍</span> Nearby Collection Centres
+                                </h2>
+                                <label style="display:inline-flex;align-items:center;gap:.4rem;font-size:.85rem;color:var(--text-muted);cursor:pointer;">
+                                    <input type="checkbox" id="res-include-unverified" style="accent-color:var(--primary);">
+                                    Include Unverified / Expired
+                                </label>
+                            </div>
+
+                            <!-- Filter Chips & Regional Dropdowns -->
+                            <div class="centre-filter-controls" style="margin-bottom:1.25rem;background:#f8fafc;border:1px solid var(--border-light);border-radius:var(--radius-lg);padding:1rem;">
+                                <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;align-items:center;">
+                                    <span style="font-size:.82rem;font-weight:700;color:var(--text-muted);margin-right:.25rem;">Filter Access:</span>
+                                    <button type="button" class="access-chip" data-access-filter="all">All Verified</button>
+                                    <button type="button" class="access-chip active" data-access-filter="public_dropoff">Public Drop-Off Only</button>
+                                    <button type="button" class="access-chip" data-access-filter="recycler_pickup">Authorized Recyclers / Pickup</button>
+                                </div>
+                                <div style="display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;">
+                                    <div style="display:flex;align-items:center;gap:.4rem;">
+                                        <label for="res-filter-district" style="font-size:.82rem;font-weight:600;color:var(--text-mid);">Gujarat District:</label>
+                                        <select id="res-filter-district" style="padding:.4rem .7rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.85rem;background:#fff;">
+                                            <option value="">All Districts</option>
+                                        </select>
+                                    </div>
+                                    <div style="display:flex;align-items:center;gap:.4rem;">
+                                        <label for="res-filter-city" style="font-size:.82rem;font-weight:600;color:var(--text-mid);">City:</label>
+                                        <select id="res-filter-city" style="padding:.4rem .7rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.85rem;background:#fff;">
+                                            <option value="">All Cities</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="centres-grid" id="res-centres-list"></div>
                             <div class="no-centres" id="res-no-centres" style="display:none">
-                                📭 No specific collection centres found for this category. Please contact your local municipal corporation for disposal guidance.
+                                📭 No specific collection centres found for this category or filter criteria.
                             </div>
                         </div>
 
@@ -541,7 +588,7 @@
     <section class="section" style="padding-top:2.5rem">
         <div class="container">
             <!-- Filters -->
-            <div class="filter-row">
+            <div class="filter-row" style="flex-wrap:wrap;gap:.75rem;">
                 <input
                     id="centres-filter"
                     class="filter-input"
@@ -549,7 +596,7 @@
                     placeholder="🔍 Search by name, city, or address..."
                     aria-label="Filter collection centres"
                 >
-                <select id="centres-cat-filter" class="filter-input" style="max-width:220px" aria-label="Filter by category">
+                <select id="centres-cat-filter" class="filter-input" style="max-width:200px" aria-label="Filter by category">
                     <option value="">All Categories</option>
                     @if(isset($categories) && count($categories) > 0)
                         @foreach($categories as $cat)
@@ -566,12 +613,40 @@
                         <option value="Textile Waste">👕 Textile Waste</option>
                     @endif
                 </select>
+                <select id="centres-district-filter" class="filter-input" style="max-width:180px" aria-label="Filter by District">
+                    <option value="">All Districts</option>
+                </select>
+                <select id="centres-city-filter" class="filter-input" style="max-width:180px" aria-label="Filter by City">
+                    <option value="">All Cities</option>
+                </select>
                 <button id="btn-find-nearest" class="btn btn-primary btn-nearest" type="button" aria-label="Find Nearest Centre">
                     📍 Find Nearest Centre
                 </button>
                 <button id="btn-show-all" class="btn btn-outline btn-show-all" type="button" aria-label="Show All Centres">
                     Show All Centres
                 </button>
+            </div>
+
+            <!-- Access Filter Chips & Unverified Toggle for Directory -->
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem;margin-top:1rem;margin-bottom:1.5rem;">
+                <div style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;">
+                    <span style="font-size:.85rem;font-weight:700;color:var(--text-muted);">Access:</span>
+                    <button type="button" class="dir-access-chip" data-dir-access="all">All Verified</button>
+                    <button type="button" class="dir-access-chip active" data-dir-access="public_dropoff">Public Drop-Off</button>
+                    <button type="button" class="dir-access-chip" data-dir-access="recycler_pickup">Authorized Recyclers / Pickup</button>
+                </div>
+                <label style="display:inline-flex;align-items:center;gap:.4rem;font-size:.85rem;color:var(--text-muted);cursor:pointer;">
+                    <input type="checkbox" id="dir-include-unverified" style="accent-color:var(--primary);">
+                    Include Unverified / Expired
+                </label>
+            </div>
+
+            <!-- Fallback manual prompt when geolocation times out or is denied -->
+            <div id="geo-fallback-prompt" style="display:none;background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius-md);padding:.75rem 1rem;margin-bottom:1.25rem;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+                <div style="font-size:.88rem;color:#1e40af;font-weight:600;">
+                    📍 Location request timed out or access denied. Select your Gujarat District or City above to browse local centres.
+                </div>
+                <button type="button" onclick="document.getElementById('geo-fallback-prompt').style.display='none'" style="background:transparent;border:none;font-weight:700;color:#1e40af;cursor:pointer;">✕ Dismiss</button>
             </div>
 
             <!-- Status message container -->
@@ -968,6 +1043,62 @@
         </div>
     </div>
 
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     REPORT AN ISSUE MODAL
+════════════════════════════════════════════════════════════════════════════ -->
+<div id="report-centre-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+    <div style="background:#fff;border-radius:var(--radius-xl);max-width:500px;width:100%;box-shadow:var(--shadow-xl);overflow:hidden;animation:modalIn 0.2s ease-out;">
+        <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;background:var(--bg-base);">
+            <div>
+                <h3 style="font-family:'Outfit',sans-serif;font-size:1.15rem;font-weight:700;color:var(--text-dark);margin:0;">
+                    🚩 Report an Issue with Centre
+                </h3>
+                <p id="report-centre-name" style="font-size:.82rem;color:var(--text-muted);margin:0;"></p>
+            </div>
+            <button type="button" id="close-report-modal" style="background:transparent;border:none;font-size:1.4rem;color:var(--text-muted);cursor:pointer;line-height:1;">✕</button>
+        </div>
+        <form id="report-centre-form" style="padding:1.5rem;">
+            <input type="hidden" id="report-centre-id" name="collection_centre_id" value="">
+            
+            <div style="margin-bottom:1rem;">
+                <label for="report-issue-type" style="display:block;font-size:.85rem;font-weight:600;color:var(--text-mid);margin-bottom:.4rem;">
+                    What is the issue? <span style="color:#ef4444;">*</span>
+                </label>
+                <select id="report-issue-type" name="issue_type" required style="width:100%;padding:.6rem .8rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.9rem;background:#fff;">
+                    <option value="permanently_closed">Facility is permanently closed</option>
+                    <option value="wrong_address_or_map">Incorrect address or map pin</option>
+                    <option value="does_not_accept_public_dropoff">Does not accept public household drop-off</option>
+                    <option value="wrong_waste_category">Refuses the listed waste categories</option>
+                    <option value="wrong_phone">Invalid or disconnected phone number</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom:1rem;">
+                <label for="report-message" style="display:block;font-size:.85rem;font-weight:600;color:var(--text-mid);margin-bottom:.4rem;">
+                    Additional details / correction: <span style="color:#ef4444;">*</span>
+                </label>
+                <textarea id="report-message" name="message" required rows="3" placeholder="Please describe what you experienced or provide correct details..." style="width:100%;padding:.6rem .8rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.9rem;resize:vertical;"></textarea>
+            </div>
+
+            <div style="display:flex;gap:.75rem;margin-bottom:1rem;">
+                <div style="flex:1;">
+                    <label for="report-name" style="display:block;font-size:.8rem;font-weight:600;color:var(--text-muted);margin-bottom:.25rem;">Your Name (optional)</label>
+                    <input type="text" id="report-name" name="name" placeholder="Citizen name" style="width:100%;padding:.5rem .75rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.85rem;">
+                </div>
+                <div style="flex:1;">
+                    <label for="report-email" style="display:block;font-size:.8rem;font-weight:600;color:var(--text-muted);margin-bottom:.25rem;">Your Email (optional)</label>
+                    <input type="email" id="report-email" name="email" placeholder="name@domain.com" style="width:100%;padding:.5rem .75rem;border:1px solid var(--border);border-radius:var(--radius-md);font-size:.85rem;">
+                </div>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;gap:.75rem;margin-top:1.25rem;">
+                <button type="button" id="cancel-report-btn" class="btn btn-outline" style="padding:.5rem 1rem;font-size:.88rem;">Cancel</button>
+                <button type="submit" id="submit-report-btn" class="btn btn-primary" style="padding:.5rem 1.25rem;font-size:.88rem;">Submit Report</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════

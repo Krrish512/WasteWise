@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\PythonAnalyticsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class AnalyticsController extends Controller
 {
@@ -36,7 +38,7 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * Trigger Python report generation via subprocess.
+     * Trigger Python report generation.
      */
     public function generateReport()
     {
@@ -49,6 +51,37 @@ class AnalyticsController extends Controller
 
         return redirect()->route('admin.analytics.index')
             ->with('error', 'Failed to generate Python report: ' . ($result['message'] ?? 'Unknown error'));
+    }
+
+    /**
+     * Manually test Flask /health endpoint.
+     */
+    public function testHealth()
+    {
+        $flaskUrl = $this->analyticsService->getFlaskBaseUrl() . '/health';
+
+        try {
+            $response = Http::connectTimeout(2)->timeout(5)->get($flaskUrl);
+
+            if ($response->successful()) {
+                $status = $response->json('status', 'OK');
+                $service = $response->json('service', 'Flask Service');
+                return back()->with('success', "✅ Flask Analytics Service is ONLINE & HEALTHY (HTTP 200). Status: {$status}, Service: {$service}");
+            }
+
+            return back()->with('error', "⚠️ Flask service responded with HTTP {$response->status()}");
+        } catch (\Throwable $e) {
+            return back()->with('error', "❌ Flask Analytics Service is OFFLINE or TIMED OUT: {$e->getMessage()}. Local PHP fallback is active.");
+        }
+    }
+
+    /**
+     * Flush analytics cache.
+     */
+    public function flushCache()
+    {
+        Cache::flush();
+        return back()->with('success', '🧹 Analytics cache flushed successfully! Fresh insights will be fetched on next request.');
     }
 
     /**
@@ -66,7 +99,6 @@ class AnalyticsController extends Controller
         if ($reportExists) {
             $rawContent = file_get_contents($reportPath);
             $decoded = json_decode($rawContent, true);
-            // Ensure clean pretty printing
             $reportJsonString = is_array($decoded) ? json_encode($decoded, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) : $rawContent;
         }
 

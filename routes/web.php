@@ -30,19 +30,32 @@ Route::get('/', function () {
     $categories = [];
 
     if (Schema::hasTable('collection_centres')) {
-        $collectionCentres = CollectionCentre::with(['city', 'category'])
+        $collectionCentres = CollectionCentre::with(['city', 'category', 'categories'])
             ->orderBy('name')
             ->get()
             ->map(function ($centre) {
                 return [
-                    'id'       => $centre->id,
-                    'name'     => $centre->name,
-                    'city'     => $centre->city ? $centre->city->name : '',
-                    'address'  => $centre->address,
-                    'phone'    => $centre->phone,
-                    'category' => $centre->category ? $centre->category->name : '',
-                    'lat'      => $centre->latitude !== null ? (float) $centre->latitude : null,
-                    'lng'      => $centre->longitude !== null ? (float) $centre->longitude : null,
+                    'id'                        => $centre->id,
+                    'name'                      => $centre->name,
+                    'city'                      => $centre->city ? $centre->city->name : '',
+                    'district'                  => $centre->district ?? ($centre->city ? $centre->city->district : ''),
+                    'address'                   => $centre->address,
+                    'phone'                     => $centre->phone,
+                    'category'                  => $centre->category ? $centre->category->name : '',
+                    'categories'                => $centre->categories ? $centre->categories->pluck('name')->toArray() : [],
+                    'lat'                       => $centre->latitude !== null ? (float) $centre->latitude : null,
+                    'lng'                       => $centre->longitude !== null ? (float) $centre->longitude : null,
+                    'facility_type'             => $centre->facility_type ?? 'public_dropoff',
+                    'public_access'             => $centre->public_access ?? 'public_dropoff',
+                    'authorization_status'      => $centre->authorization_status ?? 'verified',
+                    'authorization_id'          => $centre->authorization_id,
+                    'authorization_valid_until' => $centre->authorization_valid_until ? $centre->authorization_valid_until->format('Y-m-d') : null,
+                    'verification_date'         => $centre->verification_date ? $centre->verification_date->format('Y-m-d') : null,
+                    'confidence'                => $centre->confidence ?? 'medium',
+                    'status'                    => $centre->status ?? 'active',
+                    'website'                   => $centre->website,
+                    'source_url'                => $centre->source_url,
+                    'notes'                     => $centre->notes,
                 ];
             });
     }
@@ -57,6 +70,9 @@ Route::get('/', function () {
 // ── Public User Feedback Routes ─────────────────────────────────────────────
 Route::get('/feedback', [FeedbackController::class, 'create'])->name('feedback.create');
 Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+Route::post('/collection-centres/{collectionCentre}/report', [FeedbackController::class, 'reportCentre'])
+    ->middleware('throttle:10,1')
+    ->name('collection-centres.report');
 
 // ── Public Announcements / Updates Routes ─────────────────────────────────
 Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
@@ -119,6 +135,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/feedback', [AdminFeedbackController::class, 'index'])->name('feedback.index');
         Route::get('/feedback/{feedback}', [AdminFeedbackController::class, 'show'])->name('feedback.show');
         Route::patch('/feedback/{feedback}/toggle-reviewed', [AdminFeedbackController::class, 'toggleReviewed'])->name('feedback.toggle-reviewed');
+        Route::patch('/feedback/{feedback}/mark-centre-pending', [AdminFeedbackController::class, 'markCentrePending'])->name('feedback.mark-centre-pending');
+        Route::patch('/feedback/{feedback}/resolve', [AdminFeedbackController::class, 'resolveReport'])->name('feedback.resolve');
         Route::delete('/feedback/{feedback}', [AdminFeedbackController::class, 'destroy'])->name('feedback.destroy');
 
         // Phase 9: Announcements / Updates CRUD
@@ -136,6 +154,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Phase 12: Smart Waste Analytics & Python Integration
         Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
         Route::post('/analytics/generate-report', [AnalyticsController::class, 'generateReport'])->name('analytics.generate-report');
+        Route::post('/analytics/test-health', [AnalyticsController::class, 'testHealth'])->name('analytics.test-health');
+        Route::post('/analytics/flush-cache', [AnalyticsController::class, 'flushCache'])->name('analytics.flush-cache');
         Route::get('/analytics/report', [AnalyticsController::class, 'viewReport'])->name('analytics.report');
         Route::get('/analytics/view-report', [AnalyticsController::class, 'viewReport'])->name('analytics.view-report');
         Route::get('/analytics/download-report', [AnalyticsController::class, 'downloadReport'])->name('analytics.download-report');

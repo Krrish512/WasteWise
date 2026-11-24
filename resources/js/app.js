@@ -19,18 +19,14 @@ const pages = {
 let currentPage = 'home';
 
 function navigateTo(pageId, options = {}) {
-    // Close mobile nav if open
     closeMobileNav();
 
-    // Hide all pages
     Object.values(pages).forEach(p => { if (p) p.classList.remove('active'); });
 
-    // Show target page
     if (pages[pageId]) {
         pages[pageId].classList.add('active');
         currentPage = pageId;
 
-        // Update active nav links
         const navLinks = {
             home: document.getElementById('nav-home'),
             how: document.getElementById('nav-how'),
@@ -45,14 +41,11 @@ function navigateTo(pageId, options = {}) {
             el.classList.toggle('active', el.dataset.page === pageId);
         });
 
-        // Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        // Page-specific init
         if (pageId === 'centres') initCentresPage();
         if (pageId === 'results' && options.query) doSearch(options.query);
 
-        // Init scroll reveal
         setTimeout(initReveal, 100);
     }
 }
@@ -98,7 +91,6 @@ const resSearchInput = document.getElementById('res-search-input');
 const resSearchBtn   = document.getElementById('res-search-btn');
 const resSearchClear = document.getElementById('res-search-clear');
 
-// Sync inputs
 function syncSearchInputs(val) {
     if (heroSearchInput) heroSearchInput.value = val;
     if (resSearchInput)  resSearchInput.value  = val;
@@ -132,7 +124,6 @@ resSearchClear?.addEventListener('click', () => {
     resSearchInput?.focus();
 });
 
-// Enter key search
 [heroSearchInput, resSearchInput].forEach(inp => {
     inp?.addEventListener('keydown', e => {
         if (e.key === 'Enter') triggerSearch(inp.value);
@@ -181,12 +172,16 @@ document.querySelectorAll('[data-chip]').forEach(chip => {
     });
 });
 
-/* ── API Search ───────────────────────────────────────────────────────────── */
+/* ── API Search & Results Handling ────────────────────────────────────────── */
 const resultLoading  = document.getElementById('result-loading');
 const resultSuccess  = document.getElementById('result-success');
 const resultNotFound = document.getElementById('result-not-found');
 const resultError    = document.getElementById('result-error');
 const resultQueryLabel = document.getElementById('result-query-label');
+
+let currentSearchResultsCentres = [];
+let currentResultsAccessFilter = 'public_dropoff'; // Default ON for household searches
+let currentSearchQuery = '';
 
 function showResultState(state) {
     [resultLoading, resultSuccess, resultNotFound, resultError].forEach(el => {
@@ -197,12 +192,15 @@ function showResultState(state) {
 }
 
 async function doSearch(query) {
+    currentSearchQuery = query;
     if (resultQueryLabel) resultQueryLabel.textContent = `"${query}"`;
 
     showResultState('loading');
 
+    const includeUnverified = document.getElementById('res-include-unverified')?.checked ? 1 : 0;
+
     try {
-        const url = `${API_BASE}/waste/search?q=${encodeURIComponent(query)}`;
+        const url = `${API_BASE}/waste/search?q=${encodeURIComponent(query)}&include_unverified=${includeUnverified}`;
         const resp = await fetch(url, {
             method: 'GET',
             headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
@@ -270,9 +268,20 @@ function showError() {
 }
 
 function renderResult(data) {
-    // Item name & description
     setText('res-item-name', data.name);
     setText('res-item-desc', data.description);
+
+    // Safety Banner Handling (e.g. Lithium-Ion warning)
+    const safetyBanner = document.getElementById('res-safety-banner');
+    const safetyText = document.getElementById('res-safety-warning-text');
+    if (safetyBanner && safetyText) {
+        if (data.safety_warning) {
+            safetyText.textContent = data.safety_warning;
+            safetyBanner.style.display = 'block';
+        } else {
+            safetyBanner.style.display = 'none';
+        }
+    }
 
     // Category badge
     const catName = data.category?.name ?? 'Uncategorized';
@@ -287,7 +296,9 @@ function renderResult(data) {
     setText('res-avoid', dm?.avoid ?? 'No specific warnings available.');
 
     // Collection centres
-    renderCentres(data.collection_centres ?? []);
+    currentSearchResultsCentres = data.collection_centres ?? [];
+    populateResultFilters(currentSearchResultsCentres);
+    applyResultCentresFilter();
 }
 
 function setText(id, value) {
@@ -313,6 +324,187 @@ function setCategoryEmoji(id, catName) {
     el.textContent = map[catName] ?? '🗑️';
 }
 
+/* ── Result Centres Cascading Filter & Rendering ─────────────────────────── */
+function populateResultFilters(centres) {
+    const districtSelect = document.getElementById('res-filter-district');
+    const citySelect = document.getElementById('res-filter-city');
+    if (!districtSelect || !citySelect) return;
+
+    const districts = new Set();
+    const cities = new Set();
+
+    centres.forEach(c => {
+        if (c.district) districts.add(c.district);
+        if (c.city) cities.add(c.city);
+    });
+
+    districtSelect.innerHTML = '<option value="">All Districts</option>' +
+        Array.from(districts).sort().map(d => `<option value="${escHtml(d)}">${escHtml(d)}</option>`).join('');
+
+    citySelect.innerHTML = '<option value="">All Cities</option>' +
+        Array.from(cities).sort().map(ct => `<option value="${escHtml(ct)}">${escHtml(ct)}</option>`).join('');
+}
+
+function applyResultCentresFilter() {
+    const district = document.getElementById('res-filter-district')?.value ?? '';
+    const city = document.getElementById('res-filter-city')?.value ?? '';
+
+    let filtered = currentSearchResultsCentres.filter(c => {
+        // District filter
+        if (district && c.district !== district) return false;
+        // City filter
+        if (city && c.city !== city) return false;
+
+        // Access filter chip
+        if (currentResultsAccessFilter === 'public_dropoff') {
+            const isPublic = (c.public_access === 'public_dropoff' || c.facility_type === 'public_dropoff' || c.facility_type === 'municipal_centre');
+            if (!isPublic) return false;
+        } else if (currentResultsAccessFilter === 'recycler_pickup') {
+            const isRecyclerOrPickup = (c.public_access === 'pickup_only' || c.facility_type === 'authorized_recycler' || c.facility_type === 'pickup_provider' || c.facility_type === 'processing_facility');
+            if (!isRecyclerOrPickup) return false;
+        }
+        return true;
+    });
+
+    renderCentres(filtered);
+}
+
+// Result Filter Chip Event Handlers
+document.querySelectorAll('.access-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+        document.querySelectorAll('.access-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentResultsAccessFilter = chip.dataset.accessFilter;
+        applyResultCentresFilter();
+    });
+});
+
+document.getElementById('res-filter-district')?.addEventListener('change', () => {
+    const selDist = document.getElementById('res-filter-district').value;
+    const citySelect = document.getElementById('res-filter-city');
+    if (citySelect) {
+        const matchingCities = new Set();
+        currentSearchResultsCentres.forEach(c => {
+            if (!selDist || c.district === selDist) {
+                if (c.city) matchingCities.add(c.city);
+            }
+        });
+        citySelect.innerHTML = '<option value="">All Cities</option>' +
+            Array.from(matchingCities).sort().map(ct => `<option value="${escHtml(ct)}">${escHtml(ct)}</option>`).join('');
+    }
+    applyResultCentresFilter();
+});
+
+document.getElementById('res-filter-city')?.addEventListener('change', applyResultCentresFilter);
+
+document.getElementById('res-include-unverified')?.addEventListener('change', () => {
+    if (currentSearchQuery) {
+        doSearch(currentSearchQuery);
+    }
+});
+
+/* ── Card Building & Access Badges Helper ──────────────────────────────────── */
+function buildCentreCardHtml(c, isSearchCard = false) {
+    const lat = (c.latitude !== undefined && c.latitude !== null) ? c.latitude : c.lat;
+    const lng = (c.longitude !== undefined && c.longitude !== null) ? c.longitude : c.lng;
+    const hasCoords = (lat !== null && lat !== undefined && lng !== null && lng !== undefined && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lng)));
+
+    // Access Badge Logic
+    let accessBadgeHtml = '';
+    const pubAccess = c.public_access || 'public_dropoff';
+    const facType = c.facility_type || 'public_dropoff';
+
+    if (pubAccess === 'public_dropoff' || facType === 'public_dropoff') {
+        accessBadgeHtml = `<span class="access-badge access-badge-green">🌿 Public Drop-Off</span>`;
+    } else if (pubAccess === 'pickup_only' || facType === 'pickup_provider') {
+        accessBadgeHtml = `<span class="access-badge access-badge-amber">📞 Pickup / Call First</span>`;
+    } else if (pubAccess === 'business_industrial_only' || facType === 'industrial_facility') {
+        accessBadgeHtml = `<span class="access-badge access-badge-red">🏭 Business / Industrial Only</span>`;
+    } else {
+        accessBadgeHtml = `<span class="access-badge access-badge-amber">ℹ️ ${escHtml(pubAccess.replace(/_/g, ' '))}</span>`;
+    }
+
+    // Verification Badge Logic
+    let verifyBadgeHtml = '';
+    const authStatus = c.authorization_status || 'verified';
+    const verifyDate = c.verification_date || c.authorization_valid_until;
+    const dateText = verifyDate ? ` (${verifyDate.substring(0, 7)})` : '';
+
+    if (authStatus === 'verified') {
+        verifyBadgeHtml = `<span class="verify-badge verify-badge-green">✓ GPCB / Municipal Verified${dateText}</span>`;
+    } else if (authStatus === 'needs_confirmation' || c.status === 'pending_verification') {
+        verifyBadgeHtml = `<span class="verify-badge verify-badge-amber">⏳ Pending Review</span>`;
+    } else if (authStatus === 'expired') {
+        verifyBadgeHtml = `<span class="verify-badge verify-badge-red">⚠️ Authorization Expired</span>`;
+    }
+
+    // Distance Badge (if nearest active)
+    const distBadge = (c.distance !== null && c.distance !== undefined)
+        ? `<div class="centre-distance-badge">📏 ${c.distance < 1 ? (c.distance * 1000).toFixed(0) + ' m away' : c.distance.toFixed(1) + ' km away'}</div>`
+        : '';
+
+    // Directions & Call Logic
+    let actionsHtml = '';
+    if (hasCoords) {
+        const mapsUrl = (userLocation && userLocation.lat && userLocation.lng)
+            ? `https://www.google.com/maps/dir/?api=1&origin=${userLocation.lat},${userLocation.lng}&destination=${lat},${lng}`
+            : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+
+        actionsHtml = `
+            <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" class="directions-btn">
+                🧭 Get Directions
+            </a>
+        `;
+    } else {
+        const fullAddress = `${c.name || ''}, ${c.address || ''}, ${c.city || ''}, Gujarat`;
+        const searchUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`;
+        const callBtn = c.phone
+            ? `<a href="tel:${c.phone}" class="call-btn">📞 Call Before Visiting</a>`
+            : '';
+
+        actionsHtml = `
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;width:100%;align-items:center;">
+                <a href="${searchUrl}" target="_blank" rel="noopener noreferrer" class="search-map-btn" style="flex:1;">
+                    🔍 Search Address on Map
+                </a>
+                ${callBtn}
+            </div>
+        `;
+    }
+
+    const cardClass = isSearchCard ? 'centre-card reveal' : 'centre-list-card reveal';
+
+    return `
+        <div class="${cardClass}" data-centre-id="${c.id || ''}">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;margin-bottom:.5rem;">
+                <div style="display:flex;flex-wrap:wrap;gap:.35rem;">
+                    ${accessBadgeHtml}
+                    ${verifyBadgeHtml}
+                </div>
+                <button type="button" class="btn-report-issue" onclick="openReportModal(${c.id || 'null'}, '${escHtml(c.name || '')}')" title="Report issue with this centre" style="background:transparent;border:none;cursor:pointer;font-size:.85rem;color:var(--text-light);padding:.2rem;">
+                    🚩 Report
+                </button>
+            </div>
+
+            <div class="centre-name" style="font-size:1.05rem;font-weight:700;color:var(--text-dark);margin-bottom:.3rem;">
+                ♻️ ${escHtml(c.name)}
+            </div>
+
+            ${c.city ? `<div class="centre-city" style="font-size:.85rem;color:var(--text-muted);margin-bottom:.4rem;">📍 ${escHtml(c.city)}${c.district ? ` (${escHtml(c.district)} Dist.)` : ''}</div>` : ''}
+            ${distBadge}
+
+            ${c.address ? `<div class="centre-detail"><span class="centre-detail-icon">🏢</span><span>${escHtml(c.address)}</span></div>` : ''}
+            ${c.phone ? `<div class="centre-detail"><span class="centre-detail-icon">📞</span><span><a href="tel:${c.phone}" style="color:var(--primary-dark);font-weight:600;">${escHtml(c.phone)}</a></span></div>` : ''}
+            ${c.facility_type ? `<div class="centre-detail"><span class="centre-detail-icon">🏷️</span><span>Type: ${escHtml(c.facility_type.replace(/_/g, ' '))}</span></div>` : ''}
+            ${hasCoords ? `<div class="centre-detail" style="font-size:.8rem;color:var(--text-light);"><span class="centre-detail-icon">🗺️</span><span>GPS: ${lat}, ${lng}</span></div>` : ''}
+
+            <div style="margin-top:.85rem;">
+                ${actionsHtml}
+            </div>
+        </div>
+    `;
+}
+
 function renderCentres(centres) {
     const container = document.getElementById('res-centres-list');
     const noCentres = document.getElementById('res-no-centres');
@@ -329,28 +521,7 @@ function renderCentres(centres) {
     container.style.display = '';
     if (noCentres) noCentres.style.display = 'none';
 
-    centres.forEach(centre => {
-        const lat = centre.latitude;
-        const lng = centre.longitude;
-        const hasCoords = lat && lng;
-        const mapsUrl = hasCoords
-            ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
-            : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(centre.name + ' ' + (centre.city ?? ''))}`;
-
-        const card = document.createElement('div');
-        card.className = 'centre-card reveal';
-        card.innerHTML = `
-            <div class="centre-name">♻️ ${escHtml(centre.name)}</div>
-            ${centre.city ? `<div class="centre-city">📍 ${escHtml(centre.city)}</div>` : ''}
-            ${centre.address ? `<div class="centre-detail"><span class="centre-detail-icon">🏢</span><span>${escHtml(centre.address)}</span></div>` : ''}
-            ${centre.phone   ? `<div class="centre-detail"><span class="centre-detail-icon">📞</span><span>${escHtml(centre.phone)}</span></div>` : ''}
-            ${hasCoords      ? `<div class="centre-detail"><span class="centre-detail-icon">🗺️</span><span>${lat}, ${lng}</span></div>` : ''}
-            <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" class="directions-btn">
-                🧭 Get Directions
-            </a>
-        `;
-        container.appendChild(card);
-    });
+    container.innerHTML = centres.map(c => buildCentreCardHtml(c, true)).join('');
 }
 
 function escHtml(str) {
@@ -363,26 +534,14 @@ function escHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
-/* ── Collection Centres Page ──────────────────────────────────────────────── */
+/* ── Collection Centres Directory Page ────────────────────────────────────── */
 let centresData = (window.collectionCentresData && window.collectionCentresData.length > 0)
     ? window.collectionCentresData
-    : [
-        { name: 'GreenEarth Recycling Hub', city: 'Mumbai', address: '45 Marol Industrial Area, Andheri East', phone: '+91 22 2835 4567', category: 'Electronic Waste', lat: 19.1136, lng: 72.8697 },
-        { name: 'EcoMart Collection Point', city: 'Pune', address: '12 Hadapsar Industrial Estate', phone: '+91 20 2683 1234', category: 'Plastic Waste', lat: 18.5103, lng: 73.9302 },
-        { name: 'CleanCycle Centre', city: 'Bangalore', address: '78 Electronic City Phase 1', phone: '+91 80 2852 3456', category: 'Electronic Waste', lat: 12.8399, lng: 77.6770 },
-        { name: 'PaperPath Recyclers', city: 'Delhi', address: '34 Okhla Industrial Area Phase 2', phone: '+91 11 2692 7890', category: 'Paper Waste', lat: 28.5384, lng: 77.2700 },
-        { name: 'GlassWorks Collection', city: 'Hyderabad', address: '56 Patancheru Industrial Area', phone: '+91 40 2304 5678', category: 'Glass Waste', lat: 17.5288, lng: 78.2666 },
-        { name: 'BioGreen Organics', city: 'Chennai', address: '23 Ambattur Industrial Estate', phone: '+91 44 2625 9012', category: 'Organic Waste', lat: 13.0975, lng: 80.1540 },
-        { name: 'MetalMax Scrap Hub', city: 'Kolkata', address: '9 Tangra Industrial Growth Centre', phone: '+91 33 2334 5678', category: 'Metal Waste', lat: 22.5387, lng: 88.3871 },
-        { name: 'SafeDrop Hazmat Centre', city: 'Ahmedabad', address: '67 GIDC Vatva Industrial Estate', phone: '+91 79 2583 4567', category: 'Hazardous Waste', lat: 22.9734, lng: 72.6389 },
-        { name: 'FibreLoop Textiles', city: 'Surat', address: '14 Sachin GIDC', phone: '+91 261 239 7890', category: 'Textile Waste', lat: 21.1046, lng: 72.8714 },
-        { name: 'CityGreen E-Waste', city: 'Mumbai', address: '7 Kalina Business Park, BKC', phone: '+91 22 6744 1234', category: 'Electronic Waste', lat: 19.0670, lng: 72.8647 },
-        { name: 'RecyclePoint Nagpur', city: 'Nagpur', address: '22 Hingna MIDC', phone: '+91 712 265 3456', category: 'Plastic Waste', lat: 21.1272, lng: 79.1095 },
-        { name: 'EarthCycle Jaipur', city: 'Jaipur', address: '5 Sitapura Industrial Area', phone: '+91 141 271 7890', category: 'Organic Waste', lat: 26.7748, lng: 75.8648 },
-    ];
+    : [];
 
-let userLocation = null; // { lat, lng }
+let userLocation = null;
 let isNearestActive = false;
+let currentDirAccessFilter = 'public_dropoff';
 
 function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
     if (lat1 === null || lon1 === null || lat2 === null || lon2 === null) return null;
@@ -411,18 +570,38 @@ function initCentresPage() {
         centresData = window.collectionCentresData;
     }
 
+    populateDirectoryDropdowns();
+
     const filterInput = document.getElementById('centres-filter');
     const catFilter   = document.getElementById('centres-cat-filter');
+    const distFilter  = document.getElementById('centres-district-filter');
+    const cityFilter  = document.getElementById('centres-city-filter');
+    const unverifiedToggle = document.getElementById('dir-include-unverified');
     const btnNearest  = document.getElementById('btn-find-nearest');
     const btnShowAll  = document.getElementById('btn-show-all');
 
     filterCentres();
 
-    filterInput?.removeEventListener('input', filterCentres);
     filterInput?.addEventListener('input', filterCentres);
-
-    catFilter?.removeEventListener('change', filterCentres);
     catFilter?.addEventListener('change', filterCentres);
+    unverifiedToggle?.addEventListener('change', filterCentres);
+
+    distFilter?.addEventListener('change', () => {
+        const selDist = distFilter.value;
+        const matchingCities = new Set();
+        centresData.forEach(c => {
+            if (!selDist || c.district === selDist) {
+                if (c.city) matchingCities.add(c.city);
+            }
+        });
+        if (cityFilter) {
+            cityFilter.innerHTML = '<option value="">All Cities</option>' +
+                Array.from(matchingCities).sort().map(ct => `<option value="${escHtml(ct)}">${escHtml(ct)}</option>`).join('');
+        }
+        filterCentres();
+    });
+
+    cityFilter?.addEventListener('change', filterCentres);
 
     if (btnNearest) {
         btnNearest.removeEventListener('click', handleFindNearest);
@@ -433,14 +612,45 @@ function initCentresPage() {
         btnShowAll.removeEventListener('click', handleShowAll);
         btnShowAll.addEventListener('click', handleShowAll);
     }
+
+    document.querySelectorAll('.dir-access-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            document.querySelectorAll('.dir-access-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            currentDirAccessFilter = chip.dataset.dirAccess;
+            filterCentres();
+        });
+    });
+}
+
+function populateDirectoryDropdowns() {
+    const distFilter = document.getElementById('centres-district-filter');
+    const cityFilter = document.getElementById('centres-city-filter');
+    if (!distFilter || !cityFilter) return;
+
+    const districts = new Set();
+    const cities = new Set();
+
+    centresData.forEach(c => {
+        if (c.district) districts.add(c.district);
+        if (c.city) cities.add(c.city);
+    });
+
+    distFilter.innerHTML = '<option value="">All Districts</option>' +
+        Array.from(districts).sort().map(d => `<option value="${escHtml(d)}">${escHtml(d)}</option>`).join('');
+
+    cityFilter.innerHTML = '<option value="">All Cities</option>' +
+        Array.from(cities).sort().map(ct => `<option value="${escHtml(ct)}">${escHtml(ct)}</option>`).join('');
 }
 
 function handleFindNearest() {
     const btnNearest = document.getElementById('btn-find-nearest');
     const btnShowAll = document.getElementById('btn-show-all');
+    const fallbackPrompt = document.getElementById('geo-fallback-prompt');
 
     if (!navigator.geolocation) {
         showNearestStatus("Your browser does not support location services.", "error");
+        if (fallbackPrompt) fallbackPrompt.style.display = 'flex';
         return;
     }
 
@@ -464,6 +674,7 @@ function handleFindNearest() {
 
             showNearestStatus("📍 Showing centres nearest to you", "success");
             if (btnShowAll) btnShowAll.style.display = 'inline-flex';
+            if (fallbackPrompt) fallbackPrompt.style.display = 'none';
 
             filterCentres();
         },
@@ -473,24 +684,27 @@ function handleFindNearest() {
                 btnNearest.innerHTML = '📍 Find Nearest Centre';
             }
 
+            // Non-blocking fallback prompt letting users manually pick District/City
+            if (fallbackPrompt) fallbackPrompt.style.display = 'flex';
+
             switch (error.code) {
                 case error.PERMISSION_DENIED:
-                    showNearestStatus("📍 Location access was denied. Please allow location access to find the nearest centre.", "error");
+                    showNearestStatus("📍 Location access was denied. Please pick your District or City above.", "error");
                     break;
                 case error.POSITION_UNAVAILABLE:
-                    showNearestStatus("Unable to determine your location. Please try again.", "error");
+                    showNearestStatus("Unable to determine your location. Please pick your District or City above.", "error");
                     break;
                 case error.TIMEOUT:
-                    showNearestStatus("Location request timed out. Please try again.", "error");
+                    showNearestStatus("Location request timed out (8s). Select your District or City manually above.", "error");
                     break;
                 default:
-                    showNearestStatus("Unable to determine your location. Please try again.", "error");
+                    showNearestStatus("Location unavailable. Please pick your District or City above.", "error");
                     break;
             }
         },
         {
             enableHighAccuracy: true,
-            timeout: 10000,
+            timeout: 8000, // 8-second timeout requirement
             maximumAge: 0
         }
     );
@@ -526,21 +740,51 @@ function hideNearestStatus() {
 function filterCentres() {
     const term = document.getElementById('centres-filter')?.value.toLowerCase() ?? '';
     const cat  = document.getElementById('centres-cat-filter')?.value ?? '';
+    const dist = document.getElementById('centres-district-filter')?.value ?? '';
+    const city = document.getElementById('centres-city-filter')?.value ?? '';
+    const includeUnverified = document.getElementById('dir-include-unverified')?.checked ?? false;
 
     let filtered = centresData.filter(c => {
+        // Verification filter (hide pending_verification or expired unless toggle checked)
+        if (!includeUnverified) {
+            if (c.status === 'pending_verification') return false;
+            if (c.authorization_status === 'expired') return false;
+        }
+
+        // District & City
+        if (dist && c.district !== dist) return false;
+        if (city && c.city !== city) return false;
+
+        // Access filter chip
+        if (currentDirAccessFilter === 'public_dropoff') {
+            const isPublic = (c.public_access === 'public_dropoff' || c.facility_type === 'public_dropoff' || c.facility_type === 'municipal_centre');
+            if (!isPublic) return false;
+        } else if (currentDirAccessFilter === 'recycler_pickup') {
+            const isRecyclerOrPickup = (c.public_access === 'pickup_only' || c.facility_type === 'authorized_recycler' || c.facility_type === 'pickup_provider' || c.facility_type === 'processing_facility');
+            if (!isRecyclerOrPickup) return false;
+        }
+
+        // Search text term
         const matchTerm = !term ||
             (c.name && c.name.toLowerCase().includes(term)) ||
             (c.city && c.city.toLowerCase().includes(term)) ||
+            (c.district && c.district.toLowerCase().includes(term)) ||
             (c.address && c.address.toLowerCase().includes(term));
-        const matchCat  = !cat || c.category === cat;
+
+        // Category filter
+        const cCats = c.categories || (c.category ? [c.category] : []);
+        const matchCat = !cat || cCats.includes(cat) || c.category === cat;
+
         return matchTerm && matchCat;
     });
 
     filtered = filtered.map(c => {
-        const dist = (isNearestActive && userLocation)
-            ? calculateHaversineDistance(userLocation.lat, userLocation.lng, c.lat, c.lng)
+        const cLat = (c.latitude !== undefined && c.latitude !== null) ? c.latitude : c.lat;
+        const cLng = (c.longitude !== undefined && c.longitude !== null) ? c.longitude : c.lng;
+        const distKm = (isNearestActive && userLocation)
+            ? calculateHaversineDistance(userLocation.lat, userLocation.lng, cLat, cLng)
             : null;
-        return { ...c, distance: dist };
+        return { ...c, distance: distKm };
     });
 
     if (isNearestActive && userLocation) {
@@ -563,49 +807,90 @@ function renderCentresList(data) {
 
     if (!data || data.length === 0) {
         container.innerHTML = `<div class="no-centres" style="grid-column:1/-1">
-            <p>🔍 No collection centres match your filter.</p>
+            <p>🔍 No collection centres match your search or filter criteria.</p>
         </div>`;
         return;
     }
 
-    container.innerHTML = data.map(c => {
-        const hasCoords = c.lat !== null && c.lat !== undefined && c.lng !== null && c.lng !== undefined;
-        let mapsUrl = '';
-        if (hasCoords) {
-            if (userLocation && userLocation.lat && userLocation.lng) {
-                mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLocation.lat},${userLocation.lng}&destination=${c.lat},${c.lng}`;
-            } else {
-                mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`;
-            }
-        } else {
-            mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((c.name || '') + ' ' + (c.city || ''))}`;
-        }
-
-        const distBadge = (c.distance !== null && c.distance !== undefined)
-            ? `<div class="centre-distance-badge">📏 ${c.distance < 1 ? (c.distance * 1000).toFixed(0) + ' m away' : c.distance.toFixed(1) + ' km away'}</div>`
-            : '';
-
-        return `
-        <div class="centre-list-card reveal">
-            <div class="centre-list-header">
-                <div>
-                    <div class="centre-name" style="font-size:1.05rem;margin-bottom:.3rem">${escHtml(c.name)}</div>
-                    ${c.city ? `<div class="centre-city">📍 ${escHtml(c.city)}</div>` : ''}
-                    ${distBadge}
-                </div>
-                <div class="centre-list-icon">♻️</div>
-            </div>
-            ${c.address ? `<div class="centre-detail"><span class="centre-detail-icon">🏢</span><span>${escHtml(c.address)}</span></div>` : ''}
-            ${c.phone ? `<div class="centre-detail"><span class="centre-detail-icon">📞</span><span>${escHtml(c.phone)}</span></div>` : ''}
-            ${c.category ? `<div class="centre-detail"><span class="centre-detail-icon">🏷️</span><span>${escHtml(c.category)}</span></div>` : ''}
-            <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" class="directions-btn">
-                🗺️ Get Directions
-            </a>
-        </div>`;
-    }).join('');
-
+    container.innerHTML = data.map(c => buildCentreCardHtml(c, false)).join('');
     initReveal();
 }
+
+/* ── "Report an Issue with This Centre" Modal Logic ───────────────────────── */
+window.openReportModal = function(centreId, centreName) {
+    const modal = document.getElementById('report-centre-modal');
+    const nameEl = document.getElementById('report-centre-name');
+    const idInput = document.getElementById('report-centre-id');
+
+    if (!modal) return;
+
+    if (idInput) idInput.value = centreId || '';
+    if (nameEl) nameEl.textContent = centreName ? `Centre: ${centreName}` : '';
+
+    modal.style.display = 'flex';
+};
+
+function closeReportModal() {
+    const modal = document.getElementById('report-centre-modal');
+    if (modal) modal.style.display = 'none';
+    const form = document.getElementById('report-centre-form');
+    if (form) form.reset();
+}
+
+document.getElementById('close-report-modal')?.addEventListener('click', closeReportModal);
+document.getElementById('cancel-report-btn')?.addEventListener('click', closeReportModal);
+
+document.getElementById('report-centre-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const centreId = document.getElementById('report-centre-id')?.value;
+    if (!centreId) {
+        showToast('Invalid collection centre specified.');
+        return;
+    }
+
+    const submitBtn = document.getElementById('submit-report-btn');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+    }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    const payload = {
+        issue_type: document.getElementById('report-issue-type')?.value,
+        message: document.getElementById('report-message')?.value,
+        name: document.getElementById('report-name')?.value,
+        email: document.getElementById('report-email')?.value,
+    };
+
+    try {
+        const resp = await fetch(`/collection-centres/${centreId}/report`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': csrfToken || '',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const data = await resp.json().catch(() => ({}));
+
+        if (resp.ok) {
+            closeReportModal();
+            showToast(data.message || 'Thank you! Your issue report has been submitted to the admin team for review.');
+        } else {
+            showToast(data.message || 'Error submitting report. Please try again.');
+        }
+    } catch (err) {
+        console.error('Report submission error:', err);
+        showToast('Network error submitting report. Please try again.');
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Report';
+        }
+    }
+});
 
 /* ── Scroll Reveal ────────────────────────────────────────────────────────── */
 function initReveal() {
@@ -625,13 +910,15 @@ function initReveal() {
 }
 
 /* ── Toast ────────────────────────────────────────────────────────────────── */
-function showToast(msg, duration = 3000) {
+function showToast(msg, duration = 3500) {
     const toast = document.getElementById('toast');
     if (!toast) return;
     toast.textContent = msg;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), duration);
 }
+
+window.showToast = showToast;
 
 /* ── Navigation event delegation & SPA Init ────────────────────────────────── */
 if (document.getElementById('page-home')) {
@@ -642,7 +929,6 @@ if (document.getElementById('page-home')) {
     }
 
     document.addEventListener('click', e => {
-        // 1. Elements with data-page attribute (e.g. CTA buttons, footer links on welcome.blade.php)
         const dataPageEl = e.target.closest('[data-page]');
         if (dataPageEl) {
             const pageId = dataPageEl.dataset.page;
@@ -660,12 +946,10 @@ if (document.getElementById('page-home')) {
             }
         }
 
-        // 2. Anchor links pointing to SPA sections on welcome.blade.php
         const anchor = e.target.closest('a');
         if (anchor && anchor.href) {
             try {
                 const url = new URL(anchor.href, window.location.origin);
-                // Only intercept if target URL path is home ('/' or current welcome page)
                 if (url.pathname === '/' || url.pathname === window.location.pathname) {
                     const hashPage = url.hash.replace(/^#\/?/, '');
                     if (hashPage && pages[hashPage]) {
@@ -691,7 +975,6 @@ if (document.getElementById('page-home')) {
         navigateTo(targetPage);
     });
 
-    // Initial page load SPA routing
     const urlParams = new URLSearchParams(window.location.search);
     const initialQuery = urlParams.get('q') || urlParams.get('search');
     if (initialQuery) {
@@ -703,38 +986,5 @@ if (document.getElementById('page-home')) {
 }
 setTimeout(initReveal, 200);
 
-// ── Global Exports (for Blade onclick handlers) ────────────────────────────
 window.triggerSearch = triggerSearch;
 window.searchCategory = (q) => triggerSearch(q);
-
-/* ── Password Visibility Toggle ───────────────────────────────────────────── */
-function togglePasswordVisibility(button, inputId) {
-    if (!button) return;
-    const input = inputId ? document.getElementById(inputId) : button.parentElement.querySelector('input');
-    if (!input) return;
-
-    const isPassword = input.type === 'password';
-    input.type = isPassword ? 'text' : 'password';
-    button.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
-    button.classList.toggle('is-visible', isPassword);
-
-    const eyeShow = button.querySelector('.eye-icon-show');
-    const eyeHide = button.querySelector('.eye-icon-hide');
-
-    if (eyeShow && eyeHide) {
-        eyeShow.style.display = isPassword ? 'none' : 'block';
-        eyeHide.style.display = isPassword ? 'block' : 'none';
-    }
-}
-
-window.togglePasswordVisibility = togglePasswordVisibility;
-
-document.addEventListener('click', e => {
-    const toggleBtn = e.target.closest('.password-toggle-btn');
-    if (toggleBtn) {
-        e.preventDefault();
-        const targetId = toggleBtn.dataset.target;
-        togglePasswordVisibility(toggleBtn, targetId);
-    }
-});
-

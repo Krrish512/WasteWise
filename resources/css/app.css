@@ -2162,3 +2162,136 @@ ul { list-style: none; }
     color: var(--primary);
 }
 
+
+/* ── Collection Centre Access & Verification Badges ── */
+.access-chip, .dir-access-chip {
+    padding: .4rem .85rem;
+    border-radius: var(--radius-full);
+    font-size: .82rem;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.access-chip:hover, .dir-access-chip:hover {
+    border-color: var(--primary);
+    color: var(--primary-dark);
+}
+
+.access-chip.active, .dir-access-chip.active {
+    background: var(--primary-dark);
+    color: #fff;
+    border-color: var(--primary-dark);
+}
+
+.access-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .2rem .65rem;
+    border-radius: var(--radius-full);
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.access-badge-green {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.access-badge-amber {
+    background: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.access-badge-red {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.verify-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    padding: .2rem .6rem;
+    border-radius: var(--radius-full);
+    font-size: .75rem;
+    font-weight: 700;
+}
+
+.verify-badge-green {
+    background: #f0fdf4;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+.verify-badge-amber {
+    background: #fffbeb;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+}
+
+.verify-badge-red {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+}
+
+.search-map-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    background: #f8fafc;
+    color: #1e293b;
+    border: 1px solid #cbd5e1;
+    padding: .5rem .9rem;
+    border-radius: var(--radius-md);
+    font-size: .84rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition);
+}
+
+.search-map-btn:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+}
+
+.call-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+    padding: .5rem .9rem;
+    border-radius: var(--radius-md);
+    font-size: .84rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all var(--transition);
+}
+
+.call-btn:hover {
+    background: #fde68a;
+}
+
+@keyframes modalIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

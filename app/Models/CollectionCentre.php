@@ -63,4 +63,12 @@ class CollectionCentre extends Model
             'waste_category_id'
         )->withTimestamps();
     }
+
+    /**
+     * Reports and issue submissions filed by citizens against this centre.
+     */
+    public function reports()
+    {
+        return $this->hasMany(Feedback::class, 'collection_centre_id');
+    }
 }

@@ -9,6 +9,15 @@
             <div style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);padding:.3rem .8rem;border-radius:var(--radius-full);font-size:.8rem;font-weight:700;margin-bottom:.6rem;color:#dcfce7;">
                 🐍 Smart Analytics Engine
             </div>
+            @if(($insights['source'] ?? '') === 'flask')
+                <div style="display:inline-flex;align-items:center;gap:.35rem;background:#dcfce7;color:#166534;padding:.3rem .8rem;border-radius:var(--radius-full);font-size:.8rem;font-weight:700;margin-left:.5rem;">
+                    🟢 Python Flask Engine (Live Service)
+                </div>
+            @else
+                <div style="display:inline-flex;align-items:center;gap:.35rem;background:#fef3c7;color:#92400e;padding:.3rem .8rem;border-radius:var(--radius-full);font-size:.8rem;font-weight:700;margin-left:.5rem;">
+                    🟡 PHP Local Fallback (Resilient Mode)
+                </div>
+            @endif
             <h1 class="admin-dash-title" style="font-family:'Outfit',sans-serif;font-size:2.2rem;font-weight:900;margin:0;">
                 📊 Smart Waste Insights & Analytics
             </h1>
@@ -16,7 +25,19 @@
                 Real-time search data analyzed dynamically using WasteWise's Python analytics integration.
             </p>
         </div>
-        <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;">
+            <form action="{{ route('admin.analytics.test-health') }}" method="POST" style="margin:0;">
+                @csrf
+                <button type="submit" style="background:#fff;color:var(--primary-dark);padding:.6rem 1.2rem;border-radius:var(--radius-full);font-weight:700;font-size:.85rem;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;box-shadow:0 2px 8px rgba(0,0,0,.1);">
+                    🩺 Test /health
+                </button>
+            </form>
+            <form action="{{ route('admin.analytics.flush-cache') }}" method="POST" style="margin:0;">
+                @csrf
+                <button type="submit" style="background:rgba(255,255,255,.2);color:#fff;padding:.6rem 1.2rem;border-radius:var(--radius-full);font-weight:700;font-size:.85rem;border:1px solid rgba(255,255,255,.3);cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;">
+                    🧹 Flush Cache
+                </button>
+            </form>
             <a href="http://127.0.0.1:5000" target="_blank" style="background:#10b981;color:#fff;padding:.6rem 1.2rem;border-radius:var(--radius-full);font-weight:700;font-size:.9rem;text-decoration:none;border:none;box-shadow:0 2px 8px rgba(16,185,129,.4);display:inline-flex;align-items:center;gap:.4rem;">
                 🐍 Open Python Insights ↗
             </a>
@@ -28,6 +49,18 @@
 </div>
 
 <div class="container" style="padding-bottom:5rem;">
+
+    @if(session('success'))
+        <div style="background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;padding:1rem 1.25rem;border-radius:var(--radius-md);margin-bottom:1.5rem;font-weight:600;">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div style="background:#fef2f2;color:#991b1b;border:1px solid #fecaca;padding:1rem 1.25rem;border-radius:var(--radius-md);margin-bottom:1.5rem;font-weight:600;">
+            {{ session('error') }}
+        </div>
+    @endif
 
     <!-- Top Metric Cards (4 Cards) -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:1.5rem;margin-bottom:2.5rem;">

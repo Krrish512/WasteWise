@@ -35,6 +35,62 @@
             {% endif %}
         {% endwith %}
 
+        <!-- Row-by-Row Warnings & Region Alerts (Gujarat Region) -->
+        {% if result.import_warnings %}
+        <div class="card" style="border-left: 4px solid #f59e0b; background: #fffbeb;">
+            <h2 class="card-title" style="color: #b45309; display: flex; align-items: center; gap: 0.5rem;">
+                ⚠️ Gujarat Bounding-Box Regional Warnings ({{ result.import_warnings|length }})
+            </h2>
+            <p style="font-size: 0.85rem; color: #92400e; margin-bottom: 0.75rem;">
+                The following records have coordinates located outside the standard Gujarat region boundary (Latitude 20.0–24.8, Longitude 68.0–74.6):
+            </p>
+            <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.9rem; color: #78350f;">
+                {% for w in result.import_warnings %}
+                    <li style="margin-bottom: 0.35rem;">{{ w }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Row-by-Row Errors -->
+        {% if result.import_errors %}
+        <div class="card" style="border-left: 4px solid #ef4444; background: #fef2f2;">
+            <h2 class="card-title" style="color: #b91c1c; display: flex; align-items: center; gap: 0.5rem;">
+                ❌ Row-by-Row Import Errors ({{ result.import_errors|length }})
+            </h2>
+            <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.9rem; color: #991b1b;">
+                {% for err in result.import_errors %}
+                    <li style="margin-bottom: 0.35rem;">{{ err }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Import Summary Metric if available -->
+        {% if result.import_summary %}
+        <div class="card" style="border-left: 4px solid #10b981; background: #ecfdf5;">
+            <h2 class="card-title" style="color: #065f46;">📥 Ingestion Pipeline Summary</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-top: 0.75rem;">
+                <div>
+                    <div style="font-size: 0.8rem; color: #047857; font-weight: 600;">Inserted</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: #064e3b;">{{ result.import_summary.inserted }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.8rem; color: #b45309; font-weight: 600;">Skipped Duplicates</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: #78350f;">{{ result.import_summary.skipped_duplicates }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.8rem; color: #dc2626; font-weight: 600;">Flagged Conflicts</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: #991b1b;">{{ result.import_summary.flagged_conflicts }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.8rem; color: #1e40af; font-weight: 600;">Total Rows Processed</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: #1e3a8a;">{{ result.import_summary.total_processed }}</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Generated Insight Banner -->
         <div class="insight-banner">
             <div class="insight-title">💡 Generated Insight</div>
@@ -52,7 +108,7 @@
                 <div class="metric-value">{{ result.item }}</div>
             </div>
             <div class="metric-box">
-                <div class="metric-label">Total Searches</div>
+                <div class="metric-label">Total Volume / Searches</div>
                 <div class="metric-value">{{ result.searches }}</div>
             </div>
         </div>
@@ -106,7 +162,7 @@
         </div>
         {% endif %}
 
-        <div style="display: flex; gap: 1rem;">
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
             <a href="{{ url_for('insights') }}" class="btn btn-primary">Analyze Another Item</a>
             <a href="http://127.0.0.1:8000/admin/analytics" class="btn btn-secondary">Return to Main WasteWise App</a>
         </div>

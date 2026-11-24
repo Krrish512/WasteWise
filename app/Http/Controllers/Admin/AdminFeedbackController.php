@@ -9,11 +9,19 @@ use Illuminate\Http\Request;
 class AdminFeedbackController extends Controller
 {
     /**
-     * Display a listing of user feedbacks.
+     * Display a listing of user feedbacks and centre issue reports.
      */
     public function index(Request $request)
     {
-        $query = Feedback::with('user');
+        $query = Feedback::with(['user', 'collectionCentre.city']);
+
+        if ($request->filled('type')) {
+            if ($request->type === 'centres') {
+                $query->whereNotNull('collection_centre_id');
+            } elseif ($request->type === 'general') {
+                $query->whereNull('collection_centre_id');
+            }
+        }
 
         if ($request->filled('rating')) {
             $query->where('rating', $request->rating);
@@ -26,7 +34,11 @@ class AdminFeedbackController extends Controller
 
         $feedbacks = $query->orderBy('created_at', 'desc')->get();
 
-        return view('admin.feedback.index', compact('feedbacks'));
+        $centresNeedingReviewCount = Feedback::whereNotNull('collection_centre_id')
+            ->where('is_reviewed', false)
+            ->count();
+
+        return view('admin.feedback.index', compact('feedbacks', 'centresNeedingReviewCount'));
     }
 
     /**
@@ -34,7 +46,7 @@ class AdminFeedbackController extends Controller
      */
     public function show(Feedback $feedback)
     {
-        $feedback->load('user');
+        $feedback->load(['user', 'collectionCentre.city']);
 
         return view('admin.feedback.show', compact('feedback'));
     }
@@ -54,14 +66,40 @@ class AdminFeedbackController extends Controller
     }
 
     /**
+     * One-click action: Mark reported collection centre as pending_verification.
+     */
+    public function markCentrePending(Feedback $feedback)
+    {
+        if ($feedback->collectionCentre) {
+            $feedback->collectionCentre->update(['status' => 'pending_verification']);
+        }
+
+        $feedback->update(['is_reviewed' => true]);
+
+        return redirect()->back()->with(
+            'success',
+            "Collection centre '{$feedback->collectionCentre?->name}' has been marked as pending_verification and report #{$feedback->id} resolved."
+        );
+    }
+
+    /**
+     * One-click action: Resolve report.
+     */
+    public function resolveReport(Feedback $feedback)
+    {
+        $feedback->update(['is_reviewed' => true]);
+
+        return redirect()->back()->with('success', "Report #{$feedback->id} has been resolved.");
+    }
+
+    /**
      * Remove the specified feedback.
      */
     public function destroy(Feedback $feedback)
     {
-        $feedbackId = $feedback->id;
         $feedback->delete();
 
         return redirect()->route('admin.feedback.index')
-            ->with('success', "Feedback #{$feedbackId} deleted successfully!");
+            ->with('success', 'Feedback entry deleted successfully!');
     }
 }

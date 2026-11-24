@@ -31,6 +31,7 @@ class AdminDashboardController extends Controller
             'cities'                       => City::count(),
             'users'                        => User::count(),
             'searches_today'               => SearchHistory::whereDate('created_at', Carbon::today())->count(),
+            'centres_needing_review'       => Feedback::whereNotNull('collection_centre_id')->where('is_reviewed', false)->count(),
             'pending_feedback'             => Feedback::where('is_reviewed', false)->count(),
             'avg_rating'                   => round((float) (Feedback::avg('rating') ?? 0), 1),
             'announcements_total'          => Announcement::count(),

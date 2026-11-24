@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\WasteCategory;
 use App\Models\WasteItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class AdminAnalyticsTest extends TestCase
@@ -75,6 +77,77 @@ class AdminAnalyticsTest extends TestCase
         $response->assertSee('Plastic Waste');
     }
 
+    public function test_admin_analytics_with_healthy_mocked_flask_service(): void
+    {
+        Http::fake([
+            '*/health' => Http::response(['status' => 'ok', 'service' => 'wastewise-flask'], 200),
+            '*/api/insights*' => Http::response([
+                'success' => true,
+                'status' => 'success',
+                'source' => 'flask',
+                'total_searches' => 42,
+                'top_category' => 'Electronic Waste',
+                'top_item' => 'Old Laptop',
+                'percentage' => 71.4,
+                'most_active_day' => 'Today',
+                'category_breakdown' => [
+                    ['category' => 'Electronic Waste', 'searches' => 30, 'percentage' => 71.4],
+                    ['category' => 'Plastic Waste', 'searches' => 12, 'percentage' => 28.6],
+                ],
+                'insight' => 'Electronic Waste leads search activity with 30 out of 42 searches.',
+            ], 200),
+            '*/api/report*' => Http::response([
+                'success' => true,
+                'source' => 'flask',
+                'generated_at' => now()->toIso8601String(),
+                'total_searches' => 42,
+                'category_breakdown' => ['Electronic Waste' => 30],
+            ], 200),
+        ]);
+
+        $response = $this->actingAs($this->admin)->get('/admin/analytics');
+        $response->assertStatus(200);
+        $response->assertSee('Python Flask Engine');
+        $response->assertSee('Electronic Waste');
+
+        // Test health endpoint
+        $healthResponse = $this->actingAs($this->admin)->post('/admin/analytics/test-health');
+        $healthResponse->assertRedirect();
+        $healthResponse->assertSessionHas('success');
+    }
+
+    public function test_admin_analytics_falls_back_gracefully_when_flask_times_out(): void
+    {
+        // Simulate Flask timeout or connection exception
+        Http::fake([
+            '*/health' => Http::response(null, 500),
+            '*/api/insights*' => function () {
+                throw new \Illuminate\Http\Client\ConnectionException('Connection timed out after 5 seconds');
+            },
+            '*/api/report*' => function () {
+                throw new \Illuminate\Http\Client\ConnectionException('Connection timed out');
+            },
+        ]);
+
+        $response = $this->actingAs($this->admin)->get('/admin/analytics');
+        $response->assertStatus(200);
+        $response->assertSee('PHP Local Fallback');
+
+        // Test health endpoint on failed connection
+        $healthResponse = $this->actingAs($this->admin)->post('/admin/analytics/test-health');
+        $healthResponse->assertRedirect();
+        $healthResponse->assertSessionHas('error');
+    }
+
+    public function test_admin_can_flush_analytics_cache(): void
+    {
+        Cache::put('some_analytics_key', 'some_value', 60);
+
+        $response = $this->actingAs($this->admin)->post('/admin/analytics/flush-cache');
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+    }
+
     public function test_admin_can_generate_python_json_report_via_subprocess(): void
     {
         $response = $this->actingAs($this->admin)->post('/admin/analytics/generate-report');
@@ -93,7 +166,6 @@ class AdminAnalyticsTest extends TestCase
 
     public function test_admin_can_view_styled_json_python_report(): void
     {
-        // First generate
         $this->actingAs($this->admin)->post('/admin/analytics/generate-report');
 
         $response = $this->actingAs($this->admin)->get('/admin/analytics/report');
@@ -105,7 +177,6 @@ class AdminAnalyticsTest extends TestCase
 
     public function test_admin_can_download_generated_python_json_report(): void
     {
-        // First generate
         $this->actingAs($this->admin)->post('/admin/analytics/generate-report');
 
         $response = $this->actingAs($this->admin)->get('/admin/analytics/download-report');

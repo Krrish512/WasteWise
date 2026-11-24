@@ -61,33 +61,95 @@ class WasteSearchController extends Controller
 
         // ── 5. Fetch collection centres handling this waste category ─────────
         $centres = collect();
+        $safetyWarning = null;
+
+        $itemNameLower = strtolower($item->name);
+        $itemKeywords = strtolower($item->keywords ?? '');
+        $isLeadAcid = str_contains($itemNameLower, 'lead') || str_contains($itemKeywords, 'lead acid');
+        $isLithiumIon = str_contains($itemNameLower, 'lithium') || str_contains($itemKeywords, 'lithium');
+
+        if ($isLithiumIon) {
+            $safetyWarning = 'Never crush, puncture, or send Lithium-Ion batteries to Lead-Acid scrap dealers—fire and toxic gas hazard; use authorized e-waste / Li-ion take-back channels.';
+        }
 
         if ($item->category) {
-            $centres = $item->category
-                ->collectionCentres()
-                ->with('city')
-                ->get()
-                ->map(function ($centre) {
-                    return [
-                        'id'        => $centre->id,
-                        'name'      => $centre->name,
-                        'city'      => $centre->city ? $centre->city->name : null,
-                        'address'   => $centre->address,
-                        'phone'     => $centre->phone,
-                        'latitude'  => $centre->latitude,
-                        'longitude' => $centre->longitude,
-                    ];
+            $includeUnverified = $request->boolean('include_unverified');
+
+            // Load collection centres (via category and pivot)
+            $centresQuery = \App\Models\CollectionCentre::with(['city', 'categories', 'category'])
+                ->where(function ($q) use ($item) {
+                    $q->where('category_id', $item->category_id)
+                      ->orWhereHas('categories', function ($cq) use ($item) {
+                          $cq->where('waste_categories.id', $item->category_id);
+                      });
                 });
+
+            // Filter unverified / expired unless explicit citizen toggle is checked
+            if (!$includeUnverified) {
+                $centresQuery->where(function ($q) {
+                    $q->whereNull('status')
+                      ->orWhere('status', 'active');
+                })->where(function ($q) {
+                    $q->whereNull('authorization_status')
+                      ->orWhere('authorization_status', '!=', 'expired');
+                })->where(function ($q) {
+                    $q->whereNull('authorization_valid_until')
+                      ->orWhere('authorization_valid_until', '>=', now()->toDateString());
+                });
+            }
+
+            $rawCentres = $centresQuery->get();
+
+            // Strict battery chemistry filtering:
+            if ($isLeadAcid) {
+                // Only return centres handling lead-acid / smelters / specialized battery recovery
+                $rawCentres = $rawCentres->filter(function ($c) {
+                    $text = strtolower($c->name . ' ' . ($c->notes ?? '') . ' ' . ($c->facility_type ?? ''));
+                    return str_contains($text, 'lead') || str_contains($text, 'battery') || str_contains($text, 'smelter') || in_array($c->facility_type, ['authorized_recycler', 'processing_facility', 'industrial_facility']);
+                });
+            } elseif ($isLithiumIon) {
+                // Strictly exclude lead-acid smelters/dealers; keep e-waste and take-back facilities
+                $rawCentres = $rawCentres->filter(function ($c) {
+                    $text = strtolower($c->name . ' ' . ($c->notes ?? ''));
+                    return !str_contains($text, 'lead-acid') && !str_contains($text, 'lead smelter');
+                });
+            }
+
+            $centres = $rawCentres->map(function ($centre) {
+                return [
+                    'id'                        => $centre->id,
+                    'name'                      => $centre->name,
+                    'city'                      => $centre->city ? $centre->city->name : null,
+                    'district'                  => $centre->district ?? ($centre->city ? $centre->city->district : null),
+                    'address'                   => $centre->address,
+                    'phone'                     => $centre->phone,
+                    'latitude'                  => $centre->latitude !== null ? (float) $centre->latitude : null,
+                    'longitude'                 => $centre->longitude !== null ? (float) $centre->longitude : null,
+                    'facility_type'             => $centre->facility_type ?? 'public_dropoff',
+                    'public_access'             => $centre->public_access ?? 'public_dropoff',
+                    'authorization_status'      => $centre->authorization_status ?? 'verified',
+                    'authorization_id'          => $centre->authorization_id,
+                    'authorization_valid_until' => $centre->authorization_valid_until ? $centre->authorization_valid_until->format('Y-m-d') : null,
+                    'verification_date'         => $centre->verification_date ? $centre->verification_date->format('Y-m-d') : null,
+                    'confidence'                => $centre->confidence ?? 'medium',
+                    'status'                    => $centre->status ?? 'active',
+                    'website'                   => $centre->website,
+                    'source_url'                => $centre->source_url,
+                    'notes'                     => $centre->notes,
+                    'categories'                => $centre->categories ? $centre->categories->pluck('name')->toArray() : [],
+                ];
+            })->values();
         }
 
         // ── 6. Return standard success JSON response ──────────────────────────
         return response()->json([
             'success' => true,
             'data'    => [
-                'id'          => $item->id,
-                'name'        => $item->name,
-                'description' => $item->description,
-                'category'    => $item->category ? [
+                'id'              => $item->id,
+                'name'            => $item->name,
+                'description'     => $item->description,
+                'safety_warning'  => $safetyWarning,
+                'category'        => $item->category ? [
                     'id'   => $item->category->id,
                     'name' => $item->category->name,
                 ] : null,

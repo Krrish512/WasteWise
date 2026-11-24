@@ -1,4 +1,5 @@
-name,category,city,address,latitude,longitude,phone
-Surat E-Waste Recycling Hub,Electronic Waste,Surat,Ring Road Near Station,21.1702430,72.8311000,9876543210
-Ahmedabad Plastic Collection Depot,Plastic Waste,Ahmedabad,CG Road Navrangpura,23.0225050,72.5713620,9876543211
-Vadodara Organic Compost Facility,Organic Waste,Vadodara,Alkapuri Main Market,22.3071590,73.1812190,9876543212
+centre_name,district,city,category,address,phone,latitude,longitude,facility_type,public_access,authorization_status,authorization_id,authorization_valid_until,website,source_url,verification_date,confidence,notes
+Surat E-Waste Recycling Hub,Surat District,Surat,Electronic Waste,Ring Road Near Station,9876543210,21.1702430,72.8311000,authorized_recycler,public_dropoff,verified,GPCB/SURAT/EW/01,2028-12-31,https://suratewaste.org,https://gpcb.gujarat.gov.in,2026-08-15,high,Authorized recycling centre with modern e-waste staging
+Ahmedabad Plastic Collection Depot,Ahmedabad District,Ahmedabad,Plastic Waste,CG Road Navrangpura,9876543211,23.0225050,72.5713620,municipal_centre,public_dropoff,verified,AMC/PL/2026/09,2027-06-30,https://ahmedabadcity.gov.in,https://gpcb.gujarat.gov.in,2026-08-20,high,Municipal plastic segregated drop-off depot
+Vadodara Organic Compost Facility,Vadodara District,Vadodara,Organic Waste,Alkapuri Main Market,9876543212,22.3071590,73.1812190,processing_facility,public_dropoff,verified,VMC/ORG/2026/14,2029-01-01,,,2026-08-10,medium,Bulk compost processing plant
+Staged Government Recycler,Rajkot District,Rajkot,Electronic Waste,Aji GIDC Industrial Area,9876543213,,,authorized_recycler,business_industrial_only,verified,GPCB/RJK/2026/88,2028-04-15,https://rajkotgidc.in,https://gpcb.gujarat.gov.in,2026-09-01,high,Verified government recycler staged without GPS coordinates

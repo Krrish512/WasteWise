@@ -118,6 +118,14 @@
                 </div>
             </a>
 
+            <a href="{{ route('admin.feedback.index', ['type' => 'centres', 'reviewed' => '0']) }}" style="background:var(--bg-white);border:{{ ($stats['centres_needing_review'] ?? 0) > 0 ? '2px solid #ef4444' : '1px solid var(--border)' }};border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                <div style="width:48px;height:48px;background:#fef2f2;color:#dc2626;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🚩</div>
+                <div>
+                    <div style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;color:{{ ($stats['centres_needing_review'] ?? 0) > 0 ? '#dc2626' : 'var(--text-dark)' }};line-height:1;">{{ $stats['centres_needing_review'] ?? 0 }}</div>
+                    <div style="color:var(--text-muted);font-size:.85rem;font-weight:600;margin-top:.2rem;">Centres Needing Review</div>
+                </div>
+            </a>
+
             <a href="{{ route('admin.feedback.index') }}" style="background:var(--bg-white);border:1px solid var(--border);border-radius:var(--radius-xl);padding:1.5rem;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:1rem;transition:var(--transition);" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
                 <div style="width:48px;height:48px;background:#fefce8;color:#a16207;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;">💬</div>
                 <div>

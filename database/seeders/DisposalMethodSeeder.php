@@ -16,6 +16,16 @@ class DisposalMethodSeeder extends Seeder
                 'avoid' => 'Do not throw in regular household dustbins or burn electronic items.',
             ],
             [
+                'name' => 'GPCB Lead-Acid Battery Recycler',
+                'instructions' => 'Return spent lead-acid battery to an authorized battery dealer, OEM buyback center, or GPCB-authorized lead recycler under Battery Waste Management Rules.',
+                'avoid' => 'Never dump battery acid into drains or sell to informal scrap dealers—severe lead toxicity and acid burn hazard.',
+            ],
+            [
+                'name' => 'Lithium-Ion Battery Take-Back',
+                'instructions' => 'Take to authorized e-waste collection centre or manufacturer take-back kiosk with taped terminals.',
+                'avoid' => 'Never crush, puncture, or send Lithium-Ion batteries to Lead-Acid scrap dealers—fire and toxic gas hazard; use authorized e-waste / Li-ion take-back channels.',
+            ],
+            [
                 'name' => 'Dry Waste Recycling',
                 'instructions' => 'Clean and dry the item, then place it in the blue/dry waste bin for recycling.',
                 'avoid' => 'Do not mix with wet or food waste.',
